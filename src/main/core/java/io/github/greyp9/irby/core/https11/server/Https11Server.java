@@ -86,15 +86,17 @@ public class Https11Server {
             throws GeneralSecurityException, IOException {
         final KeyStore keyStore = KeyStore.getInstance(config.getKeyStoreType());
         final File keyStoreFile = new File(config.getKeyStoreFile());
-        keyStore.load(new FileInputStream(keyStoreFile), config.getKeyStorePass().toCharArray());
-        return new TLSKeyManager(keyStore, config.getKeyStorePass().toCharArray());
+        final char[] password = config.getKeyStorePass().toCharArray();
+        keyStore.load(new FileInputStream(keyStoreFile), password);
+        return new TLSKeyManager(keyStore, password);
     }
 
     private static TLSTrustManager getTrustManager(final Https11Config config)
             throws GeneralSecurityException, IOException {
         final KeyStore keyStore = KeyStore.getInstance(config.getTrustStoreType());
         final File keyStoreFile = new File(config.getTrustStoreFile());
-        keyStore.load(new FileInputStream(keyStoreFile), config.getTrustStorePass().toCharArray());
+        final char[] password = config.getTrustStorePass().toCharArray();
+        keyStore.load(new FileInputStream(keyStoreFile), password);
         return new TLSTrustManager(keyStore);
     }
 }
