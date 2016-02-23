@@ -15,7 +15,7 @@ public final class App {
 
     private int run() throws IOException {
         final String className = getClass().getName();
-        final String methodName = "run()";
+        final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
         final URL url = ResourceU.resolve(Const.CONFIG);
         final String signal = new Application(className).run(url);

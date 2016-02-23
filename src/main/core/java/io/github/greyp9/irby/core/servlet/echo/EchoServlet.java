@@ -25,8 +25,8 @@ public class EchoServlet extends javax.servlet.http.HttpServlet {
             final String value = request.getHeader(name);
             buffer.append(String.format("%s: %s\r\n", name, value));
         }
-        final byte[] bytes = buffer.toString().getBytes("UTF-8");
-        response.setContentType("text/plain; charset='UTF-8'");
+        final byte[] bytes = buffer.toString().getBytes("UTF-8");  // i18n http
+        response.setContentType("text/plain; charset='UTF-8'");  // i18n http
         response.setContentLength(bytes.length);
         response.getOutputStream().write(bytes);
     }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+// i18nf
 public class ApplicationConfig {
     private final XPathContext context;
 

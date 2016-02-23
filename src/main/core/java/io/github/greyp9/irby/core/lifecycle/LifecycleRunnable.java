@@ -23,7 +23,7 @@ public class LifecycleRunnable implements Runnable {
 
     @Override
     public final void run() {
-        final String methodName = "run()";
+        final String methodName = "run()";  // i18n trace
         logger.entering(getClass().getSimpleName(), methodName);
         final Properties properties = System.getProperties();
         while (reference.get() == null) {

@@ -16,7 +16,7 @@ public final class App {
 
     private int run() throws IOException {
         final String className = getClass().getName();
-        final String methodName = "run()";
+        final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
         final URL url = URLCodec.toURL(new File(Const.CONFIG));
         final String signal = new Application(className).run(url);
@@ -30,6 +30,6 @@ public final class App {
     }
 
     private static class Const {
-        private static final String CONFIG = "app.xml";
+        private static final String CONFIG = "app.xml";  // i18n internal
     }
 }

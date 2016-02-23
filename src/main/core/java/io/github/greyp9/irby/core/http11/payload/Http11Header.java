@@ -74,7 +74,7 @@ public class Http11Header {
 
     private static class Const {
         // GET / HTTP/1.1
-        private static final String REGEX_REQUEST = "(\\S+)\\s+(\\S+?)(\\?\\S*)?\\s+(\\S+)";
+        private static final String REGEX_REQUEST = "(\\S+)\\s+(\\S+?)(\\?\\S*)?\\s+(\\S+)";  // i18n internal
         private static final Pattern PATTERN_REQUEST = Pattern.compile(REGEX_REQUEST);
         private static final int GROUP_METHOD = 1;
         private static final int GROUP_URI = 2;

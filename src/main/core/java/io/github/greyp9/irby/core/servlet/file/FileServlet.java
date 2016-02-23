@@ -110,8 +110,8 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
     }
 
     private static class Const {
-        private static final String CSS_NUMBER = "number";
+        private static final String CSS_NUMBER = "number";  // i18n css
         private static final String HTML = "io/github/greyp9/irby/html/FileServlet.html";
-        private static final String INIT_PARAM_FILE = "file";
+        private static final String INIT_PARAM_FILE = "file";  // i18n internal
     }
 }

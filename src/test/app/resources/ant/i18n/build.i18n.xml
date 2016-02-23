@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project name='irby-app-i18n' default='main' basedir='.'>
+
+    <!--fixed-->
+    <property name='project.dir' location='${basedir}/../../../../../..' description='(suggested) ~/irby'/>
+    <property name='arwo.dir' location='${basedir}/../../../../../../../arwo' description='(suggested) ~/arwo'/>
+    <!--transient-->
+    <property name='target.dir' value='${arwo.dir}/target'/>
+    <property name='classes.core.dir' value='${target.dir}/app/classes-core'/>
+    <property name='test.classes.core.dir' value='${target.dir}/app/test-classes-core'/>
+
+    <path id='classpath-i18n'>
+        <pathelement path='${classes.core.dir}'/>
+        <pathelement path='${test.classes.core.dir}'/>
+    </path>
+
+    <target name='compile'/>
+
+    <target name='i18n-scan' depends='compile'>
+        <java classname='io.github.greyp9.arwo.core.i18n.ScanI18n' classpathref='classpath-i18n' fork='true'>
+            <arg value='${project.dir}/src/main/core/java'/>
+        </java>
+        <java classname='io.github.greyp9.arwo.core.i18n.ScanI18n' classpathref='classpath-i18n' fork='true'>
+            <arg value='${project.dir}/src/main/app/java'/>
+        </java>
+    </target>
+
+    <target name='main' depends='i18n-scan' description='Use -p to view help information.'/>
+
+</project>

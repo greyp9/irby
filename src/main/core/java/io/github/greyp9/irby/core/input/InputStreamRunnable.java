@@ -29,7 +29,7 @@ public class InputStreamRunnable implements Runnable {
 
     @Override
     public final void run() {
-        final String methodName = "run()";
+        final String methodName = "run()";  // i18n trace
         logger.entering(getClass().getSimpleName(), methodName);
 
         while (reference.get() == null) {
