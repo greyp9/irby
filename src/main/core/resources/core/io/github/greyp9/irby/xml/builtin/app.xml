@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<irby:application xmlns='urn:irby:app' xmlns:irby='urn:irby:app' threads='6' loop='PT1S'>
+    <realm enabled='true' name='Irby' method='Basic'>
+        <principal name='irby' credential='irby' roles='*'/>
+    </realm>
+    <realm enabled='true' name='IrbyCert' method='Certificate'>
+        <principal name='OU=irby,CN=irby-user' credential='089df8716fe9e04cd7561d92a74b4ab3e4edd2452bd1727f28a3dd11a06407ab' roles='*'/>
+    </realm>
+    <http11 enabled='true' name='http11-8080' port='8080' threads='6'>
+        <web-app enabled='true' name='root' path='' realm='Irby'>
+            <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.echo.EchoServlet' auth-constraint='*'/>
+        </web-app>
+    </http11>
+    <https11 enabled='true' name='https11-8443' port='8443' threads='6'
+             keyStoreFile='server.pkcs12' keyStoreType='PKCS12' keyStorePass='irby'
+             trustStoreFile='client.pkcs12' trustStoreType='PKCS12' trustStorePass='irby'
+             protocol='TLS'>
+        <web-app enabled='true' name='file' path='' realm='IrbyCert'>
+            <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.file.FileServlet' auth-constraint='*'>
+                <init-param name='file' value='~'/>
+                <init-param name='.gif' value='image/gif'/>
+                <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
+                <init-param name='.ico' value='image/x-icon'/>
+                <init-param name='.jpg' value='image/jpeg'/>
+                <init-param name='.jpeg' value='image/jpeg'/>
+                <init-param name='.png' value='image/png'/>
+                <init-param name='.svg' value='image/svg+xml'/>
+                <init-param name='.xml' value='text/xml; charset=&quot;UTF-8&quot;'/>
+            </servlet>
+        </web-app>
+    </https11>
+</irby:application>
