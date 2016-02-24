@@ -3,11 +3,11 @@ package io.github.greyp9.irby.core.http11.payload;
 import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.text.line.LineU;
+import io.github.greyp9.arwo.core.value.NameTypeValues;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,18 +15,16 @@ public class Http11Header {
     private final String requestLine;
     private final Matcher matcher;
     private final Collection<String> headerLines;
-    private final Properties properties;
+    private final NameTypeValues headers;
 
+    @SuppressWarnings("unused")
     public final String getRequestLine() {
         return requestLine;
     }
 
+    @SuppressWarnings("unused")
     public final Collection<String> getHeaderLines() {
         return headerLines;
-    }
-
-    public final Properties getProperties() {
-        return properties;
     }
 
     public Http11Header(final byte[] bytes) throws IOException {
@@ -41,13 +39,13 @@ public class Http11Header {
         this.matcher = (matcherIt.matches() ? matcherIt : null);
         // header lines
         this.headerLines = lines;
-        this.properties = new Properties();
+        this.headers = new NameTypeValues();
         for (final String line : headerLines) {
             final int index = line.indexOf(Http.Token.COLON);
             if (index > 0) {
                 final String name = line.substring(0, index);
                 final String value = line.substring(index + Http.Token.COLON.length()).trim();
-                properties.setProperty(name, value);
+                this.headers.add(name, value);
             }
         }
     }
@@ -68,8 +66,16 @@ public class Http11Header {
         return ((matcher == null) ? null : matcher.group(Const.GROUP_PROTOCOL));
     }
 
+    public final Collection<String> getHeaderNames() {
+        return headers.getNames();
+    }
+
+    public final Collection<String> getHeaders(final String name) {
+        return headers.getValues(name);
+    }
+
     public final String getHeader(final String name) {
-        return properties.getProperty(name);
+        return headers.getValue(name);
     }
 
     private static class Const {

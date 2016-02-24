@@ -3,7 +3,9 @@ package io.github.greyp9.irby.core.http11.payload;
 import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.io.StreamU;
+import io.github.greyp9.irby.core.http11.servlet25.Http11ServletInputStream;
 
+import javax.servlet.ServletInputStream;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,6 +26,10 @@ public class Http11Request {
 
     public final ByteArrayInputStream getEntity() {
         return new ByteArrayInputStream((entity == null) ? new byte[0] : entity);
+    }
+
+    public final ServletInputStream getInputStream() throws IOException {
+        return new Http11ServletInputStream(getEntity());
     }
 
     public Http11Request(final Socket socket) throws IOException {

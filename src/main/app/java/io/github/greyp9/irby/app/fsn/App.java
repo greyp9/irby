@@ -18,22 +18,23 @@ public final class App {
         final String className = getClass().getName();
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
-        final URL url = URLCodec.toURL(new File(Const.CONFIG));
-        String signal = "";
-        while (!signal.contains(Const.QUIT_TOKEN)) {
-            signal = new Application(className).run(url);
-            logger.finer(signal);
-        }
+        final URL url = URLCodec.toURL(new File(Application.Const.FILE));
+        final String signal = applicationRunLoop(url);
+        logger.finer(signal);
         logger.exiting(className, methodName);
         return 0;
     }
 
-    public static void main(final String[] args) throws Exception {
-        System.exit(new App().run());
+    private String applicationRunLoop(URL url) throws IOException {
+        String signal = "";
+        while (!signal.contains(Application.Const.QUIT_TOKEN)) {
+            signal = new Application(null).run(url);
+            logger.finer(signal);
+        }
+        return signal;
     }
 
-    private static class Const {
-        private static final String CONFIG = "app.xml";  // i18n internal
-        private static final String QUIT_TOKEN = "QUIT";  // i18n internal
+    public static void main(final String[] args) throws Exception {
+        System.exit(new App().run());
     }
 }

@@ -85,7 +85,7 @@ public class Http11ServletResponse implements javax.servlet.http.HttpServletResp
 
     @Override
     public final void addHeader(final String s, final String s1) {
-        throw new IllegalStateException();
+        response.addHeader(s, s1);
     }
 
     @Override

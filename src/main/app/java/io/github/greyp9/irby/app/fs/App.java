@@ -18,8 +18,8 @@ public final class App {
         final String className = getClass().getName();
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
-        final URL url = URLCodec.toURL(new File(Const.CONFIG));
-        final String signal = new Application(className).run(url);
+        final URL url = URLCodec.toURL(new File(Application.Const.FILE));
+        final String signal = new Application(null).run(url);
         logger.finer(signal);
         logger.exiting(className, methodName);
         return 0;
@@ -27,9 +27,5 @@ public final class App {
 
     public static void main(final String[] args) throws Exception {
         System.exit(new App().run());
-    }
-
-    private static class Const {
-        private static final String CONFIG = "app.xml";  // i18n internal
     }
 }

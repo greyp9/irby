@@ -29,8 +29,9 @@ public class Http11Server {
     public Http11Server(final Http11Config config, final Realms realms, final ExecutorService executorService) {
         this.config = config;
         this.dispatcher = new Http11Dispatcher(config, realms);
+        final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
         this.executorService = (config.isLocalExecutor() ?
-                ExecutorServiceFactory.create(config.getThreads(), getClass().getSimpleName()) : executorService);
+                ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
         this.serverSocket = null;
     }
 

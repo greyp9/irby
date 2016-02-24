@@ -11,9 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 @SuppressWarnings("PMD.ExcessivePublicCount")
 public class Http11ServletRequest implements javax.servlet.http.HttpServletRequest {
@@ -45,17 +47,19 @@ public class Http11ServletRequest implements javax.servlet.http.HttpServletReque
 
     @Override
     public final String getHeader(final String s) {
-        return request.getHeader().getProperties().getProperty(s);
+        return request.getHeader().getHeader(s);
     }
 
     @Override
     public final Enumeration getHeaders(final String s) {
-        throw new IllegalStateException();
+        final Collection<String> headers = request.getHeader().getHeaders(s);
+        return new Vector<String>(headers).elements();
     }
 
     @Override
     public final Enumeration getHeaderNames() {
-        return request.getHeader().getProperties().propertyNames();
+        final Collection<String> headers = request.getHeader().getHeaderNames();
+        return new Vector<String>(headers).elements();
     }
 
     @Override
@@ -195,7 +199,7 @@ public class Http11ServletRequest implements javax.servlet.http.HttpServletReque
 
     @Override
     public final ServletInputStream getInputStream() throws IOException {
-        throw new IllegalStateException();
+        return request.getInputStream();
     }
 
     @Override

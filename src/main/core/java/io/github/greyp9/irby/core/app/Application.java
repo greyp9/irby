@@ -25,7 +25,7 @@ public class Application {
     private final String name;
 
     public Application(String name) {
-        this.name = name;
+        this.name = ((name == null) ? getClass().getName() : name);
     }
 
     public final String run(final URL url) throws IOException {
@@ -59,5 +59,12 @@ public class Application {
             results.add(e.getMessage());
         }
         return results.toString();
+    }
+
+    public static class Const {
+        public static final String FILE = "app.xml";
+        public static final String URL_BUILTIN = "io/github/greyp9/irby/xml/builtin/app.xml";
+
+        public static final String QUIT_TOKEN = "QUIT";  // i18n internal
     }
 }
