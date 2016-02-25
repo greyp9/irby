@@ -42,6 +42,7 @@ public class ProxyStreamRunnable implements Runnable {
             doStream();
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
+            reference.compareAndSet(null, e.getMessage());
         } finally {
             logger.exiting(className, methodName);
         }

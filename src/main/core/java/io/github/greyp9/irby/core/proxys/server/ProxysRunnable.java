@@ -1,0 +1,46 @@
+package io.github.greyp9.irby.core.proxys.server;
+
+import io.github.greyp9.arwo.core.vm.mutex.MutexU;
+import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
+
+@SuppressWarnings("PMD.DoNotUseThreads")
+public class ProxysRunnable implements Runnable {
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
+    private final ProxysServer server;
+    private final AtomicReference<String> reference;
+
+    public static ProxysRunnable create(final ProxysConfig config,
+                                        final ExecutorService executorService,
+                                        final AtomicReference<String> reference) {
+        return new ProxysRunnable(config, executorService, reference);
+    }
+
+    public ProxysRunnable(final ProxysConfig config,
+                          final ExecutorService executorService,
+                          final AtomicReference<String> reference) {
+        this.server = new ProxysServer(config, executorService);
+        this.reference = reference;
+    }
+
+    @Override
+    public final void run() {
+        final String methodName = String.format("run(%d)", server.getConfig().getPort());
+        logger.entering(getClass().getSimpleName(), methodName);
+        try {
+            server.start();
+            while (reference.get() == null) {
+                server.accept();
+            }
+        } catch (IOException e) {
+            reference.compareAndSet(null, e.getMessage());
+        }
+        MutexU.notifyAll(reference);
+        logger.exiting(getClass().getSimpleName(), methodName);
+    }
+}

@@ -33,7 +33,7 @@ public class ProxyServer {
     }
 
     public final void start() throws IOException {
-        serverSocket = startSocket(config);
+        serverSocket = startServerSocket(config);
     }
 
     public final void stop() throws IOException {
@@ -54,7 +54,7 @@ public class ProxyServer {
         }
     }
 
-    private static ServerSocket startSocket(final ProxyConfig config) throws IOException {
+    private static ServerSocket startServerSocket(final ProxyConfig config) throws IOException {
         final ServerSocketFactory ssf = ServerSocketFactory.getDefault();
         final ServerSocket serverSocket = ssf.createServerSocket(config.getPort());
         serverSocket.setSoTimeout((int) DurationU.Const.ONE_SECOND_MILLIS);

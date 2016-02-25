@@ -12,6 +12,7 @@ import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigServlet;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
+import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
 import io.github.greyp9.irby.core.realm.config.PrincipalConfig;
 import io.github.greyp9.irby.core.realm.config.RealmConfig;
 import org.w3c.dom.Document;
@@ -35,6 +36,7 @@ public class ApplicationConfig {
     private final Collection<Http11Config> http11Configs;
     private final Collection<Https11Config> https11Configs;
     private final Collection<ProxyConfig> proxyConfigs;
+    private final Collection<ProxysConfig> proxysConfigs;
 
     public final int getThreads() {
         return threads;
@@ -60,6 +62,10 @@ public class ApplicationConfig {
         return proxyConfigs;
     }
 
+    public final Collection<ProxysConfig> getProxysConfigs() {
+        return proxysConfigs;
+    }
+
     public ApplicationConfig(final URL url) throws IOException {
         final Document document = DocumentU.toDocument(StreamU.read(url));
         this.context = XPathContextFactory.create(document);
@@ -72,10 +78,12 @@ public class ApplicationConfig {
         this.http11Configs = new ArrayList<Http11Config>();
         this.https11Configs = new ArrayList<Https11Config>();
         this.proxyConfigs = new ArrayList<ProxyConfig>();
+        this.proxysConfigs = new ArrayList<ProxysConfig>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
         doElementsHttps11(xpather.getElements("/irby:application/irby:https11[@enabled='true']"));
         doElementsProxy(xpather.getElements("/irby:application/irby:proxy[@enabled='true']"));
+        doElementsProxys(xpather.getElements("/irby:application/irby:proxys[@enabled='true']"));
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -113,7 +121,7 @@ public class ApplicationConfig {
     private Http11Config doElementHttp11(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
-        final int port = NumberU.toInt(xpather.getTextAttr("@port"), 0);
+        final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final Http11Config http11Config = new Http11Config(name, port, threadsPort);
         final List<Element> elements = xpather.getElements("irby:web-app");
@@ -162,17 +170,17 @@ public class ApplicationConfig {
     private Https11Config doElementHttps11(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
-        final int port = NumberU.toInt(xpather.getTextAttr("@port"), 0);
+        final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final String keyStoreFile = xpather.getTextAttr("@keyStoreFile");
         final String keyStoreType = xpather.getTextAttr("@keyStoreType");
         final String keyStorePass = xpather.getTextAttr("@keyStorePass");
-        final String trustStoreFile = xpather.getTextAttr("@trustStoreFile");
-        final String trustStoreType = xpather.getTextAttr("@trustStoreType");
-        final String trustStorePass = xpather.getTextAttr("@trustStorePass");
+        final String clientTrustFile = xpather.getTextAttr("@clientTrustFile");
+        final String clientTrustType = xpather.getTextAttr("@clientTrustType");
+        final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
         final String protocol = xpather.getTextAttr("@protocol");
         final Https11Config https11Config = new Https11Config(name, port, threadsPort,
-                keyStoreFile, keyStoreType, keyStorePass, trustStoreFile, trustStoreType, trustStorePass, protocol);
+                keyStoreFile, keyStoreType, keyStorePass, clientTrustFile, clientTrustType, clientTrustPass, protocol);
         final List<Element> elements = xpather.getElements("irby:web-app");
         for (final Element elementIt : elements) {
             https11Config.addContext(doElementWebapp(elementIt));
@@ -189,14 +197,39 @@ public class ApplicationConfig {
     private ProxyConfig doElementProxy(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
-        final int port = NumberU.toInt(xpather.getTextAttr("@port"), 0);
+        final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final String host = xpather.getTextAttr("@host");
         return new ProxyConfig(name, port, threadsPort, host);
     }
 
+    private void doElementsProxys(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            proxysConfigs.add(doElementProxys(element));
+        }
+    }
+
+    private ProxysConfig doElementProxys(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
+        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final String host = xpather.getTextAttr("@host");
+        final String keyStoreFile = xpather.getTextAttr("@keyStoreFile");
+        final String keyStoreType = xpather.getTextAttr("@keyStoreType");
+        final String keyStorePass = xpather.getTextAttr("@keyStorePass");
+        final String clientTrustFile = xpather.getTextAttr("@clientTrustFile");
+        final String clientTrustType = xpather.getTextAttr("@clientTrustType");
+        final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
+        final String serverTrustFile = xpather.getTextAttr("@serverTrustFile");
+        final String protocol = xpather.getTextAttr("@protocol");
+        return new ProxysConfig(name, port, threadsPort, host, keyStoreFile, keyStoreType, keyStorePass,
+                clientTrustFile, clientTrustType, clientTrustPass, serverTrustFile, protocol);
+    }
+
     private static class Const {
         private static final String XPATH_A_NAME = "@name";
+        private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_THREADS = "@threads";
     }
 }

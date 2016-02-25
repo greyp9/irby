@@ -1,15 +1,16 @@
-package io.github.greyp9.irby.core.https11.config;
+package io.github.greyp9.irby.core.proxys.config;
 
 import io.github.greyp9.arwo.core.value.Value;
-import io.github.greyp9.irby.core.http11.config.Http11Config;
+import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 
-public class Https11Config extends Http11Config {
+public class ProxysConfig extends ProxyConfig {
     private final String keyStoreFile;
     private final String keyStoreType;
     private final String keyStorePass;
     private final String clientTrustFile;
     private final String clientTrustType;
     private final String clientTrustPass;
+    private final String serverTrustFile;
     private final String protocol;
 
     public final String getKeyStoreFile() {
@@ -36,6 +37,10 @@ public class Https11Config extends Http11Config {
         return clientTrustPass;
     }
 
+    public final String getServerTrustFile() {
+        return serverTrustFile;
+    }
+
     public final boolean isNeedClientAuth() {
         return Value.notEmpty(clientTrustFile, clientTrustType, clientTrustPass);
     }
@@ -45,17 +50,18 @@ public class Https11Config extends Http11Config {
     }
 
     @SuppressWarnings({ "PMD.ExcessiveParameterList", "checkstyle:parameternumber" })
-    public Https11Config(final String name, final int port, final int threads,
-                         final String keyStoreFile, final String keyStoreType, final String keyStorePass,
-                         final String clientTrustFile, final String clientTrustType, final String clientTrustPass,
-                         final String protocol) {
-        super(name, port, threads);
+    public ProxysConfig(final String name, final int port, final int threads, final String host,
+                        final String keyStoreFile, final String keyStoreType, final String keyStorePass,
+                        final String clientTrustFile, final String clientTrustType, final String clientTrustPass,
+                        final String serverTrustFile, final String protocol) {
+        super(name, port, threads, host);
         this.keyStoreFile = keyStoreFile;
         this.keyStoreType = keyStoreType;
         this.keyStorePass = keyStorePass;
         this.clientTrustFile = clientTrustFile;
         this.clientTrustType = clientTrustType;
         this.clientTrustPass = clientTrustPass;
+        this.serverTrustFile = serverTrustFile;
         this.protocol = protocol;
     }
 }

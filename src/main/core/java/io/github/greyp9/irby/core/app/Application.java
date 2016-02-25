@@ -13,6 +13,8 @@ import io.github.greyp9.irby.core.input.InputStreamRunnable;
 import io.github.greyp9.irby.core.lifecycle.LifecycleRunnable;
 import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.proxy.server.ProxyRunnable;
+import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
+import io.github.greyp9.irby.core.proxys.server.ProxysRunnable;
 import io.github.greyp9.irby.core.realm.Realms;
 
 import java.io.IOException;
@@ -49,6 +51,9 @@ public class Application {
         }
         for (final ProxyConfig proxyConfig : config.getProxyConfigs()) {
             executorService.execute(ProxyRunnable.create(proxyConfig, executorService, reference));
+        }
+        for (final ProxysConfig proxysConfig : config.getProxysConfigs()) {
+            executorService.execute(ProxysRunnable.create(proxysConfig, executorService, reference));
         }
         // wait until shutdown signaled
         while (reference.get() == null) {
