@@ -11,6 +11,7 @@ import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigServlet;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
+import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.realm.config.PrincipalConfig;
 import io.github.greyp9.irby.core.realm.config.RealmConfig;
 import org.w3c.dom.Document;
@@ -23,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 // i18nf
+@SuppressWarnings("PMD.TooManyMethods")
 public class ApplicationConfig {
     private final XPathContext context;
 
@@ -32,6 +34,7 @@ public class ApplicationConfig {
     private final Collection<RealmConfig> realmConfigs;
     private final Collection<Http11Config> http11Configs;
     private final Collection<Https11Config> https11Configs;
+    private final Collection<ProxyConfig> proxyConfigs;
 
     public final int getThreads() {
         return threads;
@@ -53,20 +56,26 @@ public class ApplicationConfig {
         return https11Configs;
     }
 
+    public final Collection<ProxyConfig> getProxyConfigs() {
+        return proxyConfigs;
+    }
+
     public ApplicationConfig(final URL url) throws IOException {
         final Document document = DocumentU.toDocument(StreamU.read(url));
         this.context = XPathContextFactory.create(document);
         final XPather xpather = new XPather(document, context);
         // application params
-        this.threads = NumberU.toInt(xpather.getTextAttr("@threads"), 2);
+        this.threads = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 2);
         this.interval = NumberU.toLong(xpather.getTextAttr("@loop"), DurationU.Const.ONE_SECOND_MILLIS);
         // subsystems
         this.realmConfigs = new ArrayList<RealmConfig>();
         this.http11Configs = new ArrayList<Http11Config>();
         this.https11Configs = new ArrayList<Https11Config>();
+        this.proxyConfigs = new ArrayList<ProxyConfig>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
         doElementsHttps11(xpather.getElements("/irby:application/irby:https11[@enabled='true']"));
+        doElementsProxy(xpather.getElements("/irby:application/irby:proxy[@enabled='true']"));
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -105,7 +114,7 @@ public class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final int port = NumberU.toInt(xpather.getTextAttr("@port"), 0);
-        final int threadsPort = NumberU.toInt(xpather.getTextAttr("@threads"), 0);
+        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final Http11Config http11Config = new Http11Config(name, port, threadsPort);
         final List<Element> elements = xpather.getElements("irby:web-app");
         for (final Element elementIt : elements) {
@@ -154,7 +163,7 @@ public class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final int port = NumberU.toInt(xpather.getTextAttr("@port"), 0);
-        final int threadsPort = NumberU.toInt(xpather.getTextAttr("@threads"), 0);
+        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final String keyStoreFile = xpather.getTextAttr("@keyStoreFile");
         final String keyStoreType = xpather.getTextAttr("@keyStoreType");
         final String keyStorePass = xpather.getTextAttr("@keyStorePass");
@@ -171,7 +180,23 @@ public class ApplicationConfig {
         return https11Config;
     }
 
+    private void doElementsProxy(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            proxyConfigs.add(doElementProxy(element));
+        }
+    }
+
+    private ProxyConfig doElementProxy(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final int port = NumberU.toInt(xpather.getTextAttr("@port"), 0);
+        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final String host = xpather.getTextAttr("@host");
+        return new ProxyConfig(name, port, threadsPort, host);
+    }
+
     private static class Const {
         private static final String XPATH_A_NAME = "@name";
+        private static final String XPATH_A_THREADS = "@threads";
     }
 }

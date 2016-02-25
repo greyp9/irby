@@ -88,6 +88,7 @@ public class Http11Dispatcher {
             }
         }
         response.write();
+        socket.close();
     }
 
     private Http11Context selectContext(final String uri) {

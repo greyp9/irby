@@ -11,6 +11,8 @@ import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.https11.server.Https11Runnable;
 import io.github.greyp9.irby.core.input.InputStreamRunnable;
 import io.github.greyp9.irby.core.lifecycle.LifecycleRunnable;
+import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
+import io.github.greyp9.irby.core.proxy.server.ProxyRunnable;
 import io.github.greyp9.irby.core.realm.Realms;
 
 import java.io.IOException;
@@ -24,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Application {
     private final String name;
 
-    public Application(String name) {
+    public Application(final String name) {
         this.name = ((name == null) ? getClass().getName() : name);
     }
 
@@ -44,6 +46,9 @@ public class Application {
         }
         for (final Https11Config https11Config : config.getHttps11Configs()) {
             executorService.execute(Https11Runnable.create(https11Config, realms, executorService, reference));
+        }
+        for (final ProxyConfig proxyConfig : config.getProxyConfigs()) {
+            executorService.execute(ProxyRunnable.create(proxyConfig, executorService, reference));
         }
         // wait until shutdown signaled
         while (reference.get() == null) {
@@ -65,6 +70,6 @@ public class Application {
         public static final String FILE = "app.xml";
         public static final String URL_BUILTIN = "io/github/greyp9/irby/xml/builtin/app.xml";
 
-        public static final String QUIT_TOKEN = "QUIT";  // i18n internal
+        public static final String QUIT_TOKEN = "q";  // i18n internal
     }
 }

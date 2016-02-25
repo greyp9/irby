@@ -47,7 +47,8 @@ public class ConfigServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(HttpResponseU.to302(""), response);
     }
 
-    private void doPostFormMultipart(ServletHttpRequest httpRequest) throws IOException {
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private void doPostFormMultipart(final ServletHttpRequest httpRequest) throws IOException {
         final ByteArrayInputStream is = httpRequest.getHttpRequest().getEntity();
         final MultipartForm form = new MultipartForm(is);
         for (final Iterator<MimePart> mimePartIt = form.iterator(); mimePartIt.hasNext(); mimePartIt.getClass()) {

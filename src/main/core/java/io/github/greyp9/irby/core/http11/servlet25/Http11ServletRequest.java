@@ -50,12 +50,14 @@ public class Http11ServletRequest implements javax.servlet.http.HttpServletReque
         return request.getHeader().getHeader(s);
     }
 
+    @SuppressWarnings("PMD.UseArrayListInsteadOfVector")
     @Override
     public final Enumeration getHeaders(final String s) {
         final Collection<String> headers = request.getHeader().getHeaders(s);
         return new Vector<String>(headers).elements();
     }
 
+    @SuppressWarnings("PMD.UseArrayListInsteadOfVector")
     @Override
     public final Enumeration getHeaderNames() {
         final Collection<String> headers = request.getHeader().getHeaderNames();
