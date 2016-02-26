@@ -36,6 +36,7 @@ public class Application {
         this.name = ((name == null) ? getClass().getName() : name);
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException {
         final ApplicationConfig config = new ApplicationConfig(url);
         final ExecutorService executorService = ExecutorServiceFactory.create(

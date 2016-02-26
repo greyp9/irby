@@ -1,19 +1,33 @@
 package io.github.greyp9.irby.core.cron.config;
 
+import org.w3c.dom.Element;
+
 public class CronConfigJob {
     private final String name;
-    private final String line;
+    private final String schedule;
+    private final String className;
+    private final Element element;
 
     public final String getName() {
         return name;
     }
 
-    public final String getLine() {
-        return line;
+    public final String getSchedule() {
+        return schedule;
     }
 
-    public CronConfigJob(final String name, final String line) {
+    public final String getClassName() {
+        return className;
+    }
+
+    public final Element getElement() {
+        return element;
+    }
+
+    public CronConfigJob(final String name, final String schedule, final String className, final Element element) {
         this.name = name;
-        this.line = line;
+        this.schedule = schedule;
+        this.className = className;
+        this.element = element;
     }
 }

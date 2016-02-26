@@ -280,8 +280,9 @@ public class ApplicationConfig {
     private CronConfigJob doElementCronJob(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
-        final String line = xpather.getTextAttr("@line");
-        return new CronConfigJob(name, line);
+        final String schedule = xpather.getTextAttr("@schedule");
+        final String className = xpather.getTextAttr("@class");
+        return new CronConfigJob(name, schedule, className, element);
     }
 
     private static class Const {
