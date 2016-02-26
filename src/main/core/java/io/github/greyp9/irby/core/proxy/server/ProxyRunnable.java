@@ -24,7 +24,7 @@ public class ProxyRunnable implements Runnable {
     public ProxyRunnable(final ProxyConfig config,
                          final ExecutorService executorService,
                          final AtomicReference<String> reference) {
-        this.server = new ProxyServer(config, executorService);
+        this.server = new ProxyServer(config, executorService, reference);
         this.reference = reference;
     }
 
@@ -37,8 +37,9 @@ public class ProxyRunnable implements Runnable {
             while (reference.get() == null) {
                 server.accept();
             }
+            server.stop();
         } catch (IOException e) {
-            reference.compareAndSet(null, e.getMessage());
+            reference.compareAndSet(null, String.format("[%d][%s]", server.getConfig().getPort(), e.getMessage()));
         }
         MutexU.notifyAll(reference);
         logger.exiting(getClass().getSimpleName(), methodName);

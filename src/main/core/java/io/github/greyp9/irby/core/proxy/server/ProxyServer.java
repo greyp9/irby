@@ -12,10 +12,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ProxyServer {
     private final ProxyConfig config;
     private final ExecutorService executorService;
+    private final AtomicReference<String> reference;
 
     // lifecycle start/stop
     private ServerSocket serverSocket;
@@ -24,11 +26,14 @@ public class ProxyServer {
         return config;
     }
 
-    public ProxyServer(final ProxyConfig config, final ExecutorService executorService) {
+    public ProxyServer(final ProxyConfig config,
+                       final ExecutorService executorService,
+                       final AtomicReference<String> reference) {
         this.config = config;
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
         this.executorService = (config.isLocalExecutor() ?
                 ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.reference = reference;
         this.serverSocket = null;
     }
 
@@ -48,7 +53,8 @@ public class ProxyServer {
     public final void accept() throws IOException {
         try {
             final Socket socket = serverSocket.accept();
-            executorService.execute(new ProxySocketRunnable(socket, new Host(config.getHost()), executorService));
+            executorService.execute(new ProxySocketRunnable(
+                    socket, new Host(config.getHost()), executorService, reference));
         } catch (SocketTimeoutException e) {
             e.getClass();  // ignore; serverSocket.setSoTimeout()
         }

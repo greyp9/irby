@@ -20,11 +20,14 @@ public class ProxySocketRunnable implements Runnable {
     private final Socket socket;
     private final Host host;
     private final ExecutorService executorService;
+    private final AtomicReference<String> reference;
 
-    public ProxySocketRunnable(final Socket socket, final Host host, final ExecutorService executorService) {
+    public ProxySocketRunnable(final Socket socket, final Host host, final ExecutorService executorService,
+                               final AtomicReference<String> reference) {
         this.socket = socket;
         this.host = host;
         this.executorService = executorService;
+        this.reference = reference;
     }
 
     @Override
@@ -63,15 +66,16 @@ public class ProxySocketRunnable implements Runnable {
     }
 
     private void doSocket(final Socket socketClient, final Socket socketServer) throws IOException {
-        final AtomicReference<String> reference = new AtomicReference<String>();
+        final AtomicReference<String> referenceSocket = new AtomicReference<String>();
         final InputStream isC = socketClient.getInputStream();
         final OutputStream osS = socketServer.getOutputStream();
         final InputStream isS = socketServer.getInputStream();
         final OutputStream osC = socketClient.getOutputStream();
-        executorService.execute(new ProxyStreamRunnable("c2s", isC, osS, reference));  // i18n internal
-        executorService.execute(new ProxyStreamRunnable("s2c", isS, osC, reference));  // i18n internal
-        while (reference.get() == null) {
+        executorService.execute(new ProxyStreamRunnable("c2s", isC, osS, referenceSocket));  // i18n internal
+        executorService.execute(new ProxyStreamRunnable("s2c", isS, osC, referenceSocket));  // i18n internal
+        while ((reference.get() == null) && (referenceSocket.get() == null)) {
             ThreadU.sleepMillis(DurationU.Const.TENTH_SECOND_MILLIS);
         }
+        referenceSocket.compareAndSet(null, getClass().getName());
     }
 }
