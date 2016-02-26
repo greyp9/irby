@@ -16,6 +16,8 @@ import io.github.greyp9.irby.core.proxy.server.ProxyRunnable;
 import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
 import io.github.greyp9.irby.core.proxys.server.ProxysRunnable;
 import io.github.greyp9.irby.core.realm.Realms;
+import io.github.greyp9.irby.core.udp.config.UDPConfig;
+import io.github.greyp9.irby.core.udp.server.UDPRunnable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -54,6 +56,9 @@ public class Application {
         }
         for (final ProxysConfig proxysConfig : config.getProxysConfigs()) {
             executorService.execute(ProxysRunnable.create(proxysConfig, executorService, reference));
+        }
+        for (final UDPConfig udpConfig : config.getUDPConfigs()) {
+            executorService.execute(UDPRunnable.create(udpConfig, reference));
         }
         // wait until shutdown signaled
         while (reference.get() == null) {

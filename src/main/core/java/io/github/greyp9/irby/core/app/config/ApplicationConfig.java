@@ -15,6 +15,7 @@ import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
 import io.github.greyp9.irby.core.realm.config.PrincipalConfig;
 import io.github.greyp9.irby.core.realm.config.RealmConfig;
+import io.github.greyp9.irby.core.udp.config.UDPConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,6 +38,7 @@ public class ApplicationConfig {
     private final Collection<Https11Config> https11Configs;
     private final Collection<ProxyConfig> proxyConfigs;
     private final Collection<ProxysConfig> proxysConfigs;
+    private final Collection<UDPConfig> udpConfigs;
 
     public final int getThreads() {
         return threads;
@@ -66,6 +68,10 @@ public class ApplicationConfig {
         return proxysConfigs;
     }
 
+    public final Collection<UDPConfig> getUDPConfigs() {
+        return udpConfigs;
+    }
+
     public ApplicationConfig(final URL url) throws IOException {
         final Document document = DocumentU.toDocument(StreamU.read(url));
         this.context = XPathContextFactory.create(document);
@@ -79,11 +85,13 @@ public class ApplicationConfig {
         this.https11Configs = new ArrayList<Https11Config>();
         this.proxyConfigs = new ArrayList<ProxyConfig>();
         this.proxysConfigs = new ArrayList<ProxysConfig>();
+        this.udpConfigs = new ArrayList<UDPConfig>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
         doElementsHttps11(xpather.getElements("/irby:application/irby:https11[@enabled='true']"));
         doElementsProxy(xpather.getElements("/irby:application/irby:proxy[@enabled='true']"));
         doElementsProxys(xpather.getElements("/irby:application/irby:proxys[@enabled='true']"));
+        doElementsUDP(xpather.getElements("/irby:application/irby:udp[@enabled='true']"));
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -226,6 +234,21 @@ public class ApplicationConfig {
         return new ProxysConfig(name, port, threadsPort, host, keyStoreFile, keyStoreType, keyStorePass,
                 clientTrustFile, clientTrustType, clientTrustPass, serverTrustFile, protocol);
     }
+
+    private void doElementsUDP(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            udpConfigs.add(doElementUDP(element));
+        }
+    }
+
+    private UDPConfig doElementUDP(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
+        final int buffer = NumberU.toInt(xpather.getTextAttr("@buffer"), 0);
+        return new UDPConfig(name, port, buffer);
+    }
+
 
     private static class Const {
         private static final String XPATH_A_NAME = "@name";
