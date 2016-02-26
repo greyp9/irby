@@ -7,6 +7,8 @@ import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.arwo.core.xpath.XPathContext;
 import io.github.greyp9.arwo.core.xpath.XPathContextFactory;
 import io.github.greyp9.arwo.core.xpath.XPather;
+import io.github.greyp9.irby.core.cron.config.CronConfig;
+import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigServlet;
@@ -39,6 +41,7 @@ public class ApplicationConfig {
     private final Collection<ProxyConfig> proxyConfigs;
     private final Collection<ProxysConfig> proxysConfigs;
     private final Collection<UDPConfig> udpConfigs;
+    private final Collection<CronConfig> cronConfigs;
 
     public final int getThreads() {
         return threads;
@@ -72,6 +75,10 @@ public class ApplicationConfig {
         return udpConfigs;
     }
 
+    public final Collection<CronConfig> getCronConfigs() {
+        return cronConfigs;
+    }
+
     public ApplicationConfig(final URL url) throws IOException {
         final Document document = DocumentU.toDocument(StreamU.read(url));
         this.context = XPathContextFactory.create(document);
@@ -86,12 +93,14 @@ public class ApplicationConfig {
         this.proxyConfigs = new ArrayList<ProxyConfig>();
         this.proxysConfigs = new ArrayList<ProxysConfig>();
         this.udpConfigs = new ArrayList<UDPConfig>();
+        this.cronConfigs = new ArrayList<CronConfig>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
         doElementsHttps11(xpather.getElements("/irby:application/irby:https11[@enabled='true']"));
         doElementsProxy(xpather.getElements("/irby:application/irby:proxy[@enabled='true']"));
         doElementsProxys(xpather.getElements("/irby:application/irby:proxys[@enabled='true']"));
         doElementsUDP(xpather.getElements("/irby:application/irby:udp[@enabled='true']"));
+        doElementsCronTab(xpather.getElements("/irby:application/irby:cron[@enabled='true']"));
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -249,6 +258,31 @@ public class ApplicationConfig {
         return new UDPConfig(name, port, buffer);
     }
 
+    private void doElementsCronTab(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            cronConfigs.add(doElementCronTab(element));
+        }
+    }
+
+    private CronConfig doElementCronTab(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String timezone = xpather.getTextAttr("@tz");
+        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final CronConfig cronConfig = new CronConfig(name, timezone, threadsPort);
+        final List<Element> elements = xpather.getElements("irby:job[@enabled='true']");
+        for (final Element elementIt : elements) {
+            cronConfig.addJob(doElementCronJob(elementIt));
+        }
+        return cronConfig;
+    }
+
+    private CronConfigJob doElementCronJob(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String line = xpather.getTextAttr("@line");
+        return new CronConfigJob(name, line);
+    }
 
     private static class Const {
         private static final String XPATH_A_NAME = "@name";

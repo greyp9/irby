@@ -34,7 +34,7 @@ public class UDPServer {
 
     public final void start() throws IOException {
         datagramSocket = startDatagramSocket(config);
-        logger.finest(reference.get());
+        reference.getClass();
     }
 
     public final void stop() throws IOException {

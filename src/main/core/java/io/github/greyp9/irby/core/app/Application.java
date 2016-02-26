@@ -5,6 +5,8 @@ import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
+import io.github.greyp9.irby.core.cron.config.CronConfig;
+import io.github.greyp9.irby.core.cron.service.CronRunnable;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.server.Http11Runnable;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
@@ -59,6 +61,9 @@ public class Application {
         }
         for (final UDPConfig udpConfig : config.getUDPConfigs()) {
             executorService.execute(UDPRunnable.create(udpConfig, reference));
+        }
+        for (final CronConfig cronConfig : config.getCronConfigs()) {
+            executorService.execute(CronRunnable.create(cronConfig, executorService, reference));
         }
         // wait until shutdown signaled
         while (reference.get() == null) {
