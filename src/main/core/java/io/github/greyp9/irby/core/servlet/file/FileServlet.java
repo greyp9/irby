@@ -1,6 +1,6 @@
 package io.github.greyp9.irby.core.servlet.file;
 
-import io.github.greyp9.arwo.core.date.DateU;
+import io.github.greyp9.arwo.core.date.DateConvertU;
 import io.github.greyp9.arwo.core.date.HttpDateU;
 import io.github.greyp9.arwo.core.file.FileU;
 import io.github.greyp9.arwo.core.file.FileX;
@@ -96,7 +96,7 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
             final Element td = ElementU.addElement(tr, Html.TD);
             final String href = request.getRequestURI() + fileIt.getName();
             ElementU.addElement(td, Html.A, fileIt.getName(), NTV.create(Html.HREF, href));
-            ElementU.addElement(tr, Html.TD, HttpDateU.toHttpZ(DateU.fromMillis(fileIt.lastModified())));
+            ElementU.addElement(tr, Html.TD, HttpDateU.toHttpZ(DateConvertU.fromMillis(fileIt.lastModified())));
             ElementU.addElement(tr, Html.TD, fileIt.length(), NTV.create(Html.CLASS, Const.CSS_NUMBER));
         }
         // show logged on user

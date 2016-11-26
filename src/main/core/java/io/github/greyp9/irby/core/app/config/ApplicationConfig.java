@@ -113,7 +113,9 @@ public class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String method = xpather.getTextAttr("@method");
-        final RealmConfig realmConfig = new RealmConfig(name, method);
+        final String type = xpather.getTextAttr("@type");
+        final String realmContext = xpather.getTextAttr("@context");
+        final RealmConfig realmConfig = new RealmConfig(name, method, type, realmContext);
         final List<Element> elements = xpather.getElements("irby:principal");
         for (final Element elementIt : elements) {
             realmConfig.addPrincipal(doElementPrincipal(elementIt));

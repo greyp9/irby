@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.http11.servlet25;
 
+import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.irby.core.http11.payload.Http11Request;
 
@@ -79,7 +80,7 @@ public class Http11ServletRequest implements javax.servlet.http.HttpServletReque
         final String prefix = getContextPath() + getServletPath();
         final String requestURI = request.getHeader().getRequestURI();
         if (requestURI.startsWith(prefix)) {
-            return Value.defaultOnEmpty(requestURI.substring(prefix.length()), null);
+            return Value.defaultOnEmpty(URLCodec.decodeSafe(requestURI.substring(prefix.length())), null);
         } else {
             throw new IllegalStateException();
         }

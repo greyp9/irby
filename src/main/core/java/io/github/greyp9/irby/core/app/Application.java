@@ -13,6 +13,7 @@ import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.https11.server.Https11Runnable;
 import io.github.greyp9.irby.core.input.InputStreamRunnable;
 import io.github.greyp9.irby.core.lifecycle.LifecycleRunnable;
+import io.github.greyp9.irby.core.naming.IrbyContextFactory;
 import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.proxy.server.ProxyRunnable;
 import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
@@ -21,6 +22,7 @@ import io.github.greyp9.irby.core.realm.Realms;
 import io.github.greyp9.irby.core.udp.config.UDPConfig;
 import io.github.greyp9.irby.core.udp.server.UDPRunnable;
 
+import javax.naming.Context;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class Application {
         executorService.execute(new LifecycleRunnable(name, reference, config.getInterval()));
         executorService.execute(new InputStreamRunnable(System.in, reference, config.getInterval()));
         // application credentials
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         final Realms realms = new Realms(config.getRealmConfigs());
         // web servers
         for (final Http11Config http11Config : config.getHttp11Configs()) {

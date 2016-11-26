@@ -16,27 +16,27 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SimpleRealm implements Realm {
+public final class SimpleRealm implements Realm {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final RealmConfig config;
 
-    public SimpleRealm(final RealmConfig config) {
+    private SimpleRealm(final RealmConfig config) {
         this.config = config;
     }
 
     @Override
-    public final String getName() {
+    public String getName() {
         return config.getName();
     }
 
     @Override
-    public final String getMethod() {
+    public String getMethod() {
         return config.getMethod();
     }
 
     @Override
-    public final Principal authenticate(final String user, final Object credential) {
+    public Principal authenticate(final String user, final Object credential) {
         Principal principal = null;
         final String method = config.getMethod();
         final boolean isPass = (Http.Realm.BASIC.equals(method) && (credential instanceof String));
@@ -90,7 +90,7 @@ public class SimpleRealm implements Realm {
     }
 
     @Override
-    public final boolean isUserInRole(final Principal principal, final String role) {
+    public boolean isUserInRole(final Principal principal, final String role) {
         boolean authorized = false;
         if (principal instanceof AppPrincipal) {
             authorized = ((AppPrincipal) principal).getRoles().contains(role);

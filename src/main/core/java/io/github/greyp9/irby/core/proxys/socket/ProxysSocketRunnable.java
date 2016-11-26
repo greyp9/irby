@@ -58,7 +58,7 @@ public class ProxysSocketRunnable implements Runnable {
     private void doSocket() throws IOException {
         final Socket socketClient = augmentSSLSocket(config, socket);
         try {
-            socketClient.setSoTimeout((int) DurationU.Const.TENTH_SECOND_MILLIS);
+            socketClient.setSoTimeout((int) DurationU.Const.HUNDRED_MILLIS);
             doSocket(socketClient);
         } finally {
             socketClient.close();
@@ -76,7 +76,7 @@ public class ProxysSocketRunnable implements Runnable {
     private void doSocket(final Socket socketClient) throws IOException {
         final Socket socketServer = socketFactory.createSocket(host.getHost(), host.getPort());
         try {
-            socketServer.setSoTimeout((int) DurationU.Const.TENTH_SECOND_MILLIS);
+            socketServer.setSoTimeout((int) DurationU.Const.HUNDRED_MILLIS);
             doSocket(socketClient, socketServer);
         } finally {
             socketServer.close();
@@ -92,7 +92,7 @@ public class ProxysSocketRunnable implements Runnable {
         executorService.execute(new ProxyStreamRunnable("c2s", isC, osS, reference));  // i18n internal
         executorService.execute(new ProxyStreamRunnable("s2c", isS, osC, reference));  // i18n internal
         while (reference.get() == null) {
-            ThreadU.sleepMillis(DurationU.Const.TENTH_SECOND_MILLIS);
+            ThreadU.sleepMillis(DurationU.Const.HUNDRED_MILLIS);
         }
     }
 }

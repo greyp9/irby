@@ -66,7 +66,7 @@ public class ProxyStreamRunnable implements Runnable {
                 outputStream.flush();
             }
             if (available == 0) {
-                interrupted = ThreadU.sleepMillis(DurationU.Const.TENTH_SECOND_MILLIS);
+                interrupted = ThreadU.sleepMillis(DurationU.Const.HUNDRED_MILLIS);
             }
         }
         reference.compareAndSet(null, String.format("[%s][%s]", interrupted, reference.get()));
