@@ -7,6 +7,7 @@ import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.cron.factory.JobFactory;
+import io.github.greyp9.irby.core.cron.impl.CommandRunnable;
 import io.github.greyp9.irby.core.cron.job.CronJobX;
 
 import java.util.ArrayList;
@@ -81,6 +82,9 @@ public class CronService {
     private void doJob(final Date date, final CronJobX job) {
         final JobFactory factory = new JobFactory();
         final Runnable runnable = factory.getRunnable(job.getClassName(), job.getElement(), date);
+        if (runnable instanceof CommandRunnable) {
+            ((CommandRunnable) runnable).setExecutorService(executorService);
+        }
         if (runnable != null) {
             executorService.execute(runnable);
         }
