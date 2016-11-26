@@ -80,11 +80,11 @@ public class Http11Header {
 
     private static class Const {
         // GET / HTTP/1.1
-        private static final String REGEX_REQUEST = "(\\S+)\\s+(\\S+?)(\\?\\S*)?\\s+(\\S+)";  // i18n internal
+        private static final String REGEX_REQUEST = "(\\S+)\\s+(\\S+?)(\\?(\\S*))?\\s+(\\S+)";  // i18n internal
         private static final Pattern PATTERN_REQUEST = Pattern.compile(REGEX_REQUEST);
         private static final int GROUP_METHOD = 1;
         private static final int GROUP_URI = 2;
-        private static final int GROUP_QUERY = 3;
-        private static final int GROUP_PROTOCOL = 4;
+        private static final int GROUP_QUERY = 4;
+        private static final int GROUP_PROTOCOL = 5;
     }
 }
