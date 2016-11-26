@@ -129,12 +129,12 @@ public class IrbyContext implements javax.naming.Context {
     @Override
     public final javax.naming.Context createSubcontext(final String name) throws NamingException {
         if (MapU.get(bindings, name) == null) {
-            throw new NameAlreadyBoundException(name);
-        } else {
             final IrbyContext irbyContext = new IrbyContext(this);
             final Binding binding = new Binding(name, irbyContext);
             MapU.put(bindings, name, binding);
             return irbyContext;
+        } else {
+            throw new NameAlreadyBoundException(name);
         }
     }
 
