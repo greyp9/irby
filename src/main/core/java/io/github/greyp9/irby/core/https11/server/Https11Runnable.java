@@ -42,6 +42,7 @@ public class Https11Runnable implements Runnable {
         } catch (IOException e) {
             reference.compareAndSet(null, String.format("[%d][%s]", server.getConfig().getPort(), e.getMessage()));
         }
+        logger.info(reference.get());
         MutexU.notifyAll(reference);
         logger.exiting(getClass().getSimpleName(), methodName);
     }
