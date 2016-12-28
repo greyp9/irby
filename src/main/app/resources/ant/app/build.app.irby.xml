@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project name='irby-app' default='main' basedir='.'>
+
+    <!--fixed-->
+    <property name='project.dir' location='${basedir}/../../../../../..'/>
+    <property name='arwo.src.core.dir' location='${project.dir}/../arwo/src/main/core'/>
+    <property name='arwo.src.app.dir' location='${project.dir}/../arwo/src/main/app'/>
+    <property name='src.core.dir' location='${project.dir}/src/main/core'/>
+    <property name='src.app.dir' location='${project.dir}/src/main/app'/>
+
+    <property name='target.dir' value='${project.dir}/target'/>
+    <property name='classes.special.dir' value='${target.dir}/app/classes-special'/>
+    <property name='classes.irby-x.dir' value='${target.dir}/app/classes-irby-x'/>
+    <property name='classes.irby.dir' value='${target.dir}/app/classes-irby'/>
+    <property name='classes.arwo-app.dir' value='${target.dir}/app/classes-arwo-app'/>
+    <property name='resources.arwo-app.dir' value='${target.dir}/app/resources-arwo-app'/>
+    <property name='artifact.dir' value='${target.dir}/app/artifact'/>
+    <property name='image.dir' value='${target.dir}/app/image'/>
+
+    <property name='tomcat6.dir' value='${user.home}/apache-tomcat-6.0.44'/>
+
+    <fileset dir='${tomcat6.dir}' id='libs-servlet-api'>
+        <include name='lib/servlet-api.jar'/>
+    </fileset>
+
+    <path id='classpath-special'/>
+
+    <path id='classpath-irby-x'/>
+
+    <path id='classpath-irby'>
+        <fileset refid='libs-servlet-api'/>
+        <path refid='classpath-special'/>
+        <pathelement path='${classes.special.dir}'/>
+    </path>
+
+    <path id='classpath-arwo-app'>
+        <path refid='classpath-irby'/>
+        <pathelement path='${classes.irby.dir}'/>
+    </path>
+
+    <property file='${user.home}/.arwo/version.properties'/>
+    <fail unless='irby.version'/>
+    <fail unless='irby.build'/>
+    <tstamp>
+        <format property='timestamp' pattern='yyyy-MM-dd&apos;T&apos;HH:mm:ss&apos;Z&apos;' timezone='UTC'/>
+    </tstamp>
+    <property name='Implementation-Version' value='${irby.build} ${timestamp}'/>
+    <property name='Specification-Version' value='${irby.version}'/>
+    <echo message='Implementation-Version = ${Implementation-Version}'/>
+    <echo message='Specification-Version = ${Specification-Version}'/>
+
+    <target name='clean' description='clean up generated resources'>
+        <delete dir='${classes.special.dir}'/>
+        <delete dir='${classes.irby-x.dir}'/>
+        <delete dir='${classes.irby.dir}'/>
+        <delete dir='${classes.arwo-app.dir}'/>
+        <delete dir='${resources.arwo-app.dir}'/>
+        <delete dir='${artifact.dir}'/>
+        <delete dir='${image.dir}'/>
+    </target>
+
+    <target name='compile-special' description='compile project source'>
+        <mkdir dir='${classes.special.dir}'/>
+        <depend destdir='${classes.special.dir}' srcdir='${arwo.src.core.dir}/java'/>
+        <javac destdir='${classes.special.dir}' classpathref='classpath-special' includeantruntime='false' debug='on'>
+            <compilerarg value='-XDignore.symbol.file' description='stack-overflow-13855700'/>
+            <src path='${arwo.src.core.dir}/java'/>
+            <include name='io/github/greyp9/arwo/core/xml/priv/XmlPriv.java'/>
+        </javac>
+    </target>
+
+    <target name='compile-irby-x' description='compile project source'>
+        <mkdir dir='${classes.irby-x.dir}'/>
+        <depend destdir='${classes.irby-x.dir}' srcdir='${src.core.dir}/java'/>
+        <javac destdir='${classes.irby-x.dir}' classpathref='classpath-irby-x' includeantruntime='false' debug='on'>
+            <src path='${arwo.src.core.dir}/java'/>
+            <src path='${src.app.dir}/java'/>
+            <include name='io/github/greyp9/irby/app/exec/App.java'/>
+        </javac>
+    </target>
+
+    <target name='compile-irby' description='compile project source'>
+        <mkdir dir='${classes.irby.dir}'/>
+        <javac destdir='${classes.irby.dir}' classpathref='classpath-irby' includeantruntime='false' debug='on'>
+            <src path='${arwo.src.core.dir}/java'/>
+            <src path='${src.core.dir}/java'/>
+            <src path='${src.app.dir}/java'/>
+            <include name='io/github/greyp9/arwo/core/logging/Formatter*.java'/>
+            <include name='io/github/greyp9/irby/app/fsn/App.java'/>
+            <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>
+            <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
+            <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
+        </javac>
+    </target>
+
+    <target name='compile-arwo-app' description='compile project source'>
+        <mkdir dir='${classes.arwo-app.dir}'/>
+        <javac destdir='${classes.arwo-app.dir}' classpathref='classpath-arwo-app' includeantruntime='false' debug='on'>
+            <src path='${arwo.src.core.dir}/java'/>
+            <src path='${arwo.src.app.dir}/java'/>
+            <include name='io/github/greyp9/arwo/app/daemon/connect/servlet/ConnectionServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/dash/servlet/DashServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/exec/servlet/ExecutorServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/lifecycle/servlet/AppLifecycleServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/local/servlet/LFSServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/local/servlet/SHServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/naming/servlet/NamingServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/realm/servlet/RealmServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/xed/servlet/Xed1Servlet.java'/>
+        </javac>
+    </target>
+
+    <target name='compile' depends='compile-special, compile-irby-x, compile-irby, compile-arwo-app'/>
+
+    <target name='jar-irby-x' depends='compile-irby-x'>
+        <mkdir dir='${artifact.dir}'/>
+        <jar destfile='${artifact.dir}/irbyx.jar'>
+            <fileset dir='${classes.irby-x.dir}'>
+                <include name='**/*.class'/>
+            </fileset>
+            <manifest>
+                <attribute name='Implementation-Version' value='${Implementation-Version}'/>
+                <attribute name='Specification-Version' value='${Specification-Version}'/>
+                <attribute name='Main-Class' value='io.github.greyp9.irby.app.exec.App'/>
+                <attribute name='Class-Path' value='.'/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name='jar-resources' description='assemble one CSS (more efficient to serve one)'>
+        <mkdir dir='${resources.arwo-app.dir}'/>
+        <concat destfile='${resources.arwo-app.dir}/webapp/arwo-war/css/webapp.css'>
+            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css' excludes='webapp.css'/>
+        </concat>
+    </target>
+
+    <target name='jar-irby-app' depends='compile-irby, compile-arwo-app, jar-resources'>
+        <mkdir dir='${artifact.dir}'/>
+        <jar destfile='${artifact.dir}/irby.jar'>
+            <fileset dir='${classes.special.dir}'>
+                <include name='**/*.class'/>
+            </fileset>
+            <fileset dir='${classes.irby.dir}'>
+                <include name='**/*.class'/>
+            </fileset>
+            <fileset dir='${classes.arwo-app.dir}'>
+                <include name='**/*.class'/>
+            </fileset>
+            <fileset dir='${resources.arwo-app.dir}'>
+                <include name='webapp/arwo-war/**/*.css'/>
+            </fileset>
+            <fileset dir='${arwo.src.core.dir}/resources/arwo-jar'>
+                <include name='io/github/greyp9/arwo/html/**/*.html'/>
+                <include name='io/github/greyp9/arwo/text/**/*.properties'/>
+            </fileset>
+            <fileset dir='${arwo.src.app.dir}/resources/arwo-jar'>
+                <include name='io/github/greyp9/arwo/xsd/**/*.properties'/>
+                <include name='io/github/greyp9/arwo/xsd/**/*.xsd'/>
+                <include name='io/github/greyp9/arwo/xsd/**/*.xslt'/>
+            </fileset>
+            <fileset dir='${arwo.src.app.dir}/resources'>
+                <!--<include name='webapp/arwo-war/**/*.css'/>-->
+                <include name='webapp/arwo-war/**/*.html'/>
+                <include name='webapp/arwo-war/**/*.ico'/>
+            </fileset>
+            <fileset dir='${src.core.dir}/resources/core'>
+                <include name='io/github/greyp9/irby/html/FileServlet.html'/>
+            </fileset>
+            <manifest>
+                <attribute name='Implementation-Version' value='${Implementation-Version}'/>
+                <attribute name='Specification-Version' value='${Specification-Version}'/>
+                <attribute name='Main-Class' value='io.github.greyp9.irby.app.fsn.App'/>
+                <attribute name='Class-Path' value='. servlet-api.jar'/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name='jar' depends='jar-irby-x, jar-irby-app'/>
+
+    <target name='image' description='create folder for distributable content'>
+        <mkdir dir='${image.dir}'/>
+        <copy todir='${image.dir}' overwrite='true' file='${artifact.dir}/irby.jar'/>
+        <copy todir='${image.dir}' overwrite='true' file='${artifact.dir}/irbyx.jar'/>
+        <copy todir='${image.dir}' overwrite='true' file='${tomcat6.dir}/lib/servlet-api.jar'/>
+        <copy todir='${image.dir}' overwrite='true'>
+            <fileset dir='${project.dir}/src/main/app/resources/app-home'>
+                <include name='*.*'/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name='run-app-irby'>
+        <java jar='${image.dir}/irby.jar' fork='true' dir='${image.dir}'>
+            <jvmarg value='-Djava.util.logging.config.file=${image.dir}/logging.properties'/>
+            <jvmarg value='-Xdebug'/>
+            <jvmarg value='-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8120'/>
+        </java>
+    </target>
+
+    <target name='main' depends='clean, compile, jar, image'>
+        <echo message='project.dir: ${project.dir}'/>
+    </target>
+
+</project>
