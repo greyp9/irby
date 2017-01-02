@@ -9,6 +9,8 @@
             <servlet enabled='true' path='/init/arwo/realm' class='io.github.greyp9.arwo.app.realm.servlet.RealmServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/init/arwo/appLifecycle' class='io.github.greyp9.arwo.app.lifecycle.servlet.AppLifecycleServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/init/arwo/daemon' class='io.github.greyp9.arwo.app.daemon.connect.servlet.ConnectionServlet' auth-constraint='*'/>
+            <!--update-->
+            <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
             <!--static resources-->
             <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
                 <init-param name='resource' value='webapp/arwo-war'/>

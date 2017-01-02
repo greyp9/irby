@@ -11,6 +11,7 @@
     <property name='target.dir' value='${project.dir}/target'/>
     <property name='classes.special.dir' value='${target.dir}/app/classes-special'/>
     <property name='classes.irby-x.dir' value='${target.dir}/app/classes-irby-x'/>
+    <property name='classes.irby-u.dir' value='${target.dir}/app/classes-irby-u'/>
     <property name='classes.irby.dir' value='${target.dir}/app/classes-irby'/>
     <property name='classes.arwo-app.dir' value='${target.dir}/app/classes-arwo-app'/>
     <property name='resources.arwo-app.dir' value='${target.dir}/app/resources-arwo-app'/>
@@ -27,6 +28,8 @@
 
     <path id='classpath-irby-x'/>
 
+    <path id='classpath-irby-u'/>
+
     <path id='classpath-irby'>
         <fileset refid='libs-servlet-api'/>
         <path refid='classpath-special'/>
@@ -38,6 +41,9 @@
         <pathelement path='${classes.irby.dir}'/>
     </path>
 
+    <propertyfile file='${user.home}/.arwo/version.properties' comment='version.properties'>
+        <entry key='irby.build' type='int' operation='+' value='1' pattern='0'/>
+    </propertyfile>
     <property file='${user.home}/.arwo/version.properties'/>
     <fail unless='irby.version'/>
     <fail unless='irby.build'/>
@@ -46,6 +52,7 @@
     </tstamp>
     <property name='Implementation-Version' value='${irby.build} ${timestamp}'/>
     <property name='Specification-Version' value='${irby.version}'/>
+    <echo message='timestamp = ${timestamp}'/>
     <echo message='Implementation-Version = ${Implementation-Version}'/>
     <echo message='Specification-Version = ${Specification-Version}'/>
 
@@ -79,10 +86,22 @@
         </javac>
     </target>
 
+    <target name='compile-irby-u' description='compile project source'>
+        <mkdir dir='${classes.irby-u.dir}'/>
+        <depend destdir='${classes.irby-u.dir}' srcdir='${src.core.dir}/java'/>
+        <javac destdir='${classes.irby-u.dir}' classpathref='classpath-irby-u' includeantruntime='false' debug='on'>
+            <src path='${arwo.src.core.dir}/java'/>
+            <src path='${src.core.dir}/java'/>
+            <src path='${src.app.dir}/java'/>
+            <include name='io/github/greyp9/irby/app/update/App.java'/>
+        </javac>
+    </target>
+
     <target name='compile-irby' description='compile project source'>
         <mkdir dir='${classes.irby.dir}'/>
         <javac destdir='${classes.irby.dir}' classpathref='classpath-irby' includeantruntime='false' debug='on'>
             <src path='${arwo.src.core.dir}/java'/>
+            <src path='${arwo.src.app.dir}/java' description='arwo.app.core.servlet.ServletU'/>
             <src path='${src.core.dir}/java'/>
             <src path='${src.app.dir}/java'/>
             <include name='io/github/greyp9/arwo/core/logging/Formatter*.java'/>
@@ -90,6 +109,7 @@
             <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
+            <include name='io/github/greyp9/irby/core/servlet/update/UpdateServlet.java'/>
         </javac>
     </target>
 
@@ -110,7 +130,7 @@
         </javac>
     </target>
 
-    <target name='compile' depends='compile-special, compile-irby-x, compile-irby, compile-arwo-app'/>
+    <target name='compile' depends='compile-special, compile-irby-x, compile-irby-u, compile-irby, compile-arwo-app'/>
 
     <target name='jar-irby-x' depends='compile-irby-x'>
         <mkdir dir='${artifact.dir}'/>
@@ -122,7 +142,7 @@
                 <attribute name='Implementation-Version' value='${Implementation-Version}'/>
                 <attribute name='Specification-Version' value='${Specification-Version}'/>
                 <attribute name='Main-Class' value='io.github.greyp9.irby.app.exec.App'/>
-                <attribute name='Class-Path' value='.'/>
+                <!--<attribute name='Class-Path' value='.'/>-->
             </manifest>
         </jar>
     </target>
@@ -132,6 +152,13 @@
         <concat destfile='${resources.arwo-app.dir}/webapp/arwo-war/css/webapp.css'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css' excludes='webapp.css'/>
         </concat>
+        <copy overwrite='true' todir='${resources.arwo-app.dir}' description='stamp build, time'>
+            <fileset dir='${arwo.src.app.dir}/resources' includes='webapp/arwo-war/index.html'/>
+        </copy>
+        <replace file='${resources.arwo-app.dir}/webapp/arwo-war/index.html' description='stamp build, time'>
+            <replacefilter token='IMPLEMENTATION_VERSION' value='${Implementation-Version}'/>
+            <replacefilter token='SPECIFICATION_VERSION' value='${Specification-Version}'/>
+        </replace>
     </target>
 
     <target name='jar-irby-app' depends='compile-irby, compile-arwo-app, jar-resources'>
@@ -148,6 +175,7 @@
             </fileset>
             <fileset dir='${resources.arwo-app.dir}'>
                 <include name='webapp/arwo-war/**/*.css'/>
+                <include name='webapp/arwo-war/**/*.html'/>
             </fileset>
             <fileset dir='${arwo.src.core.dir}/resources/arwo-jar'>
                 <include name='io/github/greyp9/arwo/html/**/*.html'/>
@@ -161,9 +189,11 @@
             <fileset dir='${arwo.src.app.dir}/resources'>
                 <!--<include name='webapp/arwo-war/**/*.css'/>-->
                 <include name='webapp/arwo-war/**/*.html'/>
+                <exclude name='webapp/arwo-war/index.html'/>
                 <include name='webapp/arwo-war/**/*.ico'/>
             </fileset>
             <fileset dir='${src.core.dir}/resources/core'>
+                <include name='io/github/greyp9/irby/html/ConfigServlet.html'/>
                 <include name='io/github/greyp9/irby/html/FileServlet.html'/>
             </fileset>
             <manifest>
@@ -175,7 +205,27 @@
         </jar>
     </target>
 
-    <target name='jar' depends='jar-irby-x, jar-irby-app'/>
+    <target name='jar-irby-u' depends='compile-irby-u'>
+        <mkdir dir='${artifact.dir}'/>
+        <jar destfile='${artifact.dir}/irbyu.b${irby.build}.jar'>
+            <fileset dir='${classes.irby-u.dir}'>
+                <include name='**/*.class'/>
+            </fileset>
+            <mappedresources>
+                <fileset dir='${artifact.dir}'>
+                    <include name='irby.jar'/>
+                </fileset>
+                <globmapper from='irby.jar' to='irby/irby.jar'/>
+            </mappedresources>
+            <manifest>
+                <attribute name='Implementation-Version' value='${Implementation-Version}'/>
+                <attribute name='Specification-Version' value='${Specification-Version}'/>
+                <attribute name='Main-Class' value='io.github.greyp9.irby.app.update.App'/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name='jar' depends='jar-irby-x, jar-irby-app, jar-irby-u'/>
 
     <target name='image' description='create folder for distributable content'>
         <mkdir dir='${image.dir}'/>
@@ -200,5 +250,11 @@
     <target name='main' depends='clean, compile, jar, image'>
         <echo message='project.dir: ${project.dir}'/>
     </target>
+
+    <target name='restart' depends='clean, compile, jar, image, run-app-irby'/>
+
+    <target name='start' depends='run-app-irby'/>
+
+    <target name='patch' depends='compile, jar'/>
 
 </project>
