@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project name='irby-app' default='main' basedir='.'>
 
+    <property file='${user.home}/.arwo/irby/build.properties.xml'/>
     <!--fixed-->
     <property name='project.dir' location='${basedir}/../../../../../..'/>
     <property name='arwo.src.core.dir' location='${project.dir}/../arwo/src/main/core'/>
@@ -41,20 +42,31 @@
         <pathelement path='${classes.irby.dir}'/>
     </path>
 
-    <propertyfile file='${user.home}/.arwo/version.properties' comment='version.properties'>
-        <entry key='irby.build' type='int' operation='+' value='1' pattern='0'/>
-    </propertyfile>
-    <property file='${user.home}/.arwo/version.properties'/>
-    <fail unless='irby.version'/>
-    <fail unless='irby.build'/>
-    <tstamp>
-        <format property='timestamp' pattern='yyyy-MM-dd&apos;T&apos;HH:mm:ss&apos;Z&apos;' timezone='UTC'/>
-    </tstamp>
-    <property name='Implementation-Version' value='${irby.build} ${timestamp}'/>
-    <property name='Specification-Version' value='${irby.version}'/>
-    <echo message='timestamp = ${timestamp}'/>
-    <echo message='Implementation-Version = ${Implementation-Version}'/>
-    <echo message='Specification-Version = ${Specification-Version}'/>
+    <target name='init-sign'>
+        <input message='jarsign passphrase:' addproperty='jarsign.passphrase'/>
+        <condition property='do-fn-sign' value='true'>
+            <length string='${jarsign.passphrase}' when='greater' length='0'/>
+        </condition>
+    </target>
+
+    <target name='init-version'>
+        <propertyfile file='${user.home}/.arwo/version.properties' comment='version.properties'>
+            <entry key='irby.build' type='int' operation='+' value='1' pattern='0'/>
+        </propertyfile>
+        <property file='${user.home}/.arwo/version.properties'/>
+        <fail unless='irby.version'/>
+        <fail unless='irby.build'/>
+        <tstamp>
+            <format property='timestamp' pattern='yyyy-MM-dd&apos;T&apos;HH:mm:ss&apos;Z&apos;' timezone='UTC'/>
+        </tstamp>
+        <property name='Implementation-Version' value='${irby.build} ${timestamp}'/>
+        <property name='Specification-Version' value='${irby.version}'/>
+        <echo message='timestamp = ${timestamp}'/>
+        <echo message='Implementation-Version = ${Implementation-Version}'/>
+        <echo message='Specification-Version = ${Specification-Version}'/>
+    </target>
+
+    <target name='init' depends='init-sign, init-version'/>
 
     <target name='clean' description='clean up generated resources'>
         <delete dir='${classes.special.dir}'/>
@@ -132,7 +144,7 @@
 
     <target name='compile' depends='compile-special, compile-irby-x, compile-irby-u, compile-irby, compile-arwo-app'/>
 
-    <target name='jar-irby-x' depends='compile-irby-x'>
+    <target name='jar-irby-x' depends='init, compile-irby-x'>
         <mkdir dir='${artifact.dir}'/>
         <jar destfile='${artifact.dir}/irbyx.jar'>
             <fileset dir='${classes.irby-x.dir}'>
@@ -145,6 +157,9 @@
                 <!--<attribute name='Class-Path' value='.'/>-->
             </manifest>
         </jar>
+        <antcall target='fn-sign'>
+            <param name='jar' value='${artifact.dir}/irbyx.jar'/>
+        </antcall>
     </target>
 
     <target name='jar-resources' description='assemble one CSS (more efficient to serve one)'>
@@ -161,7 +176,7 @@
         </replace>
     </target>
 
-    <target name='jar-irby-app' depends='compile-irby, compile-arwo-app, jar-resources'>
+    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, jar-resources'>
         <mkdir dir='${artifact.dir}'/>
         <jar destfile='${artifact.dir}/irby.jar'>
             <fileset dir='${classes.special.dir}'>
@@ -203,9 +218,12 @@
                 <attribute name='Class-Path' value='. servlet-api.jar'/>
             </manifest>
         </jar>
+        <antcall target='fn-sign'>
+            <param name='jar' value='${artifact.dir}/irby.jar'/>
+        </antcall>
     </target>
 
-    <target name='jar-irby-u' depends='compile-irby-u'>
+    <target name='jar-irby-u' depends='init, compile-irby-u'>
         <mkdir dir='${artifact.dir}'/>
         <jar destfile='${artifact.dir}/irbyu.b${irby.build}.jar'>
             <fileset dir='${classes.irby-u.dir}'>
@@ -223,6 +241,16 @@
                 <attribute name='Main-Class' value='io.github.greyp9.irby.app.update.App'/>
             </manifest>
         </jar>
+        <antcall target='fn-sign'>
+            <param name='jar' value='${artifact.dir}/irbyu.b${irby.build}.jar'/>
+        </antcall>
+    </target>
+
+    <target name='fn-sign' if='do-fn-sign'>
+        <property name='signkey.dir' value='${user.home}/.arwo/irby/ssl'/>
+        <signjar jar='${jar}' tsaurl='http://timestamp.digicert.com'
+                 alias='greyp9' keystore='${signkey.dir}/sign.jks'
+                 storepass='${jarsign.passphrase}' keypass='${jarsign.passphrase}'/>
     </target>
 
     <target name='jar' depends='jar-irby-x, jar-irby-app, jar-irby-u'/>
@@ -235,6 +263,7 @@
         <copy todir='${image.dir}' overwrite='true'>
             <fileset dir='${project.dir}/src/main/app/resources/app-home'>
                 <include name='*.*'/>
+                <exclude name='loggingU.properties'/>
             </fileset>
         </copy>
     </target>
@@ -242,8 +271,8 @@
     <target name='run-app-irby'>
         <java jar='${image.dir}/irby.jar' fork='true' dir='${image.dir}'>
             <jvmarg value='-Djava.util.logging.config.file=${image.dir}/logging.properties'/>
-            <jvmarg value='-Xdebug'/>
-            <jvmarg value='-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8120'/>
+            <!--<jvmarg value='-Xdebug'/>-->
+            <!--<jvmarg value='-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8120'/>-->
         </java>
     </target>
 
@@ -255,6 +284,6 @@
 
     <target name='start' depends='run-app-irby'/>
 
-    <target name='patch' depends='compile, jar'/>
+    <target name='patch' depends='compile-irby-u, jar'/>
 
 </project>

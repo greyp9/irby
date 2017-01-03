@@ -47,7 +47,7 @@ public class ApplyContent {
             String[] cmdarray = new String[] {
                     "java",
                     "-Duser.dir=" + userDir,
-                    "-Djava.util.logging.config.file=" + userDir + "/loggingU.properties",
+                    //"-Djava.util.logging.config.file=" + userDir + "/loggingU.properties",
                     "-jar",
                     fileUpdate.getAbsolutePath(),
             };

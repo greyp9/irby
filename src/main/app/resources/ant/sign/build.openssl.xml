@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<project name='irby-sign-openssl' default='main' basedir='.'>
+
+    <property name='ssl.dir' value='${user.home}/.arwo/irby/ssl'/>
+
+    <target name='sign-keystore-genrsa'>
+        <delete file='${ssl.dir}/sign.key'/>
+        <!-- generate sign key -->
+        <exec executable='openssl'>
+            <arg value='genrsa'/>
+            <arg value='-out'/>
+            <arg value='${ssl.dir}/sign.key'/>
+            <arg value='2048'/>
+        </exec>
+    </target>
+
+    <target name='sign-keystore-reqcert'>
+        <delete file='${ssl.dir}/sign.cer'/>
+        <!-- generate sign certificate -->
+        <exec executable='openssl'>
+            <arg value='req'/>
+            <arg value='-new'/>
+            <arg value='-x509'/>
+            <arg value='-days'/>
+            <arg value='1461'/>
+            <arg value='-key'/>
+            <arg value='${ssl.dir}/sign.key'/>
+            <arg value='-out'/>
+            <arg value='${ssl.dir}/sign.cer'/>
+            <arg value='-subj'/>
+            <arg value='/CN=greyp9/OU=irby/'/>
+        </exec>
+    </target>
+
+    <target name='sign-keystore-pkcs12'>
+        <delete file='${ssl.dir}/sign.pkcs12'/>
+        <!-- generate keystore -->
+        <exec executable='openssl'>
+            <arg value='pkcs12'/>
+            <arg value='-export'/>
+            <arg value='-out'/>
+            <arg value='${ssl.dir}/sign.pkcs12'/>
+            <arg value='-password'/>
+            <arg value='pass:arwo'/>
+            <arg value='-name'/>
+            <arg value='greyp9'/>
+            <arg value='-inkey'/>
+            <arg value='${ssl.dir}/sign.key'/>
+            <arg value='-in'/>
+            <arg value='${ssl.dir}/sign.cer'/>
+        </exec>
+    </target>
+
+    <target name='sign-keystore-pkcs12-show'>
+        <exec executable='openssl'>
+            <arg value='pkcs12'/>
+            <arg value='-info'/>
+            <arg value='-passin'/>
+            <arg value='pass:arwo'/>
+            <arg value='-in'/>
+            <arg value='${ssl.dir}/sign.pkcs12'/>
+        </exec>
+    </target>
+
+    <target name='sign-keystore-jks'>
+        <delete file='${ssl.dir}/sign.jks'/>
+        <!-- convert keystore to JKS -->
+        <exec executable='keytool'>
+            <arg value='-importkeystore'/>
+            <arg value='-srckeystore'/>
+            <arg value='${ssl.dir}/sign.pkcs12'/>
+            <arg value='-srcstoretype'/>
+            <arg value='pkcs12'/>
+            <arg value='-srcstorepass'/>
+            <arg value='arwo'/>
+            <arg value='-destkeystore'/>
+            <arg value='${ssl.dir}/sign.jks'/>
+            <arg value='-deststorepass'/>
+            <arg value='arwoarwo'/>
+            <!--<arg value='-keypass'/>-->
+            <!--<arg value='arwoarwo'/>-->
+        </exec>
+    </target>
+
+    <target name='sign-keystore-jks-show'>
+        <exec executable='keytool'>
+            <arg value='-list'/>
+            <arg value='-v'/>
+            <arg value='-storetype'/>
+            <arg value='jks'/>
+            <arg value='-storepass'/>
+            <arg value='arwoarwo'/>
+            <arg value='-keystore'/>
+            <arg value='${ssl.dir}/sign.jks'/>
+        </exec>
+    </target>
+
+    <target name='sign-keystore'>
+        <antcall target='sign-keystore-genrsa'/>
+        <antcall target='sign-keystore-reqcert'/>
+        <antcall target='sign-keystore-pkcs12'/>
+        <antcall target='sign-keystore-pkcs12-show'/>
+        <antcall target='sign-keystore-jks'/>
+        <antcall target='sign-keystore-jks-show'/>
+    </target>
+
+    <target name='main'/>
+
+</project>

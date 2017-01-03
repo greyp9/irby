@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<project name='irby-sign-keytool' default='main' basedir='.'>
+
+    <property file='${user.home}/.arwo/irby/build.properties.xml'/>
+    <!--fixed-->
+    <property name='ssl.dir' value='${user.home}/.arwo/irby/ssl'/>
+
+    <input message='keystore passphrase:' addproperty='keystore.passphrase'/>
+
+    <target name='sign-keystore'>
+        <delete file='${ssl.dir}/sign.jks'/>
+        <exec executable='keytool'>
+            <arg value='-genkey'/>
+            <arg value='-v'/>
+
+            <arg value='-keystore'/>
+            <arg value='${ssl.dir}/sign.jks'/>
+            <arg value='-storetype'/>
+            <arg value='jks'/>
+            <arg value='-storepass'/>
+            <arg value='${keystore.passphrase}'/>
+            <arg value='-keypass'/>
+            <arg value='${keystore.passphrase}'/>
+
+            <arg value='-dname'/>
+            <arg value='CN=greyp9, OU=irby'/>
+            <arg value='-alias'/>
+            <arg value='greyp9'/>
+            <arg value='-keyalg'/>
+            <arg value='RSA'/>
+            <arg value='-keysize'/>
+            <arg value='4096'/>
+            <arg value='-sigalg'/>
+            <arg value='SHA1withRSA'/>
+            <arg value='-validity'/>
+            <arg value='1461'/>
+        </exec>
+    </target>
+
+    <target name='main'/>
+
+</project>
