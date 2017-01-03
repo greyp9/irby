@@ -12,7 +12,13 @@ public class App {
     }
 
     private int run() throws IOException, URISyntaxException {
-        final String[] commandArray = { "java", "-jar", "irby.jar" };
+        final String[] commandArray = {
+                "java",
+                "-Djava.util.logging.config.file=./logging.properties",
+                "-jar",
+                "irby.jar"
+        };
+
         final File dir = PlatformU.getCodeFolder(getClass());
         final Runtime runtime = Runtime.getRuntime();
         /* final Process process = */

@@ -4,9 +4,11 @@ import io.github.greyp9.arwo.core.file.meta.FileMetaData;
 import io.github.greyp9.arwo.core.file.meta.MetaFile;
 import io.github.greyp9.arwo.core.hash.secure.HashU;
 import io.github.greyp9.arwo.core.hash.text.FingerPrint;
+import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.jar.JarVerifier;
 import io.github.greyp9.arwo.core.lang.SystemU;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.irby.core.app.Application;
 import io.github.greyp9.irby.core.update.source.thread.ApplyContentThread;
 
@@ -55,7 +57,8 @@ public class ApplyContent {
             final String userHome = SystemU.userHome();
             Runtime.getRuntime().addShutdownHook(new ApplyContentThread(cmdarray, new File(userHome)));
             // signal application (to quit)
-            System.setProperty(Application.class.getName(), getClass().getName());
+            System.setProperty(Application.class.getName(), Value.join(
+                    Http.Token.DOT, Application.Const.QUIT_TOKEN, getClass().getName()));
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         } catch (GeneralSecurityException e) {

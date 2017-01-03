@@ -233,8 +233,9 @@
             <mappedresources>
                 <fileset dir='${artifact.dir}'>
                     <include name='irby.jar'/>
+                    <include name='irbyx.jar'/>
                 </fileset>
-                <globmapper from='irby.jar' to='irby/irby.jar'/>
+                <globmapper from='*' to='irby/*'/>
             </mappedresources>
             <manifest>
                 <attribute name='Implementation-Version' value='${Implementation-Version}'/>
