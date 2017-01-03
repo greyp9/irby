@@ -198,6 +198,7 @@
             </fileset>
             <fileset dir='${arwo.src.app.dir}/resources/arwo-jar'>
                 <include name='io/github/greyp9/arwo/xsd/**/*.properties'/>
+                <include name='io/github/greyp9/arwo/xsd/**/*.xml'/>
                 <include name='io/github/greyp9/arwo/xsd/**/*.xsd'/>
                 <include name='io/github/greyp9/arwo/xsd/**/*.xslt'/>
             </fileset>
@@ -268,6 +269,14 @@
         </copy>
     </target>
 
+    <target name='dist' description='assemble distributable content'>
+        <zip destfile='${artifact.dir}/irby.b${irby.build}.zip'>
+            <fileset dir='${image.dir}'>
+                <include name='**/*.*'/>
+            </fileset>
+        </zip>
+    </target>
+
     <target name='run-app-irby'>
         <java jar='${image.dir}/irby.jar' fork='true' dir='${image.dir}'>
             <jvmarg value='-Djava.util.logging.config.file=${image.dir}/logging.properties'/>
@@ -280,10 +289,12 @@
         <echo message='project.dir: ${project.dir}'/>
     </target>
 
-    <target name='restart' depends='clean, compile, jar, image, run-app-irby'/>
+    <target name='assemble' depends='clean, compile, jar, image, dist'/>
+
+    <target name='patch' depends='compile, jar'/>
 
     <target name='start' depends='run-app-irby'/>
 
-    <target name='patch' depends='compile-irby-u, jar'/>
+    <target name='restart' depends='clean, compile, jar, image, run-app-irby'/>
 
 </project>

@@ -30,8 +30,10 @@ public class App {
             Logger.getLogger("").setLevel(Level.FINEST);
             // carry out content update
             logger.entering(className, methodName);
+            final File codeLocation = PlatformU.getCodeLocation(getClass());
+            logger.info(codeLocation.getAbsolutePath());
             final UpdateFolder updateFolder = new UpdateFolder(new File(SystemU.userDir()));
-            updateFolder.updateFrom(PlatformU.getCodeLocation(getClass()), "irby/");
+            updateFolder.updateFrom(codeLocation, "irby/");
         } catch (IOException e) {
             logger.throwing(className, methodName, e);
         } catch (URISyntaxException e) {
