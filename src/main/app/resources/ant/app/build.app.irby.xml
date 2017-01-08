@@ -117,7 +117,7 @@
             <src path='${src.core.dir}/java'/>
             <src path='${src.app.dir}/java'/>
             <include name='io/github/greyp9/arwo/core/logging/Formatter*.java'/>
-            <include name='io/github/greyp9/irby/app/fsn/App.java'/>
+            <include name='io/github/greyp9/irby/app/arwo/App.java'/>
             <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
@@ -215,7 +215,7 @@
             <manifest>
                 <attribute name='Implementation-Version' value='${Implementation-Version}'/>
                 <attribute name='Specification-Version' value='${Specification-Version}'/>
-                <attribute name='Main-Class' value='io.github.greyp9.irby.app.fsn.App'/>
+                <attribute name='Main-Class' value='io.github.greyp9.irby.app.arwo.App'/>
                 <attribute name='Class-Path' value='. servlet-api.jar'/>
             </manifest>
         </jar>
