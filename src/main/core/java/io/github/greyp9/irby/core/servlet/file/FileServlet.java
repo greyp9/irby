@@ -70,7 +70,9 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
         final String pathInfo = request.getPathInfo();
         final String resource = URLCodec.decode((pathInfo == null) ? "" : pathInfo);
         final boolean isDirectoryLink = resource.endsWith(Http.Token.SLASH);
-        final File fileGet = ((initParamIndex == null) ? new File(file, resource) : new File(file, initParamIndex));
+        final boolean isUseIndex = (isDirectoryLink && (initParamIndex != null));
+        final String resource2 = (isUseIndex ? (resource + initParamIndex) : resource);
+        final File fileGet = new File(file, resource2);
         final boolean exists = fileGet.exists();
         final boolean isFile = fileGet.isFile();
         final boolean isDirectory = fileGet.isDirectory();
