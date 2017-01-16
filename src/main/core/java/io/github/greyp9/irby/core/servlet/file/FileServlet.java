@@ -34,40 +34,43 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         final String initParamFile = getInitParameter(Const.INIT_PARAM_FILE);
+        final String initParamIndex = getInitParameter(Const.INIT_PARAM_INDEX);
         if (initParamFile == null) {
             response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
         } else {
-            doGet(request, response, SystemU.resolve(initParamFile));
+            doGet(request, response, SystemU.resolve(initParamFile), initParamIndex);
         }
     }
 
     private void doGet(final HttpServletRequest request, final HttpServletResponse response,
-                       final String initParamFile) throws ServletException, IOException {
+                       final String initParamFile, final String initParamIndex)
+            throws ServletException, IOException {
         final String pathInfo = request.getPathInfo();
         if (pathInfo == null) {
             response.sendRedirect(request.getRequestURI() + Http.Token.SLASH);
         } else {
-            doGet(request, response, initParamFile, pathInfo);
+            doGet2(request, response, initParamFile, initParamIndex);
         }
     }
 
-    private void doGet(final HttpServletRequest request, final HttpServletResponse response,
-                       final String initParamFile, final String pathInfo)
+    private void doGet2(final HttpServletRequest request, final HttpServletResponse response,
+                        final String initParamFile, final String initParamIndex)
             throws ServletException, IOException {
         final File file = new File(initParamFile);
         if (file.exists()) {
-            doGet(request, response, file);
+            doGet(request, response, file, initParamIndex);
         } else {
             response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         }
     }
 
-    private void doGet(final HttpServletRequest request, final HttpServletResponse response, final File file)
+    private void doGet(final HttpServletRequest request, final HttpServletResponse response,
+                       final File file, final String initParamIndex)
             throws ServletException, IOException {
         final String pathInfo = request.getPathInfo();
         final String resource = URLCodec.decode((pathInfo == null) ? "" : pathInfo);
         final boolean isDirectoryLink = resource.endsWith(Http.Token.SLASH);
-        final File fileGet = new File(file, resource);
+        final File fileGet = ((initParamIndex == null) ? new File(file, resource) : new File(file, initParamIndex));
         final boolean exists = fileGet.exists();
         final boolean isFile = fileGet.isFile();
         final boolean isDirectory = fileGet.isDirectory();
@@ -125,5 +128,6 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
         private static final String CSS_NUMBER = "number";  // i18n css
         private static final String HTML = "io/github/greyp9/irby/html/FileServlet.html";
         private static final String INIT_PARAM_FILE = "file";  // i18n internal
+        private static final String INIT_PARAM_INDEX = "index";  // i18n internal
     }
 }

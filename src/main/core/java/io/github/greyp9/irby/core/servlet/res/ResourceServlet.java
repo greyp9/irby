@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 
 public class ResourceServlet extends javax.servlet.http.HttpServlet {
 
+
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
