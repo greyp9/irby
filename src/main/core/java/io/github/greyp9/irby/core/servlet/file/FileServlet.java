@@ -41,7 +41,18 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
         }
     }
 
-    private void doGet(final HttpServletRequest request, final HttpServletResponse response, final String initParamFile)
+    private void doGet(final HttpServletRequest request, final HttpServletResponse response,
+                       final String initParamFile) throws ServletException, IOException {
+        final String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            response.sendRedirect(request.getRequestURI() + Http.Token.SLASH);
+        } else {
+            doGet(request, response, initParamFile, pathInfo);
+        }
+    }
+
+    private void doGet(final HttpServletRequest request, final HttpServletResponse response,
+                       final String initParamFile, final String pathInfo)
             throws ServletException, IOException {
         final File file = new File(initParamFile);
         if (file.exists()) {
@@ -92,9 +103,10 @@ public class FileServlet extends javax.servlet.http.HttpServlet {
         final Element table = ElementU.addElement(ElementU.addElement(body, Html.DIV), Html.TABLE);
         for (final File fileIt : FileU.listFiles(file)) {
             final Element tr = ElementU.addElement(table, Html.TR);
-            ElementU.addElement(tr, Html.TD, fileIt.isDirectory() ? UTF16.ICON_FOLDER : UTF16.ICON_FILE);
+            final boolean isDirectory = fileIt.isDirectory();
+            ElementU.addElement(tr, Html.TD, isDirectory ? UTF16.ICON_FOLDER : UTF16.ICON_FILE);
             final Element td = ElementU.addElement(tr, Html.TD);
-            final String href = request.getRequestURI() + fileIt.getName();
+            final String href = request.getRequestURI() + fileIt.getName() + (isDirectory ? Http.Token.SLASH : "");
             ElementU.addElement(td, Html.A, fileIt.getName(), NTV.create(Html.HREF, href));
             ElementU.addElement(tr, Html.TD, HttpDateU.toHttpZMilli(DateConvertU.fromMillis(fileIt.lastModified())));
             ElementU.addElement(tr, Html.TD, fileIt.length(), NTV.create(Html.CLASS, Const.CSS_NUMBER));

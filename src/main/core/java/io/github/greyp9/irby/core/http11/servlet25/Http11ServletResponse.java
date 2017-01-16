@@ -65,7 +65,8 @@ public class Http11ServletResponse implements javax.servlet.http.HttpServletResp
 
     @Override
     public final void sendRedirect(final String s) throws IOException {
-        throw new IllegalStateException();
+        response.setStatus(SC_MOVED_TEMPORARILY);
+        response.addHeader(Http.Header.LOCATION, s);
     }
 
     @Override

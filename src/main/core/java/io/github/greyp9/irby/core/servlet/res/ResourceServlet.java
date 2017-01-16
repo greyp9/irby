@@ -32,6 +32,16 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
                        final String initParamResource, final String initParamIndex)
             throws ServletException, IOException {
         final String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            response.sendRedirect(request.getRequestURI() + Http.Token.SLASH);
+        } else {
+            doGet(pathInfo, response, initParamResource, initParamIndex);
+        }
+    }
+
+    private void doGet(final String pathInfo, final HttpServletResponse response,
+                       final String initParamResource, final String initParamIndex)
+            throws ServletException, IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         String resource = Value.join("", initParamResource, pathInfo);
         InputStream is = classLoader.getResourceAsStream(resource);
