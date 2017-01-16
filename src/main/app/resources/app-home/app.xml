@@ -25,6 +25,14 @@
             <servlet enabled='true' path='/locale' class='io.github.greyp9.arwo.app.xed.servlet.Xed1Servlet' auth-constraint='*'/>
             <servlet enabled='true' path='/fav' class='io.github.greyp9.arwo.app.xed.servlet.Xed1Servlet' auth-constraint='*'/>
             <servlet enabled='true' path='/app' class='io.github.greyp9.arwo.app.xed.servlet.Xed1Servlet' auth-constraint='*'/>
+            <!--configuration -->
+            <servlet enabled='true' path='/irby' class='io.github.greyp9.arwo.app.xed.servlet.Xed1Servlet' auth-constraint='*'>
+                <init-param name='title' value='Irby'/>
+                <init-param name='qname' value='irby:application'/>
+                <init-param name='xml' value='app.xml'/>
+                <init-param name='xsd' value='io/github/greyp9/irby/xsd/app/app.xsd'/>
+                <init-param name='trigger' value='io.github.greyp9.irby.app.trigger.AppTrigger'/>
+            </servlet>
             <!--application overview-->
             <servlet enabled='true' path='/dash' class='io.github.greyp9.arwo.app.dash.servlet.DashServlet' auth-constraint='*'/>
             <!--local access-->

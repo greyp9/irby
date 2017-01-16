@@ -118,6 +118,7 @@
             <src path='${src.app.dir}/java'/>
             <include name='io/github/greyp9/arwo/core/logging/Formatter*.java'/>
             <include name='io/github/greyp9/irby/app/arwo/App.java'/>
+            <include name='io/github/greyp9/irby/app/trigger/AppTrigger.java'/>
             <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
@@ -201,6 +202,10 @@
                 <include name='io/github/greyp9/arwo/xsd/**/*.xml'/>
                 <include name='io/github/greyp9/arwo/xsd/**/*.xsd'/>
                 <include name='io/github/greyp9/arwo/xsd/**/*.xslt'/>
+            </fileset>
+            <fileset dir='${src.app.dir}/resources/irby-jar'>
+                <include name='io/github/greyp9/irby/xsd/**/*.properties'/>
+                <include name='io/github/greyp9/irby/xsd/**/*.xsd'/>
             </fileset>
             <fileset dir='${arwo.src.app.dir}/resources'>
                 <!--<include name='webapp/arwo-war/**/*.css'/>-->

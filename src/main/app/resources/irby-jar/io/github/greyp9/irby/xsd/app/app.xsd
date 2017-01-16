@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<xsd:schema targetNamespace='urn:irby:app'
+            xmlns:irby='urn:irby:app'
+            xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+            elementFormDefault='qualified'>
+
+    <xsd:element name='application' type='irby:applicationType'/>
+
+    <!--application-->
+
+    <xsd:complexType name='applicationType'>
+        <xsd:sequence>
+            <xsd:element name='realm' type='irby:realmType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='http11' type='irby:http11Type' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='https11' type='irby:https11Type' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='proxy' type='irby:proxyType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='proxys' type='irby:proxysType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='udp' type='irby:udpType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='cron' type='irby:cronType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='threads' type='xsd:unsignedShort' default='6'/>
+        <xsd:attribute name='loop' type='xsd:duration' default='PT1S'/>
+    </xsd:complexType>
+
+    <!--realm-->
+
+    <xsd:complexType name='realmType'>
+        <xsd:sequence>
+            <xsd:element name='principal' type='irby:principalType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='method' type='xsd:string'/>
+        <xsd:attribute name='type' type='xsd:string'/>
+        <xsd:attribute name='context' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='principalType'>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='credential' type='xsd:string'/>
+        <xsd:attribute name='roles' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--http-->
+
+    <xsd:complexType name='http11Type'>
+        <xsd:sequence>
+            <xsd:element name='web-app' type='irby:webappType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='webappType'>
+        <xsd:sequence>
+            <xsd:element name='context-param' type='irby:contextParamType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:sequence>
+            <xsd:element name='servlet' type='irby:servletType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='comment' type='xsd:string'/>
+        <xsd:attribute name='path' type='xsd:string'/>
+        <xsd:attribute name='realm' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='contextParamType'>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='value' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='servletType'>
+        <xsd:sequence>
+            <xsd:element name='init-param' type='irby:initParamType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='path' type='xsd:string'/>
+        <xsd:attribute name='class' type='xsd:string'/>
+        <xsd:attribute name='auth-constraint' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='initParamType'>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='value' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--https-->
+
+    <xsd:complexType name='https11Type'>
+        <xsd:sequence>
+            <xsd:element name='web-app' type='irby:webappType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+        <xsd:attribute name='keyStoreFile' type='xsd:string'/>
+        <xsd:attribute name='keyStoreType' type='xsd:string'/>
+        <xsd:attribute name='keyStorePass' type='xsd:string'/>
+        <xsd:attribute name='clientTrustFile' type='xsd:string'/>
+        <xsd:attribute name='clientTrustType' type='xsd:string'/>
+        <xsd:attribute name='clientTrustPass' type='xsd:string'/>
+        <xsd:attribute name='protocol' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--proxy-->
+
+    <xsd:complexType name='proxyType'>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+        <xsd:attribute name='host' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--proxys-->
+
+    <xsd:complexType name='proxysType'>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+        <xsd:attribute name='host' type='xsd:string'/>
+        <xsd:attribute name='keyStoreFile' type='xsd:string'/>
+        <xsd:attribute name='keyStoreType' type='xsd:string'/>
+        <xsd:attribute name='keyStorePass' type='xsd:string'/>
+        <xsd:attribute name='clientTrustFile' type='xsd:string'/>
+        <xsd:attribute name='clientTrustType' type='xsd:string'/>
+        <xsd:attribute name='clientTrustPass' type='xsd:string'/>
+        <xsd:attribute name='serverTrustFile' type='xsd:string'/>
+        <xsd:attribute name='protocol' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--udp-->
+
+    <xsd:complexType name='udpType'>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='buffer' type='xsd:unsignedShort'/>
+    </xsd:complexType>
+
+    <!--cron-->
+
+    <xsd:complexType name='cronType'>
+        <xsd:sequence>
+            <xsd:element name='job' type='irby:jobType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='tz' type='xsd:string'/>
+        <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='jobType'>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='schedule' type='xsd:string'/>
+        <xsd:attribute name='class' type='xsd:string'/>
+        <xsd:attribute name='command' type='xsd:string'/>
+    </xsd:complexType>
+
+</xsd:schema>
