@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html>
+
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+<title>Irby Application</title>
+<style type='text/css'>
+html, body, div.container { background-color: Window; height: 90%; min-height: 90%; }
+div.left { float: left; width: 50%; }
+div.right { float: right; width: 50%; }
+div.group { margin: 0.4em 0.2em; border: solid thin black; padding: 0.2em; background-color: Highlight; }
+div.tile { margin: 0.5em 0; border: solid thin black; padding: 0.2em; background-color: ButtonFace; }
+h1, h2 { margin: 0.2em; }
+h3, h4, h5 { margin: 0; }
+a.link { text-decoration: none; color: inherit; margin: 0.2em; display: block; }
+span.tile { background-color: ButtonFace; display: block; }
+span.header { font-size: larger; font-weight: bold; }
+</style>
+<link rel='shortcut icon' href='./ico/app-black.ico'/>
+</head>
+
+<body>
+<div class='left outer'>
+
+<div class='group'>
+<h2><a class='link' href='#filesystem'>Filesystem</a></h2>
+<div class='tile'>
+<a class='link' href='./lfs/' accesskey='1'>
+<span class="tile header">▶ Web Server (User)</span>
+<span class="tile body">View the webapp user filesystem on this web server.</span>
+</a>
+</div>
+</div>
+<div class='group'>
+<h2><a class='link' href='#command'>Command</a></h2>
+<div class='tile'>
+<a class='link' href='./lsh/' accesskey='3'>
+<span class="tile header">▶ Web Server</span>
+<span class="tile body">Run a command on this web server.</span>
+</a>
+</div>
+</div>
+<div class='group'>
+<h2><a class='link' href='#dash'>Dashboard</a></h2>
+<div class='tile'>
+<a class='link' href='./dash/' accesskey='5'>
+<span class="tile header">▶ Dashboard</span>
+<span class="tile body">View webapp state for user session.</span>
+</a>
+</div>
+</div>
+
+<div class='group'>
+<h2><a class='link' href='#cron'>Cron</a></h2>
+<div class='tile'>
+<a class='link' href='./cron/' accesskey='6'>
+<span class="tile header">▶ Cron</span>
+<span class="tile body">View cron state for webapp.</span>
+</a>
+</div>
+</div>
+
+</div>
+<div class='right outer'>
+
+<div class='group'>
+<h2><a class='link' href='#settings'>Settings</a></h2>
+<div class='tile'>
+<a class='link' href='./app/' accesskey='7'>
+<span class="tile header">▶ User Configuration</span>
+<span class="tile body">Configure webapp settings for user.</span>
+</a>
+</div>
+<div class='tile'>
+<a class='link' href='./fav/' accesskey='7'>
+<span class="tile header">▶ User Favorites</span>
+<span class="tile body">Configure webapp favorites for user.</span>
+</a>
+</div>
+<div class='tile'>
+<a class='link' href='./users/' accesskey='7'>
+<span class="tile header">▶ Users</span>
+<span class="tile body">Configure users for webapp.</span>
+</a>
+</div>
+<div class='tile'>
+<a class='link' href='./irby/' accesskey='7'>
+<span class="tile header">▶ Application Configuration</span>
+<span class="tile body">Configure application.</span>
+</a>
+</div>
+</div>
+
+<div class='group'>
+<h2><a class='link' href='#info'>Information</a></h2>
+<div class='tile'>
+<a class='link' href='./about.html' accesskey='8'>
+<span class="tile header">▶ About</span>
+<span class="tile body">Arwo Web Application</span>
+<span class="tile body">Version SPECIFICATION_VERSION</span>
+<span class="tile body">Build IMPLEMENTATION_VERSION</span>
+</a>
+</div>
+</div>
+
+</div>
+</body>
+</html>

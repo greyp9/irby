@@ -176,6 +176,11 @@
         <copy overwrite='true' todir='${resources.arwo-app.dir}' description='stamp build, time'>
             <fileset dir='${arwo.src.app.dir}/resources' includes='webapp/arwo-war/index.html'/>
         </copy>
+
+        <copy overwrite='true' todir='${resources.arwo-app.dir}/webapp/arwo-war'>
+            <fileset dir='${src.app.dir}/resources/webapp/irby-war' includes='index.html'/>
+        </copy>
+
         <replace file='${resources.arwo-app.dir}/webapp/arwo-war/index.html' description='stamp build, time'>
             <replacefilter token='IMPLEMENTATION_VERSION' value='${Implementation-Version}'/>
             <replacefilter token='SPECIFICATION_VERSION' value='${Specification-Version}'/>
