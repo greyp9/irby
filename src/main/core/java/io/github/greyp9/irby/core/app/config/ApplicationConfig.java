@@ -283,8 +283,10 @@ public class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String schedule = xpather.getTextAttr("@schedule");
-        final String className = xpather.getTextAttr("@class");
-        return new CronConfigJob(name, schedule, className, element);
+        //final String className = xpather.getTextAttr("@class");
+        final Element typeElement = xpather.getElement("*");
+        final String className = (typeElement == null ? null : typeElement.getTagName());
+        return new CronConfigJob(name, schedule, className, typeElement);
     }
 
     private static class Const {
