@@ -28,7 +28,7 @@ public class CronJobX {
         return job;
     }
 
-    public CronJobX(final CronConfigJob config) {
+    private CronJobX(final CronConfigJob config) {
         this.config = config;
         final String line = String.format("%s %s", config.getSchedule(), config.getClassName());
         this.job = new CronJob(config.getName(), true, line, config.getElement());
