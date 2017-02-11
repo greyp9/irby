@@ -68,8 +68,6 @@
     <xsd:complexType name='webappType'>
         <xsd:sequence>
             <xsd:element name='context-param' type='irby:contextParamType' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
             <xsd:element name='servlet' type='irby:servletType' minOccurs='0' maxOccurs='unbounded'/>
         </xsd:sequence>
         <xsd:attribute name='enabled' type='xsd:boolean'/>
@@ -168,11 +166,36 @@
     </xsd:complexType>
 
     <xsd:complexType name='jobType'>
+        <xsd:choice>
+            <xsd:element name='arguments' type='irby:jobArgumentsType'/>
+            <xsd:element name='sleep' type='irby:jobSleepType'/>
+            <xsd:element name='command' type='irby:jobCommandType'/>
+            <xsd:element name='copy-file' type='irby:jobCopyFileType'/>
+        </xsd:choice>
+        <xsd:attributeGroup ref='irby:jobAttributes'/>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="jobAttributes">
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='name' type='xsd:string'/>
         <xsd:attribute name='schedule' type='xsd:string'/>
-        <xsd:attribute name='class' type='xsd:string'/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="jobArgumentsType">
+        <xsd:attribute name='arguments' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobSleepType">
+        <xsd:attribute name='duration' type='xsd:duration'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobCommandType">
         <xsd:attribute name='command' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobCopyFileType">
+        <xsd:attribute name='source' type='xsd:string'/>
+        <xsd:attribute name='target' type='xsd:string'/>
     </xsd:complexType>
 
 </xsd:schema>
