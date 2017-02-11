@@ -35,7 +35,7 @@ public class CronRunnable implements Runnable {
         final String methodName = String.format("run(%s)", serviceName);
         logger.entering(getClass().getSimpleName(), methodName);
         // service
-        final String subcontextName = getClass().getName();
+        final String subcontextName = service.getClass().getName();
         final Context subcontext = AppNaming.createSubcontext(subcontextName);
         AppNaming.bind(subcontext, serviceName, service);
         service.run();
