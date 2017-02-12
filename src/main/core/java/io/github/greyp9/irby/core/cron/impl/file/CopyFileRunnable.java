@@ -4,6 +4,7 @@ import io.github.greyp9.arwo.core.date.DateX;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.file.find.FindInFolderQuery;
 import io.github.greyp9.arwo.core.io.StreamU;
+import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.xml.ElementU;
 import io.github.greyp9.irby.core.cron.impl.CronRunnable;
@@ -31,8 +32,8 @@ public class CopyFileRunnable extends CronRunnable {
         final String date = XsdDateU.toXSDZMillis(getDate());
         final String methodName = String.format("run(%s)", date);
         logger.entering(className, methodName);
-        final String source = ElementU.getAttribute(getElement(), Const.SOURCE);
-        final String target = ElementU.getAttribute(getElement(), Const.TARGET);
+        final String source = SystemU.resolve(ElementU.getAttribute(getElement(), Const.SOURCE));
+        final String target = SystemU.resolve(ElementU.getAttribute(getElement(), Const.TARGET));
         logger.log(Level.FINEST, String.format("[%s][%s][%s]", XsdDateU.toXSDZMillis(getDate()), source, target));
         new Job(source, target).execute();
         logger.exiting(className, methodName);

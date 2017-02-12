@@ -119,6 +119,11 @@
             <include name='io/github/greyp9/arwo/core/logging/Formatter*.java'/>
             <include name='io/github/greyp9/irby/app/arwo/App.java'/>
             <include name='io/github/greyp9/irby/app/trigger/AppTrigger.java'/>
+            <include name='io/github/greyp9/irby/core/cron/impl/ArgumentsRunnable.java'/>
+            <include name='io/github/greyp9/irby/core/cron/impl/CommandRunnable.java'/>
+            <include name='io/github/greyp9/irby/core/cron/impl/SleepRunnable.java'/>
+            <include name='io/github/greyp9/irby/core/cron/impl/file/CopyFileRunnable.java'/>
+            <include name='io/github/greyp9/irby/core/servlet/cron/CronServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
@@ -224,6 +229,7 @@
                 <include name='webapp/arwo-war/**/*.ico'/>
             </fileset>
             <fileset dir='${src.core.dir}/resources/core'>
+                <include name='io/github/greyp9/irby/html/AppServlet.html'/>
                 <include name='io/github/greyp9/irby/html/ConfigServlet.html'/>
                 <include name='io/github/greyp9/irby/html/FileServlet.html'/>
             </fileset>
