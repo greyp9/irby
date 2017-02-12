@@ -183,7 +183,7 @@
         </copy>
 
         <copy overwrite='true' todir='${resources.arwo-app.dir}/webapp/arwo-war'>
-            <fileset dir='${src.app.dir}/resources/webapp/irby-war' includes='index.html'/>
+            <fileset dir='${src.app.dir}/resources/webapp/irby-war' includes='*.html'/>
         </copy>
 
         <replace file='${resources.arwo-app.dir}/webapp/arwo-war/index.html' description='stamp build, time'>

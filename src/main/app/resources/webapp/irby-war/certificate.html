@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html>
+
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+<title>Irby Application - Certificate Setup</title>
+<style type='text/css'>
+html, body, div.container { background-color: Window; height: 90%; min-height: 90%; }
+div.left { float: left; width: 50%; }
+div.right { float: right; width: 50%; }
+div.group { margin: 0.4em 0.2em; border: solid thin black; padding: 0.2em; background-color: Highlight; }
+div.tile { margin: 0.25em 0; border: solid thin black; padding: 0.2em; background-color: ButtonFace; }
+h1, h2 { margin: 0.2em; }
+h3, h4, h5 { margin: 0; }
+a.link { text-decoration: none; color: inherit; margin: 0.2em; display: block; }
+span.tile { background-color: ButtonFace; display: block; }
+span.header { font-size: larger; font-weight: bold; }
+</style>
+<link rel='shortcut icon' href='./ico/app-black.ico'/>
+</head>
+
+<body>
+<h3>Make Server Keystore</h3>
+<div class='tile'><pre>
+(1) Create an RSA key.
+irby@localhost:~/irby/server/key$ openssl genrsa -out server.key 4096
+Generating RSA private key, 4096 bit long modulus ...
+</pre></div>
+<div class='tile'><pre>
+(2) Check filesystem for key.
+irby@localhost:~/irby/server/key$ ls
+server.key
+</pre></div>
+<div class='tile'><pre>
+(3) Create an X509 certificate using the public portion of the RSA key.
+irby@localhost:~/irby/server/key$ openssl req -new -x509 -days 365 -key server.key -out server.cer -subj "/CN=localhost/OU=irby/"
+...
+</pre></div>
+<div class='tile'><pre>
+(4) Verify the certificate.
+irby@localhost:~/irby/server/key$ openssl x509 -in server.cer -text
+Certificate: ...
+</pre></div>
+<div class='tile'><pre>
+(5) Create a PKCS12 keystore (password=irby-server) containing the RSA key and the certificate.
+irby@localhost:~/irby/server/key$ openssl pkcs12 -export -out server.pkcs12 -password pass:irby -inkey server.key -in server.cer
+...
+</pre></div>
+<div class='tile'><pre>
+(6) Verify the keystore (password=irby-server).
+irby@localhost:~/irby/server/key$ openssl pkcs12 -info -noout -in server.pkcs12
+Enter Import Password: ...
+</pre></div>
+
+<h3>Make Server Truststore</h3>
+<div class='tile'><pre>
+(1) Create an RSA key.
+irby@localhost:~/irby/server/trust$ openssl genrsa -out trust.key 4096
+Generating RSA private key, 4096 bit long modulus ...
+</pre></div>
+<div class='tile'><pre>
+(2) Check filesystem for key.
+irby@localhost:~/irby/server/trust$ ls
+trust.key
+</pre></div>
+<div class='tile'><pre>
+(3) Create an X509 certificate using the public portion of the RSA key.
+irby@localhost:~/irby/server/trust$ openssl req -new -x509 -days 365 -key trust.key -out trust.cer -subj "/CN=trust-ca/OU=irby/"
+...
+</pre></div>
+<div class='tile'><pre>
+(4) Verify the certificate.
+irby@localhost:~/irby/server/trust$ openssl x509 -in trust.cer -text
+Certificate: ...
+</pre></div>
+<div class='tile'><pre>
+(5) Create a JKS keystore (password=irby-trust) containing the trust certificate.
+irby@localhost:~/irby/server/trust$ keytool -importcert -keystore trust.jks -file trust.cer -alias 1
+Enter keystore password: ...
+Re-enter new password: ...
+Trust this certificate? [no]:  yes ...
+</pre></div>
+<div class='tile'><pre>
+(6) Verify the JKS keystore (password=irby-trust).
+irby@localhost:~/irby/server/key$ keytool -list -v -keystore trust.jks
+Enter keystore password: ...
+</pre></div>
+
+<h3>Make User Keystore</h3>
+<div class='tile'><pre>
+(1) Create an RSA key.
+irby@localhost:~/irby/user1/key$ openssl genrsa -out user1.key 4096
+Generating RSA private key, 4096 bit long modulus ...
+</pre></div>
+<div class='tile'><pre>
+(2) Check filesystem for key.
+irby@localhost:~/irby/user1/key$ ls
+user1.key
+</pre></div>
+<div class='tile'><pre>
+(3) Create certificate signing request.
+irby@localhost:~/irby/user1/key$ openssl req -out user1.csr -key user1.key -new -subj "/CN=user1/OU=irby/"
+...
+</pre></div>
+<div class='tile'><pre>
+(4) Verify the certificate request.
+irby@localhost:~/irby/user1/key$ cat user1.csr
+-----BEGIN CERTIFICATE REQUEST----- ...
+</pre></div>
+<div class='tile'><pre>
+(5) (at server) sign certificate request
+irby@localhost:~/irby/server/trust$ cp ~/irby/user1/key/user1.csr .
+irby@localhost:~/irby/server/trust$ ls
+trust.cer  trust.jks  trust.key  user1.csr
+irby@localhost:~/irby/server/trust$ openssl x509 -req -days 365 -in user1.csr -CA trust.cer -CAkey trust.key -CAcreateserial -out user1.cer
+Signature ok
+subject=/CN=user1/OU=irby2
+Getting CA Private Key
+irby@localhost:~/irby/server/trust$ cp user1.cer ~/irby/user1/key/
+irby@localhost:~/.arwo/irbyuser1$ ls
+user1.cer  user1.csr  user1.key
+</pre></div>
+<div class='tile'><pre>
+(6) (at user) verify certificate
+irby@localhost:~/irby/user1/key$ ls
+user1.key user1.csr user1.cer
+irby@localhost:~/irby/user1/key$ openssl x509 -in user1.cer -text
+Certificate: ...
+</pre></div>
+<div class='tile'><pre>
+(7) Create a PKCS12 keystore (password=user1) containing the RSA key and the signed certificate.
+irby@localhost:~/irby/user1/key$ openssl pkcs12 -export -out user1.pkcs12 -password pass:user1 -inkey user1.key -in user1.cer
+...
+</pre></div>
+<div class='tile'><pre>
+(8) Verify the keystore (password=user1).
+irby@localhost:~/irby/user1/key$ openssl pkcs12 -info -noout -in user1.pkcs12
+Enter Import Password: ...
+</pre></div>
+</body>
+</html>
