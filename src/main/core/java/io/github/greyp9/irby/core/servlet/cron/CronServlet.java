@@ -2,6 +2,8 @@ package io.github.greyp9.irby.core.servlet.cron;
 
 import io.github.greyp9.arwo.app.core.servlet.ServletU;
 import io.github.greyp9.arwo.core.app.App;
+import io.github.greyp9.arwo.core.app.AppHtml;
+import io.github.greyp9.arwo.core.app.AppTitle;
 import io.github.greyp9.arwo.core.bundle.Bundle;
 import io.github.greyp9.arwo.core.glyph.UTF16;
 import io.github.greyp9.arwo.core.html.Html;
@@ -75,7 +77,7 @@ public class CronServlet extends javax.servlet.http.HttpServlet {
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         final HttpResponse httpResponse = (cronService == null) ?
-                HttpResponseU.to404() : getHttpResponse(cronService, submitID);
+                HttpResponseU.to404() : getHttpResponse(request, cronService, submitID);
         ServletU.write(httpResponse, response);
     }
 
@@ -99,7 +101,7 @@ public class CronServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(HttpResponseU.to302(""), response);
     }
 
-    private HttpResponse getHttpResponse(CronService cronService, String submitID) throws IOException {
+    private HttpResponse getHttpResponse(HttpServletRequest request, CronService cronService, String submitID) throws IOException {
         logger.info(cronService.toString());
         final RowSetMetaData metaData = createMetaData(cronService.getConfig().getName());
         final RowSet rowSet = createRowSet(metaData, cronService.getConfig().getJobs(), submitID);
@@ -110,6 +112,8 @@ public class CronServlet extends javax.servlet.http.HttpServlet {
         final Document html = DocumentU.toDocument(StreamU.read(ResourceU.resolve(Const.HTML)));
         final Element body = new XPather(html, null).getElement(Html.XPath.BODY);
         tableView.addContentTo(body);
+        final ServletHttpRequest httpRequest = ServletU.read(request);
+        new AppHtml(httpRequest).fixup(html, new AppTitle(table.getID()));
         final byte[] entity = DocumentU.toXHtml(html);
         final NameTypeValue contentType = new NameTypeValue(Http.Header.CONTENT_TYPE, Http.Mime.TEXT_HTML_UTF8);
         final NameTypeValue contentLength = new NameTypeValue(Http.Header.CONTENT_LENGTH, entity.length);

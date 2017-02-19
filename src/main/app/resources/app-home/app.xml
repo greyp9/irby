@@ -13,7 +13,7 @@
             <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
             <!--static resources-->
             <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
-                <init-param name='resource' value='webapp/arwo-war'/>
+                <init-param name='resource' value='webapp/arwo'/>
                 <init-param name='index' value='index.html'/>
                 <init-param name='.css' value='text/css'/>
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
@@ -35,12 +35,22 @@
             </servlet>
             <!--application overview-->
             <servlet enabled='true' path='/dash' class='io.github.greyp9.arwo.app.dash.servlet.DashServlet' auth-constraint='*'/>
-            <servlet enabled='true' path='/cron' class="io.github.greyp9.irby.core.servlet.cron.CronServlet" auth-constraint="*">
-                <init-param name="io.github.greyp9.irby.core.cron.service.CronService" value="Irby-Cron"/>
-            </servlet>
             <!--local access-->
             <servlet enabled='true' path='/lfs' class='io.github.greyp9.arwo.app.local.servlet.LFSServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/lsh' class='io.github.greyp9.arwo.app.local.servlet.SHServlet' auth-constraint='*'/>
+        </web-app>
+        <web-app enabled='true' path='/irby' realm='Irby-Arwo'>
+            <!--static resources-->
+            <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
+                <init-param name='resource' value='webapp/irby'/>
+                <init-param name='index' value='index.html'/>
+                <init-param name='.css' value='text/css'/>
+                <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
+                <init-param name='.ico' value='image/x-icon'/>
+            </servlet>
+            <servlet enabled='true' path='/cron' class="io.github.greyp9.irby.core.servlet.cron.CronServlet" auth-constraint="*">
+                <init-param name="io.github.greyp9.irby.core.cron.service.CronService" value="Irby-Cron"/>
+            </servlet>
         </web-app>
     </https11>
     <cron enabled="true" name="Irby-Cron" tz="GMT">

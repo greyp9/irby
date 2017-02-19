@@ -16,6 +16,9 @@
     <property name='classes.irby.dir' value='${target.dir}/app/classes-irby'/>
     <property name='classes.arwo-app.dir' value='${target.dir}/app/classes-arwo-app'/>
     <property name='resources.arwo-app.dir' value='${target.dir}/app/resources-arwo-app'/>
+    <property name='webapp.dir' value='${target.dir}/app/webapp'/>
+    <property name='webapp.arwo.dir' value='${webapp.dir}/arwo'/>
+    <property name='webapp.irby.dir' value='${webapp.dir}/irby'/>
     <property name='artifact.dir' value='${target.dir}/app/artifact'/>
     <property name='image.dir' value='${target.dir}/app/image'/>
 
@@ -74,6 +77,8 @@
         <delete dir='${classes.irby.dir}'/>
         <delete dir='${classes.arwo-app.dir}'/>
         <delete dir='${resources.arwo-app.dir}'/>
+        <delete dir='${webapp.arwo.dir}'/>
+        <delete dir='${webapp.irby.dir}'/>
         <delete dir='${artifact.dir}'/>
         <delete dir='${image.dir}'/>
     </target>
@@ -173,7 +178,7 @@
         </antcall>
     </target>
 
-    <target name='jar-resources' description='assemble one CSS (more efficient to serve one)'>
+    <target name='jar-resources' description='(superceded) assemble one CSS (more efficient to serve one)'>
         <mkdir dir='${resources.arwo-app.dir}'/>
         <concat destfile='${resources.arwo-app.dir}/webapp/arwo-war/css/webapp.css'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css' excludes='webapp.css'/>
@@ -192,7 +197,52 @@
         </replace>
     </target>
 
-    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, jar-resources'>
+    <target name='webapp-arwo' description='static resources for webapp [/arwo]'>
+        <mkdir dir='${webapp.arwo.dir}'/>
+        <!--coalesce CSS resource from source components (for runtime efficiency)-->
+        <concat destfile='${webapp.arwo.dir}/css/webapp.css' description='assemble single CSS resource'>
+            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css'/>
+        </concat>
+        <!--copy other static webapp resources-->
+        <copy overwrite='true' todir='${webapp.arwo.dir}' description='static resources'>
+            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
+                <!--<include name='**/*.css'/>--> <!--coalesced-->
+                <include name='**/*.html'/>
+                <include name='**/*.ico'/>
+            </fileset>
+        </copy>
+        <!--stamp webapp index page with build and time-->
+        <replace file='${webapp.arwo.dir}/index.html' description='stamp build, time'>
+            <replacefilter token='IMPLEMENTATION_VERSION' value='${Implementation-Version}'/>
+            <replacefilter token='SPECIFICATION_VERSION' value='${Specification-Version}'/>
+        </replace>
+    </target>
+
+    <target name='webapp-irby' description='static resources for webapp [/irby]'>
+        <mkdir dir='${webapp.irby.dir}'/>
+        <!--coalesce CSS resource from source components (for runtime efficiency)-->
+        <concat destfile='${webapp.irby.dir}/css/webapp.css' description='assemble single CSS resource'>
+            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css'/>
+        </concat>
+        <!--copy other static webapp resources-->
+        <copy overwrite='true' todir='${webapp.irby.dir}' description='static resources'>
+            <fileset dir='${src.app.dir}/resources/webapp/irby-war'>
+                <include name='**/*.html'/>
+            </fileset>
+        </copy>
+        <copy overwrite='true' todir='${webapp.irby.dir}' description='static resources'>
+            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
+                <include name='**/*.ico'/>
+            </fileset>
+        </copy>
+        <!--stamp webapp index page with build and time-->
+        <replace file='${webapp.irby.dir}/index.html' description='stamp build, time'>
+            <replacefilter token='IMPLEMENTATION_VERSION' value='${Implementation-Version}'/>
+            <replacefilter token='SPECIFICATION_VERSION' value='${Specification-Version}'/>
+        </replace>
+    </target>
+
+    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, webapp-arwo, webapp-irby'>
         <mkdir dir='${artifact.dir}'/>
         <jar destfile='${artifact.dir}/irby.jar'>
             <fileset dir='${classes.special.dir}'>
@@ -204,9 +254,9 @@
             <fileset dir='${classes.arwo-app.dir}'>
                 <include name='**/*.class'/>
             </fileset>
-            <fileset dir='${resources.arwo-app.dir}'>
-                <include name='webapp/arwo-war/**/*.css'/>
-                <include name='webapp/arwo-war/**/*.html'/>
+            <fileset dir='${target.dir}/app' description='static resources for webapps'>
+                <include name='webapp/arwo/**'/>
+                <include name='webapp/irby/**'/>
             </fileset>
             <fileset dir='${arwo.src.core.dir}/resources/arwo-jar'>
                 <include name='io/github/greyp9/arwo/html/**/*.html'/>
@@ -302,8 +352,8 @@
     <target name='run-app-irby'>
         <java jar='${image.dir}/irby.jar' fork='true' dir='${image.dir}'>
             <jvmarg value='-Djava.util.logging.config.file=${image.dir}/logging.properties'/>
-            <!--<jvmarg value='-Xdebug'/>-->
-            <!--<jvmarg value='-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8120'/>-->
+            <jvmarg value='-Xdebug'/>
+            <jvmarg value='-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8120'/>
         </java>
     </target>
 
