@@ -123,6 +123,8 @@ public class CronService {
             className = "io.github.greyp9.irby.core.cron.impl.CommandRunnable";
         } else if ("copy-file".equals(type)) {
             className = "io.github.greyp9.irby.core.cron.impl.file.CopyFileRunnable";
+        } else if ("compress-file".equals(type)) {
+            className = "io.github.greyp9.irby.core.cron.impl.file.CompressFileRunnable";
         }
         return className;
     }

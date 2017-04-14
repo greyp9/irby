@@ -1,7 +1,9 @@
 package io.github.greyp9.irby.core.cron.impl.file;
 
+import io.github.greyp9.arwo.core.codec.gz.GZipCodec;
 import io.github.greyp9.arwo.core.date.DateX;
 import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.file.FileU;
 import io.github.greyp9.arwo.core.file.find.FindInFolderQuery;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.lang.SystemU;
@@ -19,10 +21,10 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({ "PMD.DoNotUseThreads", "unused" })
-public class CopyFileRunnable extends CronRunnable {
+public class CompressFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public CopyFileRunnable(Date date, Element element) {
+    public CompressFileRunnable(Date date, Element element) {
         super(date, element);
     }
 
@@ -88,8 +90,13 @@ public class CopyFileRunnable extends CronRunnable {
             try {
                 final byte[] bytes = StreamU.read(fileSource);
                 logger.finest(String.format("%d [%s]", bytes.length, fileSource.getAbsolutePath()));
-                StreamU.write(fileTarget, bytes);
+                final byte[] bytesCompressed = new GZipCodec().encode(bytes);
+                final String filenameCompressed = String.format("%s.gz", fileTarget.getName());
+                final File fileTargetCompressed = new File(fileTarget.getParentFile(), filenameCompressed);
+                StreamU.write(fileTarget, bytesCompressed);
                 logger.finest(String.format("%d [%s]", bytes.length, fileTarget.getAbsolutePath()));
+                final boolean delete = FileU.delete(fileSource);
+                logger.finest(String.format("%s [%s]", delete, fileSource.getAbsolutePath()));
             } catch (IOException e) {
                 logger.warning(e.getMessage());
             }
