@@ -172,6 +172,7 @@
             <xsd:element name='command' type='irby:jobCommandType'/>
             <xsd:element name='copy-file' type='irby:jobCopyFileType'/>
             <xsd:element name='compress-file' type='irby:jobCompressFileType'/>
+            <xsd:element name='group-file' type='irby:jobGroupFileType'/>
         </xsd:choice>
         <xsd:attributeGroup ref='irby:jobAttributes'/>
     </xsd:complexType>
@@ -202,6 +203,12 @@
     <xsd:complexType name="jobCompressFileType">
         <xsd:attribute name='source' type='xsd:string'/>
         <xsd:attribute name='target' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobGroupFileType">
+        <xsd:attribute name='source' type='xsd:string'/>
+        <xsd:attribute name='target' type='xsd:string'/>
+        <xsd:attribute name='interval' type='xsd:duration'/>
     </xsd:complexType>
 
 </xsd:schema>
