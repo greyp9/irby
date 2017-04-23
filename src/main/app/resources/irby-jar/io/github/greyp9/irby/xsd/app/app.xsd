@@ -150,6 +150,7 @@
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='name' type='xsd:string'/>
         <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='target' type='xsd:string'/>
         <xsd:attribute name='buffer' type='xsd:unsignedShort'/>
     </xsd:complexType>
 
@@ -173,6 +174,7 @@
             <xsd:element name='copy-file' type='irby:jobCopyFileType'/>
             <xsd:element name='compress-file' type='irby:jobCompressFileType'/>
             <xsd:element name='group-file' type='irby:jobGroupFileType'/>
+            <xsd:element name='regroup-file' type='irby:jobRegroupFileType'/>
         </xsd:choice>
         <xsd:attributeGroup ref='irby:jobAttributes'/>
     </xsd:complexType>
@@ -206,6 +208,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="jobGroupFileType">
+        <xsd:attribute name='source' type='xsd:string'/>
+        <xsd:attribute name='target' type='xsd:string'/>
+        <xsd:attribute name='interval' type='xsd:duration'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobRegroupFileType">
         <xsd:attribute name='source' type='xsd:string'/>
         <xsd:attribute name='target' type='xsd:string'/>
         <xsd:attribute name='interval' type='xsd:duration'/>

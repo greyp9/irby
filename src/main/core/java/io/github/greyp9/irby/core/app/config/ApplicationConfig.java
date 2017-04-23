@@ -256,8 +256,9 @@ public class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
+        final String target = xpather.getTextAttr(Const.XPATH_A_TARGET);
         final int buffer = NumberU.toInt(xpather.getTextAttr("@buffer"), 0);
-        return new UDPConfig(name, port, buffer);
+        return new UDPConfig(name, port, target, buffer);
     }
 
     private void doElementsCronTab(final List<Element> elements) throws IOException {
@@ -292,6 +293,7 @@ public class ApplicationConfig {
     private static class Const {
         private static final String XPATH_A_NAME = "@name";
         private static final String XPATH_A_PORT = "@port";
+        private static final String XPATH_A_TARGET = "@target";
         private static final String XPATH_A_THREADS = "@threads";
     }
 }

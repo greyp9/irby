@@ -6,7 +6,7 @@ import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.file.FileU;
 import io.github.greyp9.arwo.core.file.filter.FilterFiles;
 import io.github.greyp9.arwo.core.file.find.FindInFolderQuery;
-import io.github.greyp9.arwo.core.file.group.FileGrouper;
+import io.github.greyp9.arwo.core.file.group.FileRegrouper;
 import io.github.greyp9.arwo.core.file.zip.ZipAppender;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.value.Value;
@@ -23,10 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings({ "PMD.DoNotUseThreads", "unused" })
-public class GroupFileRunnable extends CronRunnable {
+public class RegroupFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GroupFileRunnable(Date date, Element element) {
+    public RegroupFileRunnable(Date date, Element element) {
         super(date, element);
     }
 
@@ -85,11 +85,11 @@ public class GroupFileRunnable extends CronRunnable {
             logger.finest("" + files.size());
             FilterFiles.byAgeMin(files, date, DurationU.Const.ONE_MINUTE);
             logger.finest("" + files.size());
-            final FileGrouper fileGrouper = new FileGrouper(interval);
+            final FileRegrouper fileRegrouper = new FileRegrouper(interval);
             for (File file : files) {
-                fileGrouper.add(file);
+                fileRegrouper.add(file);
             }
-            final Map<Date, Collection<File>> groupings = fileGrouper.getGroupings();
+            final Map<Date, Collection<File>> groupings = fileRegrouper.getGroupings();
             for (final Map.Entry<Date, Collection<File>> entry : groupings.entrySet()) {
                 final Date dateGroup = entry.getKey();
                 final Collection<File> group = entry.getValue();
@@ -107,12 +107,12 @@ public class GroupFileRunnable extends CronRunnable {
             final File fileTarget = new File(folderTarget, filenameTarget);
             // target file content
             final ZipAppender appender = new ZipAppender(fileTarget);
-            boolean success = appender.append(comment, group.toArray(new File[group.size()]));
+            boolean success = appender.appendZips(comment, group.toArray(new File[group.size()]));
             logger.info("" + success);
             if (success) {
                 // double write to get ZipEntry attributes to populate
                 final ZipAppender appender2 = new ZipAppender(fileTarget);
-                success = appender.append(comment, new File[0]);
+                success = appender.appendZips(comment);
 
                 for (File file : group) {
                     success &= FileU.delete(file);

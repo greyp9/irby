@@ -102,6 +102,7 @@ public class CronService {
     }
 
     private void doJob(final Date date, final CronJobX job) {
+        //job.getName();  // should pass name along to invocation (logging)
         final JobFactory factory = new JobFactory();
         final String className = lookupClassName(job.getClassName());
         final Runnable runnable = factory.getRunnable(className, job.getElement(), date);
@@ -127,6 +128,8 @@ public class CronService {
             className = "io.github.greyp9.irby.core.cron.impl.file.CompressFileRunnable";
         } else if ("group-file".equals(type)) {
             className = "io.github.greyp9.irby.core.cron.impl.file.GroupFileRunnable";
+        } else if ("regroup-file".equals(type)) {
+            className = "io.github.greyp9.irby.core.cron.impl.file.RegroupFileRunnable";
         }
         return className;
     }
