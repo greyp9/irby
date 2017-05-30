@@ -22,10 +22,10 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
             throws ServletException, IOException {
         final String initParamResource = getInitParameter(Const.INIT_PARAM_RESOURCE);
         final String initParamIndex = getInitParameter(Const.INIT_PARAM_INDEX);
-        if ((initParamResource == null) || (initParamIndex == null)) {
+        if (initParamResource == null) {
             response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
         } else {
-            doGet(request, response, initParamResource, initParamIndex);
+            doGet(request, response, initParamResource, Value.defaultOnEmpty(initParamIndex, ""));
         }
     }
 

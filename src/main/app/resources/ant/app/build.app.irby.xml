@@ -17,6 +17,7 @@
     <property name='classes.arwo-app.dir' value='${target.dir}/app/classes-arwo-app'/>
     <property name='resources.arwo-app.dir' value='${target.dir}/app/resources-arwo-app'/>
     <property name='webapp.dir' value='${target.dir}/app/webapp'/>
+    <property name='webapp.res.dir' value='${webapp.dir}/res'/>
     <property name='webapp.arwo.dir' value='${webapp.dir}/arwo'/>
     <property name='webapp.irby.dir' value='${webapp.dir}/irby'/>
     <property name='artifact.dir' value='${target.dir}/app/artifact'/>
@@ -177,6 +178,8 @@
     </target>
 
     <target name='jar-resources' description='(superceded) assemble one CSS (more efficient to serve one)'>
+        <fail message="should not run"/>
+
         <mkdir dir='${resources.arwo-app.dir}'/>
         <concat destfile='${resources.arwo-app.dir}/webapp/arwo-war/css/webapp.css'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css' excludes='webapp.css'/>
@@ -195,18 +198,28 @@
         </replace>
     </target>
 
-    <target name='webapp-arwo' description='static resources for webapp [/arwo]'>
-        <mkdir dir='${webapp.arwo.dir}'/>
+    <target name='webapp-res' description='shared static resources for webapps'>
+        <mkdir dir='${webapp.res.dir}'/>
         <!--coalesce CSS resource from source components (for runtime efficiency)-->
-        <concat destfile='${webapp.arwo.dir}/css/webapp.css' description='assemble single CSS resource'>
+        <concat destfile='${webapp.res.dir}/css/webapp.css' description='assemble single CSS resource'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css'/>
         </concat>
+        <!--icons-->
+        <copy overwrite='true' todir='${webapp.res.dir}' description='static resources'>
+            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
+                <include name='**/*.ico'/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name='webapp-arwo' description='static resources for webapp [/arwo]'>
+        <mkdir dir='${webapp.arwo.dir}'/>
         <!--copy other static webapp resources-->
         <copy overwrite='true' todir='${webapp.arwo.dir}' description='static resources'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
                 <!--<include name='**/*.css'/>--> <!--coalesced-->
                 <include name='**/*.html'/>
-                <include name='**/*.ico'/>
+                <!--<include name='**/*.ico'/>-->
             </fileset>
         </copy>
         <!--stamp webapp index page with build and time-->
@@ -218,19 +231,10 @@
 
     <target name='webapp-irby' description='static resources for webapp [/irby]'>
         <mkdir dir='${webapp.irby.dir}'/>
-        <!--coalesce CSS resource from source components (for runtime efficiency)-->
-        <concat destfile='${webapp.irby.dir}/css/webapp.css' description='assemble single CSS resource'>
-            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css'/>
-        </concat>
         <!--copy other static webapp resources-->
         <copy overwrite='true' todir='${webapp.irby.dir}' description='static resources'>
             <fileset dir='${src.app.dir}/resources/webapp/irby-war'>
                 <include name='**/*.html'/>
-            </fileset>
-        </copy>
-        <copy overwrite='true' todir='${webapp.irby.dir}' description='static resources'>
-            <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
-                <include name='**/*.ico'/>
             </fileset>
         </copy>
         <!--stamp webapp index page with build and time-->
@@ -240,7 +244,7 @@
         </replace>
     </target>
 
-    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, webapp-arwo, webapp-irby'>
+    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, webapp-res, webapp-arwo, webapp-irby'>
         <mkdir dir='${artifact.dir}'/>
         <jar destfile='${artifact.dir}/irby.jar'>
             <fileset dir='${classes.special.dir}'>
@@ -253,6 +257,7 @@
                 <include name='**/*.class'/>
             </fileset>
             <fileset dir='${target.dir}/app' description='static resources for webapps'>
+                <include name='webapp/res/**'/>
                 <include name='webapp/arwo/**'/>
                 <include name='webapp/irby/**'/>
             </fileset>
@@ -270,12 +275,12 @@
                 <include name='io/github/greyp9/irby/xsd/**/*.properties'/>
                 <include name='io/github/greyp9/irby/xsd/**/*.xsd'/>
             </fileset>
-            <fileset dir='${arwo.src.app.dir}/resources'>
+            <!--<fileset dir='${arwo.src.app.dir}/resources'>-->
                 <!--<include name='webapp/arwo-war/**/*.css'/>-->
-                <include name='webapp/arwo-war/**/*.html'/>
-                <exclude name='webapp/arwo-war/index.html'/>
-                <include name='webapp/arwo-war/**/*.ico'/>
-            </fileset>
+                <!--<include name='webapp/arwo-war/**/*.html'/>-->
+                <!--<exclude name='webapp/arwo-war/index.html'/>-->
+                <!--<include name='webapp/arwo-war/**/*.ico'/>-->
+            <!--</fileset>-->
             <fileset dir='${src.core.dir}/resources/core'>
                 <include name='io/github/greyp9/irby/html/AppServlet.html'/>
                 <include name='io/github/greyp9/irby/html/ConfigServlet.html'/>
