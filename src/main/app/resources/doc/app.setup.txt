@@ -1,0 +1,36 @@
+# from localhost; setup irby on machine IRBYSERVER
+
+# add user for process
+root@irbyserver: adduser irby
+# copy binary to target machine
+greyp9@localhost: scp ~/irby/target/app/artifact/irby.bXXX.zip irby@irbyserver:~
+# acquire ownership of binary
+root@irbyserver: chown irby:irby ~/irby.bXXX.zip
+irby@irbyserver: unzip ~/irby.bXXX.zip
+
+# application is on target machine
+
+# put server script
+greyp9@localhost: scp ~/irby/src/main/app/resources/sh/irby.sh root@irbyserver:/etc/init.d/irby
+root@irbyserver: chmod +x /etc/init.d/irby
+
+# run script at startup
+root@irbyserver: apt-get install daemon
+root@irbyserver: update-rc.d irby defaults
+
+# activate script configuration
+root@irbyserver: systemctl daemon-reload
+
+# application is set to run automatically at statup
+
+# exercise script
+root@irbyserver: service irby start
+root@irbyserver: service irby stop
+root@irbyserver: shutdown -r now
+root@irbyserver: ps -ef | grep java
+
+# application is running
+
+https://irbyserver:8443
+
+# use generated credentials (from application log) to access application
