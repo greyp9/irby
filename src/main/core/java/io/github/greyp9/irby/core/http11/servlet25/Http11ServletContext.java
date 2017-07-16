@@ -127,12 +127,12 @@ public class Http11ServletContext implements ServletContext {
 
     @Override
     public final String getInitParameter(final String s) {
-        throw new IllegalStateException();
+        return context.getConfig().getContextParam(s);
     }
 
     @Override
     public final Enumeration getInitParameterNames() {
-        throw new IllegalStateException();
+        return context.getConfig().getContextParams().propertyNames();
     }
 
     @Override

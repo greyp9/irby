@@ -156,8 +156,15 @@ public class ApplicationConfig {
         final String path = xpather.getTextAttr("@path");
         final String realm = xpather.getTextAttr("@realm");
         final Http11ConfigContext servletContext = new Http11ConfigContext(name, path, realm);
-        final List<Element> elements = xpather.getElements("irby:servlet");
-        for (final Element elementIt : elements) {
+        final List<Element> elementsCP = xpather.getElements("irby:context-param");
+        for (final Element elementIt : elementsCP) {
+            final XPather xpatherIt = XPather.create(elementIt, context);
+            final String nameIt = xpatherIt.getTextAttr(Const.XPATH_A_NAME);
+            final String valueIt = xpatherIt.getTextAttr(Const.XPATH_A_VALUE);
+            servletContext.addContextParam(nameIt, valueIt);
+        }
+        final List<Element> elementsS = xpather.getElements("irby:servlet");
+        for (final Element elementIt : elementsS) {
             servletContext.addServlet(doElementServlet(elementIt));
         }
         return servletContext;
@@ -174,7 +181,7 @@ public class ApplicationConfig {
         for (final Element elementIt : elements) {
             final XPather xpatherIt = XPather.create(elementIt, context);
             final String nameIt = xpatherIt.getTextAttr(Const.XPATH_A_NAME);
-            final String valueIt = xpatherIt.getTextAttr("@value");
+            final String valueIt = xpatherIt.getTextAttr(Const.XPATH_A_VALUE);
             servletConfig.addInitParam(nameIt, valueIt);
         }
         return servletConfig;
@@ -295,5 +302,6 @@ public class ApplicationConfig {
         private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_TARGET = "@target";
         private static final String XPATH_A_THREADS = "@threads";
+        private static final String XPATH_A_VALUE = "@value";
     }
 }
