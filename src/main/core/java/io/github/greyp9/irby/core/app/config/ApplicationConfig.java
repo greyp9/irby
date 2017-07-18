@@ -143,7 +143,7 @@ public class ApplicationConfig {
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final Http11Config http11Config = new Http11Config(name, port, threadsPort);
-        final List<Element> elements = xpather.getElements("irby:web-app");
+        final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {
             http11Config.addContext(doElementWebapp(elementIt));
         }
@@ -163,7 +163,7 @@ public class ApplicationConfig {
             final String valueIt = xpatherIt.getTextAttr(Const.XPATH_A_VALUE);
             servletContext.addContextParam(nameIt, valueIt);
         }
-        final List<Element> elementsS = xpather.getElements("irby:servlet");
+        final List<Element> elementsS = xpather.getElements("irby:servlet[@enabled='true']");
         for (final Element elementIt : elementsS) {
             servletContext.addServlet(doElementServlet(elementIt));
         }
@@ -207,7 +207,7 @@ public class ApplicationConfig {
         final String protocol = xpather.getTextAttr("@protocol");
         final Https11Config https11Config = new Https11Config(name, port, threadsPort,
                 keyStoreFile, keyStoreType, keyStorePass, clientTrustFile, clientTrustType, clientTrustPass, protocol);
-        final List<Element> elements = xpather.getElements("irby:web-app");
+        final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {
             https11Config.addContext(doElementWebapp(elementIt));
         }
