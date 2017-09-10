@@ -112,7 +112,7 @@ public class RegroupFileRunnable extends CronRunnable {
             if (success) {
                 // double write to get ZipEntry attributes to populate
                 final ZipAppender appender2 = new ZipAppender(fileTarget);
-                success = appender.appendZips(comment);
+                success = appender2.appendZips(comment);
 
                 for (File file : group) {
                     success &= FileU.delete(file);

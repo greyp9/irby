@@ -132,6 +132,8 @@
             <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/update/UpdateServlet.java'/>
+            <include name='io/github/greyp9/irby/core/widget/net/dns/NameLookupRunnable.java'/>
+            <include name='io/github/greyp9/irby/core/widget/net/icmp/PingRunnable.java'/>
         </javac>
     </target>
 
@@ -149,6 +151,7 @@
             <include name='io/github/greyp9/arwo/app/local/servlet/SHServlet.java'/>
             <include name='io/github/greyp9/arwo/app/naming/servlet/NamingServlet.java'/>
             <include name='io/github/greyp9/arwo/app/realm/servlet/RealmServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/vis/servlet/VisualizationServlet.java'/>
             <include name='io/github/greyp9/arwo/app/xed/servlet/Xed1Servlet.java'/>
             <!--cron-->
             <include name='io/github/greyp9/arwo/app/local/sh/cron/SHRunnable.java'/>

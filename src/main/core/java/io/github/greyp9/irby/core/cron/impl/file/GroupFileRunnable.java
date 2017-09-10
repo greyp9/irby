@@ -112,7 +112,7 @@ public class GroupFileRunnable extends CronRunnable {
             if (success) {
                 // double write to get ZipEntry attributes to populate
                 final ZipAppender appender2 = new ZipAppender(fileTarget);
-                success = appender.append(comment, new File[0]);
+                success = appender2.append(comment, new File[0]);
 
                 for (File file : group) {
                     success &= FileU.delete(file);

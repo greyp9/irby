@@ -11,23 +11,12 @@
     <xsd:complexType name='applicationType'>
         <xsd:sequence>
             <xsd:element name='realm' type='irby:realmType' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
+            <xsd:element name='context' type='irby:contextType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='http11' type='irby:http11Type' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
             <xsd:element name='https11' type='irby:https11Type' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
             <xsd:element name='proxy' type='irby:proxyType' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
             <xsd:element name='proxys' type='irby:proxysType' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
             <xsd:element name='udp' type='irby:udpType' minOccurs='0' maxOccurs='unbounded'/>
-        </xsd:sequence>
-        <xsd:sequence>
             <xsd:element name='cron' type='irby:cronType' minOccurs='0' maxOccurs='unbounded'/>
         </xsd:sequence>
         <xsd:attribute name='threads' type='xsd:unsignedShort' default='6'/>
@@ -51,6 +40,29 @@
         <xsd:attribute name='name' type='xsd:string'/>
         <xsd:attribute name='credential' type='xsd:string'/>
         <xsd:attribute name='roles' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--context-->
+
+    <xsd:complexType name='contextType'>
+        <xsd:sequence>
+            <xsd:element name='object' type='irby:objectType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='objectType'>
+        <xsd:sequence>
+            <xsd:element name='param' type='irby:paramType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='type' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='paramType'>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='value' type='xsd:string'/>
     </xsd:complexType>
 
     <!--http-->
@@ -171,6 +183,7 @@
             <xsd:element name='arguments' type='irby:jobArgumentsType'/>
             <xsd:element name='sleep' type='irby:jobSleepType'/>
             <xsd:element name='command' type='irby:jobCommandType'/>
+            <xsd:element name='generic' type='irby:jobGenericType'/>
             <xsd:element name='copy-file' type='irby:jobCopyFileType'/>
             <xsd:element name='compress-file' type='irby:jobCompressFileType'/>
             <xsd:element name='group-file' type='irby:jobGroupFileType'/>
@@ -195,6 +208,11 @@
 
     <xsd:complexType name="jobCommandType">
         <xsd:attribute name='command' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobGenericType">
+        <xsd:attribute name='type' type='xsd:string'/>
+        <xsd:attribute name='parameters' type='xsd:string'/>
     </xsd:complexType>
 
     <xsd:complexType name="jobCopyFileType">

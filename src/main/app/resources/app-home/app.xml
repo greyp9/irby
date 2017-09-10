@@ -1,6 +1,26 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <irby:application xmlns='urn:irby:app' xmlns:irby='urn:irby:app' threads='6' loop='PT1S'>
     <realm enabled='true' name='Irby-Arwo' method='Basic' type='arwo' context='/arwo'/>
+
+    <context enabled="false" name="application">
+        <object name="histogram-name-lookup" type="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram">
+            <param name="durationCell" value="PT1M"/>
+            <param name="durationWord" value="PT15M"/>
+            <param name="durationLine" value="PT1H"/>
+            <param name="durationParagraph" value="PT6H"/>
+            <param name="durationPage" value="P1D"/>
+            <param name="durationPages" value="P3D"/>
+        </object>
+        <object name="histogram-ping" type="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram">
+            <param name="durationCell" value="PT1M"/>
+            <param name="durationWord" value="PT15M"/>
+            <param name="durationLine" value="PT1H"/>
+            <param name="durationParagraph" value="PT6H"/>
+            <param name="durationPage" value="P1D"/>
+            <param name="durationPages" value="P3D"/>
+        </object>
+    </context>
+
     <https11 enabled='true' name='tls-8443' port='8443' threads='12' keyStoreFile='server.pkcs12' keyStoreType='PKCS12' keyStorePass='irby' protocol='TLS'>
         <web-app enabled='true' path='/arwo' realm='Irby-Arwo'>
             <!--initialization-->
@@ -9,6 +29,11 @@
             <servlet enabled='true' path='/init/arwo/realm' class='io.github.greyp9.arwo.app.realm.servlet.RealmServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/init/arwo/appLifecycle' class='io.github.greyp9.arwo.app.lifecycle.servlet.AppLifecycleServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/init/arwo/daemon' class='io.github.greyp9.arwo.app.daemon.connect.servlet.ConnectionServlet' auth-constraint='*'/>
+            <!--visualizations-->
+            <servlet auth-constraint="*" class="io.github.greyp9.arwo.app.vis.servlet.VisualizationServlet" enabled="true" path="/vis">
+                <init-param name="histogram-name-lookup" value="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram"/>
+                <init-param name="histogram-ping" value="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram"/>
+            </servlet>
             <!--update-->
             <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
             <!--static resources-->
@@ -62,6 +87,14 @@
     <cron enabled="true" name="Irby-Cron" tz="GMT">
         <job enabled="false" name="backup-app-log" schedule="0 0 * * *">
             <copy-file source="./app.[1|2|3|4].log" target="./app.$DATE.log"/>
+        </job>
+        <job enabled="false" name="testing-lookup" schedule="* * * * *">
+            <generic type="io.github.greyp9.irby.core.widget.net.dns.NameLookupRunnable"
+                     parameters="amazon.com PT3S application histogram-name-lookup"/>
+        </job>
+        <job enabled="false" name="testing-lookup" schedule="* * * * *">
+            <generic type="io.github.greyp9.irby.core.widget.net.icmp.PingRunnable"
+                     parameters="amazon.com PT3S application histogram-ping"/>
         </job>
     </cron>
 </irby:application>

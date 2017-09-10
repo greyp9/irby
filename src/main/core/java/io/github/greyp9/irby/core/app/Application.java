@@ -5,6 +5,8 @@ import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
+import io.github.greyp9.irby.core.context.config.ContextConfig;
+import io.github.greyp9.irby.core.context.factory.ContextFactory;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.service.CronRunnable;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
@@ -50,6 +52,10 @@ public class Application {
         // application credentials
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         final Realms realms = new Realms(config.getRealmConfigs());
+        // lookup contexts
+        for (final ContextConfig contextConfig : config.getContextConfigs()) {
+            ContextFactory.create(contextConfig);
+        }
         // web servers
         for (final Http11Config http11Config : config.getHttp11Configs()) {
             executorService.execute(Http11Runnable.create(http11Config, realms, executorService, reference));
@@ -81,6 +87,9 @@ public class Application {
             executorService.awaitTermination(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             results.add(e.getMessage());
+        }
+        for (final ContextConfig contextConfig : config.getContextConfigs()) {
+            ContextFactory.teardown(contextConfig);
         }
         return results.toString();
     }

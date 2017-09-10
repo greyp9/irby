@@ -7,6 +7,8 @@ import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.arwo.core.xpath.XPathContext;
 import io.github.greyp9.arwo.core.xpath.XPathContextFactory;
 import io.github.greyp9.arwo.core.xpath.XPather;
+import io.github.greyp9.irby.core.context.config.ContextConfig;
+import io.github.greyp9.irby.core.context.config.ContextObject;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
@@ -36,6 +38,7 @@ public class ApplicationConfig {
     private final long interval;
 
     private final Collection<RealmConfig> realmConfigs;
+    private final Collection<ContextConfig> contextConfigs;
     private final Collection<Http11Config> http11Configs;
     private final Collection<Https11Config> https11Configs;
     private final Collection<ProxyConfig> proxyConfigs;
@@ -53,6 +56,10 @@ public class ApplicationConfig {
 
     public final Collection<RealmConfig> getRealmConfigs() {
         return realmConfigs;
+    }
+
+    public Collection<ContextConfig> getContextConfigs() {
+        return contextConfigs;
     }
 
     public final Collection<Http11Config> getHttp11Configs() {
@@ -88,6 +95,7 @@ public class ApplicationConfig {
         this.interval = NumberU.toLong(xpather.getTextAttr("@loop"), DurationU.Const.ONE_SECOND_MILLIS);
         // subsystems
         this.realmConfigs = new ArrayList<RealmConfig>();
+        this.contextConfigs = new ArrayList<ContextConfig>();
         this.http11Configs = new ArrayList<Http11Config>();
         this.https11Configs = new ArrayList<Https11Config>();
         this.proxyConfigs = new ArrayList<ProxyConfig>();
@@ -95,6 +103,7 @@ public class ApplicationConfig {
         this.udpConfigs = new ArrayList<UDPConfig>();
         this.cronConfigs = new ArrayList<CronConfig>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
+        doElementsContext(xpather.getElements("/irby:application/irby:context[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
         doElementsHttps11(xpather.getElements("/irby:application/irby:https11[@enabled='true']"));
         doElementsProxy(xpather.getElements("/irby:application/irby:proxy[@enabled='true']"));
@@ -129,6 +138,40 @@ public class ApplicationConfig {
         final String credential = xpather.getTextAttr("@credential");
         final String roles = xpather.getTextAttr("@roles");
         return new PrincipalConfig(name, credential, roles);
+    }
+
+    private void doElementsContext(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            contextConfigs.add(doElementContext(element));
+        }
+    }
+
+    private ContextConfig doElementContext(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final ContextConfig contextConfig = new ContextConfig(name);
+        final List<Element> elements = xpather.getElements("irby:object");
+        for (final Element elementIt : elements) {
+            contextConfig.addObject(doElementObject(elementIt));
+        }
+        return contextConfig;
+    }
+
+    private ContextObject doElementObject(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String type = xpather.getTextAttr(Const.XPATH_A_TYPE);
+        final ContextObject contextObject = new ContextObject(name, type);
+        final List<Element> elements = xpather.getElements("irby:param");
+        for (final Element elementIt : elements) {
+            contextObject.addParameter(doElementParameter(elementIt));
+        }
+        return contextObject;
+    }
+
+    private String doElementParameter(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        return xpather.getTextAttr(Const.XPATH_A_VALUE);
     }
 
     private void doElementsHttp11(final List<Element> elements) throws IOException {
@@ -302,6 +345,7 @@ public class ApplicationConfig {
         private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_TARGET = "@target";
         private static final String XPATH_A_THREADS = "@threads";
+        private static final String XPATH_A_TYPE = "@type";
         private static final String XPATH_A_VALUE = "@value";
     }
 }
