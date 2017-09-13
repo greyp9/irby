@@ -12,6 +12,8 @@ import javax.naming.NamingException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
+import java.util.regex.Pattern;
 
 // stackoverflow 10045466 20359483
 @SuppressWarnings("PMD.TooManyMethods")
@@ -25,7 +27,8 @@ public class IrbyContext implements javax.naming.Context {
 
     @Override
     public final String toString() {
-        return String.format("%s/%s/%s", hashCode(), parentContext.hashCode(), bindings.size());
+        return String.format("%s/%s/%s", hashCode(),
+                ((parentContext == null) ? null : parentContext.hashCode()), bindings.size());
     }
 
     public IrbyContext(final IrbyContext parentContext) {
@@ -98,7 +101,14 @@ public class IrbyContext implements javax.naming.Context {
 
     @Override
     public final NamingEnumeration<NameClassPair> list(final String name) throws NamingException {
-        throw new IllegalStateException();
+        final Pattern pattern = Pattern.compile(name);
+        final Vector<NameClassPair> pairsByName = new Vector<NameClassPair>();
+        for (Binding binding : bindings.values()) {
+            if (pattern.matcher(binding.getName()).matches()) {
+                pairsByName.add(binding);
+            }
+        }
+        return new NamesEnumeration(pairsByName.elements());
     }
 
     @Override
@@ -108,7 +118,14 @@ public class IrbyContext implements javax.naming.Context {
 
     @Override
     public final NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
-        throw new IllegalStateException();
+        final Pattern pattern = Pattern.compile(name);
+        final Vector<Binding> bindingsByName = new Vector<Binding>();
+        for (Binding binding : bindings.values()) {
+            if (pattern.matcher(binding.getName()).matches()) {
+                bindingsByName.add(binding);
+            }
+        }
+        return new ValuesEnumeration(bindingsByName.elements());
     }
 
     @Override

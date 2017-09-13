@@ -56,6 +56,8 @@ public class Application {
         for (final ContextConfig contextConfig : config.getContextConfigs()) {
             ContextFactory.create(contextConfig);
         }
+        //final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(getClass().getName());
+        //logger.info("AFTER ContextFactory.create()" + IrbyContextU.enumerate(null));
         // web servers
         for (final Http11Config http11Config : config.getHttp11Configs()) {
             executorService.execute(Http11Runnable.create(http11Config, realms, executorService, reference));
@@ -91,6 +93,7 @@ public class Application {
         for (final ContextConfig contextConfig : config.getContextConfigs()) {
             ContextFactory.teardown(contextConfig);
         }
+        //logger.info("AFTER ContextFactory.teardown()" + IrbyContextU.enumerate(null));
         return results.toString();
     }
 

@@ -44,8 +44,10 @@ public class NameLookupRunnable implements Runnable {
             final boolean isReachable = address.isReachable(timeout);
             final long elapsed = stopwatch.lap();
             final TimeHistogram histogram = (TimeHistogram) AppNaming.lookup(toContext, toObject);
-            histogram.normalize(date);
-            histogram.add(date, isReachable ? elapsed : Integer.MAX_VALUE);
+            if (histogram != null) {
+                histogram.normalize(date);
+                histogram.add(date, isReachable ? elapsed : Integer.MAX_VALUE);
+            }
         } catch (IOException e) {
             logger.severe(e.getMessage());
         }
