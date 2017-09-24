@@ -34,8 +34,6 @@
                 <init-param name="histogram-name-lookup" value="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram"/>
                 <init-param name="histogram-ping" value="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram"/>
             </servlet>
-            <!--update-->
-            <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
             <!--static resources-->
             <servlet enabled='true' path='/res' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
                 <init-param name='resource' value='webapp/res'/>
@@ -82,6 +80,8 @@
             <servlet enabled='true' path='/cron' class="io.github.greyp9.irby.core.servlet.cron.CronServlet" auth-constraint="*">
                 <init-param name="io.github.greyp9.irby.core.cron.service.CronService" value="Irby-Cron"/>
             </servlet>
+            <!--update-->
+            <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
         </web-app>
     </https11>
     <cron enabled="true" name="Irby-Cron" tz="GMT">
