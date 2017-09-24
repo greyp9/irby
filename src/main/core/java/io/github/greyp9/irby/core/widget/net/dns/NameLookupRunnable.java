@@ -41,16 +41,21 @@ public class NameLookupRunnable implements Runnable {
         try {
             final Stopwatch stopwatch = new Stopwatch(className);
             final InetAddress address = InetAddress.getByName(host);
-            final boolean isReachable = address.isReachable(timeout);
             final long elapsed = stopwatch.lap();
-            final TimeHistogram histogram = (TimeHistogram) AppNaming.lookup(toContext, toObject);
-            if (histogram != null) {
-                histogram.normalize(date);
-                histogram.add(date, isReachable ? elapsed : Integer.MAX_VALUE);
-            }
+            logger.fine(String.format("%s:%d", toObject, elapsed));
+            recordMetric(elapsed);
         } catch (IOException e) {
             logger.severe(e.getMessage());
+            recordMetric(Integer.MAX_VALUE);
         }
         logger.exiting(className, methodName);
+    }
+
+    private void recordMetric(long elapsed) {
+        final TimeHistogram histogram = (TimeHistogram) AppNaming.lookup(toContext, toObject);
+        if (histogram != null) {
+            histogram.normalize(date);
+            histogram.add(date, elapsed);
+        }
     }
 }
