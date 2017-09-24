@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,11 +78,17 @@ public class Application {
         for (final CronConfig cronConfig : config.getCronConfigs()) {
             executorService.execute(CronRunnable.create(cronConfig, executorService, reference));
         }
+        // record executor state (should be no queued tasks)
+        final Collection<String> results = new ArrayList<String>();
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
+            results.add(String.format("%s,TASKS=%d,ACTIVE=%d,QUEUED=%d", tpe.getClass().getSimpleName(),
+                    tpe.getTaskCount(), tpe.getActiveCount(), tpe.getQueue().size()));
+        }
         // wait until shutdown signaled
         while (reference.get() == null) {
             MutexU.waitUntil(reference, DurationU.add(DateU.now(), DateU.Const.TZ_GMT, DurationU.Const.ONE_HOUR));
         }
-        final Collection<String> results = new ArrayList<String>();
         results.add(reference.get());
         // clean application shutdown
         executorService.shutdownNow();
