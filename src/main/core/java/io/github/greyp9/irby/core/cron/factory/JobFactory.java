@@ -12,15 +12,16 @@ import java.util.logging.Logger;
 public class JobFactory {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public final Runnable getRunnable(final String className, final Element element, final Date date) {
+    public final Runnable getRunnable(final String className, final Element element,
+                                      final String name, final Date date) {
         Runnable runnable = null;
         try {
             final Class<?> c = Class.forName(className);
             final Type type = c.getGenericSuperclass();
             final Class<?> s = (type instanceof Class<?>) ? ((Class<?>) type) : null;
             if (CronRunnable.class.equals(s)) {
-                final Constructor<?> ctor = c.getConstructor(Date.class, Element.class);
-                runnable = (Runnable) ctor.newInstance(date, element);
+                final Constructor<?> ctor = c.getConstructor(String.class, Date.class, Element.class);
+                runnable = (Runnable) ctor.newInstance(name, date, element);
             } else if (Runnable.class.equals(s)) {
                 final Constructor<?> ctor = c.getConstructor();
                 runnable = (Runnable) ctor.newInstance();

@@ -89,23 +89,23 @@ public class CronService {
         for (final CronJobQ jobQ : jobs) {
             for (final CronJobX jobX : jobsX) {
                 if (jobX.getName().equals(jobQ.getName())) {
-                    doJob(jobQ.getDate(), jobX);
+                    doJob(jobQ.getName(), jobQ.getDate(), jobX);
                 }
             }
         }
         // scheduled jobs
         for (final CronJobX job : jobsX) {
             if (job.getJob().isReady(date, timeZone)) {
-                doJob(date, job);
+                doJob(job.getJob().getName(), date, job);
             }
         }
     }
 
-    private void doJob(final Date date, final CronJobX job) {
+    private void doJob(final String name, final Date date, final CronJobX job) {
         //job.getName();  // should pass name along to invocation (logging)
         final JobFactory factory = new JobFactory();
         final String className = lookupClassName(job.getClassName());
-        final Runnable runnable = factory.getRunnable(className, job.getElement(), date);
+        final Runnable runnable = factory.getRunnable(className, job.getElement(), name, date);
         if (runnable instanceof CommandRunnable) {
             ((CommandRunnable) runnable).setExecutorService(executorService);
         }

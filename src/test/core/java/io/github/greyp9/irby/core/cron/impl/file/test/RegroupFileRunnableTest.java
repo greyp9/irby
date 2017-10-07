@@ -43,7 +43,8 @@ public class RegroupFileRunnableTest extends TestCase {
                 "target='/tmp/RegroupFileRunnableTest/regroup/$DATE.zip'/>";
         // run job
         final Element element = DocumentU.toDocument(config).getDocumentElement();
-        final RegroupFileRunnable runnable = new RegroupFileRunnable(new Date(), element);
+        final RegroupFileRunnable runnable = new RegroupFileRunnable(
+                getClass().getSimpleName(), new Date(), element);
         try {
             runnable.run();
         } catch (Throwable e) {

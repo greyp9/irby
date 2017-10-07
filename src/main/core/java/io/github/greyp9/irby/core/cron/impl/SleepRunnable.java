@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 public class SleepRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public SleepRunnable(final Date date, final Element element) {
-        super(date, element);
+    public SleepRunnable(final String name, final Date date, final Element element) {
+        super(name, date, element);
     }
 
     @Override

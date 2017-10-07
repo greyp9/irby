@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 public class CompressFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public CompressFileRunnable(Date date, Element element) {
-        super(date, element);
+    public CompressFileRunnable(String name, Date date, Element element) {
+        super(name, date, element);
     }
 
     @Override

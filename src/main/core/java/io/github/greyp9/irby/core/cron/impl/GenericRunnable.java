@@ -15,23 +15,22 @@ import java.util.logging.Logger;
 public class GenericRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GenericRunnable(final Date date, final Element element) {
-        super(date, element);
+    public GenericRunnable(final String name, final Date date, final Element element) {
+        super(name, date, element);
     }
 
     @Override
     public final void run() {
         final String className = getClass().getName();
-        final String date = XsdDateU.toXSDZMillis(getDate());
-        final String methodName = String.format("run(%s)", date);
+        final String methodName = String.format("run(%s)", XsdDateU.toXSDZMillis(getDate()));
         logger.entering(className, methodName);
         final String runnableClassName = ElementU.getAttribute(getElement(), Const.TYPE);
         final String parameters = ElementU.getAttribute(getElement(), Const.PARAMETERS);
         final String[] parametersArray = StringU.tokenize(parameters, StringU.Const.WHITESPACE);
         try {
             final Class<?> c = Class.forName(runnableClassName);
-            final Constructor<?> constructor = c.getConstructor(String[].class);
-            Runnable runnable = (Runnable) constructor.newInstance((Object) parametersArray);
+            final Constructor<?> constructor = c.getConstructor(String.class, Date.class, String[].class);
+            Runnable runnable = (Runnable) constructor.newInstance(getName(), getDate(), (Object) parametersArray);
             runnable.run();
         } catch (ClassNotFoundException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);

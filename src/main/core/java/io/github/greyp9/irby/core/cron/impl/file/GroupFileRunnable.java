@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 public class GroupFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GroupFileRunnable(Date date, Element element) {
-        super(date, element);
+    public GroupFileRunnable(String name, Date date, Element element) {
+        super(name, date, element);
     }
 
     @Override

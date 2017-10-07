@@ -40,7 +40,8 @@ public class GroupFileRunnableTest extends TestCase {
                 "target='/tmp/GroupFileRunnableTest/$DATE.zip'/>";
         // run job
         final Element element = DocumentU.toDocument(config).getDocumentElement();
-        final GroupFileRunnable runnable = new GroupFileRunnable(new Date(), element);
+        final GroupFileRunnable runnable = new GroupFileRunnable(
+                getClass().getSimpleName(), new Date(), element);
         runnable.run();
     }
 

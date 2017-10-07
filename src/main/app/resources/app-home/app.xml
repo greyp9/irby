@@ -4,6 +4,7 @@
 
     <context enabled="false" name="application">
         <object name="histogram-name-lookup" type="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram">
+            <param name="folder" value="./data/histogram/name-lookup"/>
             <param name="durationCell" value="PT1M"/>
             <param name="durationWord" value="PT15M"/>
             <param name="durationLine" value="PT1H"/>
@@ -12,6 +13,7 @@
             <param name="durationPages" value="P3D"/>
         </object>
         <object name="histogram-ping" type="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram">
+            <param name="folder" value="./data/histogram/ping"/>
             <param name="durationCell" value="PT1M"/>
             <param name="durationWord" value="PT15M"/>
             <param name="durationLine" value="PT1H"/>
@@ -88,13 +90,17 @@
         <job enabled="false" name="backup-app-log" schedule="0 0 * * *">
             <copy-file source="./app.[1|2|3|4].log" target="./app.$DATE.log"/>
         </job>
-        <job enabled="false" name="testing-lookup" schedule="* * * * *">
+        <job enabled="false" name="testing-dns" schedule="* * * * *">
             <generic type="io.github.greyp9.irby.core.widget.net.dns.NameLookupRunnable"
                      parameters="amazon.com PT3S application histogram-name-lookup"/>
         </job>
-        <job enabled="false" name="testing-lookup" schedule="* * * * *">
+        <job enabled="false" name="testing-icmp" schedule="* * * * *">
             <generic type="io.github.greyp9.irby.core.widget.net.icmp.PingRunnable"
                      parameters="amazon.com PT3S application histogram-ping"/>
+        </job>
+        <job enabled="false" name="testing-http" schedule="* * * * *">
+            <generic type="io.github.greyp9.irby.core.widget.net.http.WgetRunnable"
+                     parameters="https://localhost:8443/ TLS +RYAe+CiKp1pJ8+pBCIPQGNl1Q2rPhvo0MtOqSso3IU= GET YXJ3bzphcndv ./cron/wget/wget.$DATE.html"/>
         </job>
     </cron>
 </irby:application>
