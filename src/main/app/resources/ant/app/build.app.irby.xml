@@ -146,6 +146,7 @@
             <!--servlets-->
             <include name='io/github/greyp9/arwo/app/daemon/connect/servlet/ConnectionServlet.java'/>
             <include name='io/github/greyp9/arwo/app/dash/servlet/DashServlet.java'/>
+            <include name='io/github/greyp9/arwo/app/diag/servlet/EnvServlet.java'/>
             <include name='io/github/greyp9/arwo/app/exec/servlet/ExecutorServlet.java'/>
             <include name='io/github/greyp9/arwo/app/lifecycle/servlet/AppLifecycleServlet.java'/>
             <include name='io/github/greyp9/arwo/app/local/servlet/LFSServlet.java'/>
