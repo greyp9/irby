@@ -80,9 +80,11 @@
                 <init-param name='index' value='index.html'/>
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
             </servlet>
-            <servlet enabled='true' path='/cron' class="io.github.greyp9.irby.core.servlet.cron.CronServlet" auth-constraint="*">
+            <!--cron-->
+            <servlet enabled='true' path='/cron/tab' class="io.github.greyp9.irby.core.servlet.cron.CronTabServlet" auth-constraint="*">
                 <init-param name="io.github.greyp9.irby.core.cron.service.CronService" value="Irby-Cron"/>
             </servlet>
+            <servlet enabled='true' path='/cron/service' class="io.github.greyp9.irby.core.servlet.cron.CronServiceServlet" auth-constraint="*"/>
             <!--update-->
             <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
         </web-app>

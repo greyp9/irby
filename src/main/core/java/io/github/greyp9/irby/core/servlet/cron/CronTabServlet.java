@@ -50,7 +50,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class CronServlet extends javax.servlet.http.HttpServlet {
+public class CronTabServlet extends javax.servlet.http.HttpServlet {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private transient CronService cronService;
