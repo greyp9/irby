@@ -160,6 +160,7 @@
             <include name='io/github/greyp9/arwo/app/local/sh/cron/SHRunnable.java'/>
             <include name='io/github/greyp9/arwo/core/cron/instance/ArgumentsRunnable.java'/>
             <include name='io/github/greyp9/arwo/core/cron/instance/SleepRunnable.java'/>
+            <include name='io/github/greyp9/arwo/core/metric/histogram/cron/TimeHistogramSaveRunnable.java'/>
         </javac>
     </target>
 
