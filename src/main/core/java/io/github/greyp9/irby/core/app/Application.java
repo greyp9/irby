@@ -9,6 +9,7 @@ import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.factory.ContextFactory;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.service.CronRunnable;
+import io.github.greyp9.irby.core.depend.ApplicationResolver;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.server.Http11Runnable;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
@@ -44,6 +45,7 @@ public class Application {
     @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException {
         final ApplicationConfig config = new ApplicationConfig(url);
+        new ApplicationResolver(config).resolveDependencies();
         final ExecutorService executorService = ExecutorServiceFactory.create(
                 config.getThreads(), getClass().getSimpleName());
         final AtomicReference<String> reference = new AtomicReference<String>();

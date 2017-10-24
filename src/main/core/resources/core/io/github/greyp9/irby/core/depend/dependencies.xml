@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<irby:dependencies xmlns="urn:irby:depend" xmlns:irby="urn:irby:depend">
+    <binding>
+        <!--ssh-->
+        <entry className="io.github.greyp9.arwo.app.ssh.servlet.SFTPServlet" remoteId="ganymed"/>
+        <entry className="io.github.greyp9.arwo.app.ssh.servlet.SHServlet" remoteId="ganymed"/>
+        <entry className="io.github.greyp9.arwo.app.ssh.sftp.cron.SFTPRunnable" remoteId="ganymed"/>
+        <entry className="io.github.greyp9.arwo.app.ssh.sftp.cron.SHRunnable" remoteId="ganymed"/>
+        <!--cifs-->
+        <entry className="io.github.greyp9.arwo.app.cifs.servlet.CIFSServlet" remoteId="jcifs"/>
+        <entry className="io.github.greyp9.arwo.app.cifs.fs.cron.CIFSRunnable" remoteId="jcifs"/>
+        <!--j-interop-->
+        <entry className="io.github.greyp9.arwo.app.interop.servlet.SHServlet" remoteId="j-interop"/>
+        <entry className="io.github.greyp9.arwo.app.interop.sh.cron.SHRunnable" remoteId="j-interop"/>
+        <!--webdav-->
+        <entry className="io.github.greyp9.arwo.app.webdav.servlet.WebDAVServlet" remoteId="sardine"/>
+        <!--mail-->
+        <entry className="io.github.greyp9.arwo.app.mail.imap.servlet.IMAPServlet" remoteId="javax.mail"/>
+        <entry className="io.github.greyp9.arwo.app.mail.pop3.servlet.POP3Servlet" remoteId="javax.mail"/>
+        <entry className="io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet" remoteId="javax.mail"/>
+    </binding>
+    <resource>
+        <!--ssh-->
+        <entry remoteId="ganymed" md5="69d9067fc89719ad4d19af60a7b3c980" sha1="7761dc665d0f6993dc846d914214fb93291e2bdf"
+               resource="http://repo1.maven.org/maven2/ch/ethz/ganymed/ganymed-ssh2/262/ganymed-ssh2-262.jar"/>
+        <!--cifs-->
+        <entry remoteId="jcifs" md5="82c887a09c5826b5839a15a69e4a50ad" sha1="60e3805e7bcfe96bf1f1907b821d251cc9d789ec"
+               resource="http://repo1.maven.org/maven2/jcifs/jcifs/1.3.17/jcifs-1.3.17.jar"/>
+        <!--j-interop-->
+        <entry remoteId="j-interop" md5="dcab461d2318ee9cfed99b58b286c2e2" sha1="6182b8d7515d4b38ab1c68bbde6bd625f10078bf"
+               resource="http://repo1.maven.org/maven2/org/glassfish/main/external/j-interop-repackaged/4.1.1/j-interop-repackaged-4.1.1.jar"/>
+        <!--webdav-->
+        <entry remoteId="sardine" md5="9de778cfa829cfdd6f1fc9b3b3de34c2" sha1="b34f418d6d55fb967b927f8229f1087d0813e232"
+               resource="http://repo1.maven.org/maven2/com/github/lookfirst/sardine/5.6/sardine-5.6.jar"/>
+        <entry remoteId="sardine" md5="38f9399922142fc9538d690dbaae7e2e" sha1="016d0bc512222f1253ee6b64d389c84e22f697f0"
+               resource="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.4.1/httpclient-4.4.1.jar"/>
+        <entry remoteId="sardine" md5="27bf6d5323a86a6115b607ce82512d6c" sha1="f5aa318bda4c6c8d688c9d00b90681dcd82ce636"
+               resource="http://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar"/>
+        <entry remoteId="sardine" md5="040b4b4d8eac886f6b4a2a3bd2f31b00" sha1="4bfc12adfe4842bf07b657f0369c4cb522955686"
+               resource="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+        <!--mail-->
+        <entry remoteId="javax.mail" md5="e5c34cb9d16967375c823d4503270a10" sha1="2dd6b709ca0d35853a6061c83434a9b94533b877"
+               resource="http://repo1.maven.org/maven2/com/sun/mail/javax.mail/1.5.4/javax.mail-1.5.4.jar"/>
+    </resource>
+</irby:dependencies>
