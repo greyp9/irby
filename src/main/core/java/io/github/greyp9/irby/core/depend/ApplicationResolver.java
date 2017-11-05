@@ -54,7 +54,7 @@ public class ApplicationResolver {
                 }
             }
         }
-        logger.info(String.format("DEPENDENCY COUNT=[%d]", dependencies.size()));
+        logger.finer(String.format("DEPENDENCY COUNT=[%d]", dependencies.size()));
         for (final Dependency dependency : dependencies) {
             resolveDependency(dependency);
         }
@@ -62,13 +62,13 @@ public class ApplicationResolver {
 
     public void resolveDependency(final Dependency dependency) throws IOException {
         // only proceed if local copy of resource not present
-        final String resource = dependency.getResource();
-        final String filename = new File(resource).getName();
-        final File file = new File(".", filename);
-        logger.info(String.format("LOOK FOR [%s]", file.getAbsolutePath()));
+        final String src = dependency.getSrc();
+        final String dest = dependency.getDest();
+        final File file = new File(".", dest);
+        logger.finer(String.format("LOOK FOR [%s]", file.getAbsolutePath()));
         if (!file.exists()) {
-            logger.info(String.format("DOWNLOAD SOURCE=[%s]", dependency.getResource()));
-            final URL url = new URL(resource);
+            logger.info(String.format("DOWNLOAD SOURCE=[%s]", src));
+            final URL url = new URL(src);
             final NameTypeValues headersRequest = NTV.create();
             final HttpRequest httpRequest = new HttpRequest(
                     Http.Method.GET, url.getFile(), url.getQuery(), headersRequest, null);
