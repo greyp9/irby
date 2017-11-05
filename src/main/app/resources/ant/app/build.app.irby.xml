@@ -162,6 +162,7 @@
             <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/file/FileServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/res/ResourceServlet.java'/>
+            <include name='io/github/greyp9/irby/core/servlet/status/RedirectServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/update/UpdateServlet.java'/>
             <include name='io/github/greyp9/irby/core/widget/net/dns/NameLookupRunnable.java'/>
             <include name='io/github/greyp9/irby/core/widget/net/http/WgetRunnable.java'/>

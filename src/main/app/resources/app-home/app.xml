@@ -2,28 +2,33 @@
 <irby:application xmlns='urn:irby:app' xmlns:irby='urn:irby:app' threads='6' loop='PT1S'>
     <realm enabled='true' name='Irby-Arwo' method='Basic' type='arwo' context='/arwo'/>
 
-    <context enabled="false" name="application">
-        <object name="histogram-name-lookup" type="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram">
-            <param name="folder" value="./data/histogram/name-lookup"/>
-            <param name="durationCell" value="PT1M"/>
-            <param name="durationWord" value="PT15M"/>
-            <param name="durationLine" value="PT1H"/>
-            <param name="durationParagraph" value="PT6H"/>
-            <param name="durationPage" value="P1D"/>
-            <param name="durationPages" value="P1D"/>
+    <context enabled='false' name='application'>
+        <object name='histogram-name-lookup' type='io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram'>
+            <param name='folder' value='./data/histogram/name-lookup'/>
+            <param name='durationCell' value='PT1M'/>
+            <param name='durationWord' value='PT15M'/>
+            <param name='durationLine' value='PT1H'/>
+            <param name='durationParagraph' value='PT6H'/>
+            <param name='durationPage' value='P1D'/>
+            <param name='durationPages' value='P1D'/>
         </object>
-        <object name="histogram-ping" type="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram">
-            <param name="folder" value="./data/histogram/ping"/>
-            <param name="durationCell" value="PT1M"/>
-            <param name="durationWord" value="PT15M"/>
-            <param name="durationLine" value="PT1H"/>
-            <param name="durationParagraph" value="PT6H"/>
-            <param name="durationPage" value="P1D"/>
-            <param name="durationPages" value="P1D"/>
+        <object name='histogram-ping' type='io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram'>
+            <param name='folder' value='./data/histogram/ping'/>
+            <param name='durationCell' value='PT1M'/>
+            <param name='durationWord' value='PT15M'/>
+            <param name='durationLine' value='PT1H'/>
+            <param name='durationParagraph' value='PT6H'/>
+            <param name='durationPage' value='P1D'/>
+            <param name='durationPages' value='P1D'/>
         </object>
     </context>
 
     <https11 enabled='true' name='tls-8443' port='8443' threads='12' keyStoreFile='server.pkcs12' keyStoreType='PKCS12' keyStorePass='irby' protocol='TLS'>
+        <web-app enabled='true' path=''>
+            <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.status.RedirectServlet'>
+                <init-param name='Location' value='/arwo'/>
+            </servlet>
+        </web-app>
         <web-app enabled='true' path='/arwo' realm='Irby-Arwo'>
             <!--initialization-->
             <servlet enabled='true' path='/init/arwo/naming' class='io.github.greyp9.arwo.app.naming.servlet.NamingServlet' auth-constraint='*'/>
@@ -32,9 +37,9 @@
             <servlet enabled='true' path='/init/arwo/appLifecycle' class='io.github.greyp9.arwo.app.lifecycle.servlet.AppLifecycleServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/init/arwo/daemon' class='io.github.greyp9.arwo.app.daemon.connect.servlet.ConnectionServlet' auth-constraint='*'/>
             <!--visualizations-->
-            <servlet auth-constraint="*" class="io.github.greyp9.arwo.app.vis.servlet.VisualizationServlet" enabled="true" path="/vis">
-                <init-param name="histogram-name-lookup" value="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram"/>
-                <init-param name="histogram-ping" value="io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram"/>
+            <servlet auth-constraint='*' class='io.github.greyp9.arwo.app.vis.servlet.VisualizationServlet' enabled='true' path='/vis'>
+                <init-param name='histogram-name-lookup' value='io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram'/>
+                <init-param name='histogram-ping' value='io.github.greyp9.arwo.core.metric.histogram.core.TimeHistogram'/>
             </servlet>
             <!--static resources-->
             <servlet enabled='true' path='/res' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
@@ -68,22 +73,22 @@
             <servlet enabled='true' path='/lfs' class='io.github.greyp9.arwo.app.local.servlet.LFSServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/lsh' class='io.github.greyp9.arwo.app.local.servlet.SHServlet' auth-constraint='*'/>
             <!--ssh - [http://repo1.maven.org/maven2/ch/ethz/ganymed/ganymed-ssh2/]-->
-            <servlet enabled="false" path="/sftp" class="io.github.greyp9.arwo.app.ssh.servlet.SFTPServlet" auth-constraint="*"/>
-            <servlet enabled="false" path="/ssh" class="io.github.greyp9.arwo.app.ssh.servlet.SHServlet" auth-constraint="*"/>
+            <servlet enabled='false' path='/sftp' class='io.github.greyp9.arwo.app.ssh.servlet.SFTPServlet' auth-constraint='*'/>
+            <servlet enabled='false' path='/ssh' class='io.github.greyp9.arwo.app.ssh.servlet.SHServlet' auth-constraint='*'/>
             <!--cifs - [http://repo1.maven.org/maven2/jcifs/jcifs/]-->
-            <servlet enabled="false" path="/cifs" class="io.github.greyp9.arwo.app.cifs.servlet.CIFSServlet" auth-constraint="*"/>
+            <servlet enabled='false' path='/cifs' class='io.github.greyp9.arwo.app.cifs.servlet.CIFSServlet' auth-constraint='*'/>
             <!--j-interop - [http://repo1.maven.org/maven2/org/glassfish/main/external/j-interop-repackaged/]-->
             <servlet enabled='false' path='/wsh' class='io.github.greyp9.arwo.app.interop.servlet.SHServlet' auth-constraint='*'/>
             <!--webdav - [http://repo1.maven.org/maven2/com/github/lookfirst/sardine/]-->
             <servlet enabled='false' path='/webdav' class='io.github.greyp9.arwo.app.webdav.servlet.WebDAVServlet' auth-constraint='*'/>
             <!--mail - [http://repo1.maven.org/maven2/com/sun/mail/javax.mail/]-->
-            <servlet enabled="false" path="/smtp" class="io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet" auth-constraint="*"/>
-            <servlet enabled="false" path="/imap" class="io.github.greyp9.arwo.app.mail.imap.servlet.IMAPServlet" auth-constraint="*"/>
-            <servlet enabled="false" path="/pop3" class="io.github.greyp9.arwo.app.mail.pop3.servlet.POP3Servlet" auth-constraint="*"/>
+            <servlet enabled='false' path='/smtp' class='io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet' auth-constraint='*'/>
+            <servlet enabled='false' path='/imap' class='io.github.greyp9.arwo.app.mail.imap.servlet.IMAPServlet' auth-constraint='*'/>
+            <servlet enabled='false' path='/pop3' class='io.github.greyp9.arwo.app.mail.pop3.servlet.POP3Servlet' auth-constraint='*'/>
             <!--jdbc-->
-            <servlet enabled="false" path="/jdbc" class="io.github.greyp9.arwo.app.jdbc.servlet.JDBCServlet" auth-constraint="*"/>
+            <servlet enabled='false' path='/jdbc' class='io.github.greyp9.arwo.app.jdbc.servlet.JDBCServlet' auth-constraint='*'/>
             <!--jdbc - [cache BLOBs and CLOBs]-->
-            <servlet enabled="false" path="/cache" class="io.github.greyp9.arwo.app.cache.servlet.CacheServlet" auth-constraint="*"/>
+            <servlet enabled='false' path='/cache' class='io.github.greyp9.arwo.app.cache.servlet.CacheServlet' auth-constraint='*'/>
         </web-app>
         <web-app enabled='true' path='/irby' realm='Irby-Arwo'>
             <!--static resources-->
@@ -98,33 +103,33 @@
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
             </servlet>
             <!--cron-->
-            <servlet enabled='true' path='/cron/tab' class="io.github.greyp9.irby.core.servlet.cron.CronTabServlet" auth-constraint="*">
-                <init-param name="io.github.greyp9.irby.core.cron.service.CronService" value="Irby-Cron"/>
+            <servlet enabled='true' path='/cron/tab' class='io.github.greyp9.irby.core.servlet.cron.CronTabServlet' auth-constraint='*'>
+                <init-param name='io.github.greyp9.irby.core.cron.service.CronService' value='Irby-Cron'/>
             </servlet>
-            <servlet enabled='true' path='/cron/service' class="io.github.greyp9.irby.core.servlet.cron.CronServiceServlet" auth-constraint="*"/>
+            <servlet enabled='true' path='/cron/service' class='io.github.greyp9.irby.core.servlet.cron.CronServiceServlet' auth-constraint='*'/>
             <!--update-->
             <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
         </web-app>
     </https11>
-    <cron enabled="true" name="Irby-Cron" tz="GMT">
-        <job enabled="false" name="backup-app-log" schedule="0 0 * * *">
-            <copy-file source="./app.[1|2|3|4].log" target="./app.$DATE.log"/>
+    <cron enabled='true' name='Irby-Cron' tz='GMT'>
+        <job enabled='false' name='backup-app-log' schedule='0 0 * * *'>
+            <copy-file source='./app.[1|2|3|4].log' target='./app.$DATE.log'/>
         </job>
-        <job enabled="false" name="testing-dns" schedule="* * * * *">
-            <generic type="io.github.greyp9.irby.core.widget.net.dns.NameLookupRunnable"
-                     parameters="amazon.com PT3S application histogram-name-lookup"/>
+        <job enabled='false' name='testing-dns' schedule='* * * * *'>
+            <generic type='io.github.greyp9.irby.core.widget.net.dns.NameLookupRunnable'
+                     parameters='amazon.com PT3S application histogram-name-lookup'/>
         </job>
-        <job enabled="false" name="testing-icmp" schedule="* * * * *">
-            <generic type="io.github.greyp9.irby.core.widget.net.icmp.PingRunnable"
-                     parameters="amazon.com PT3S application histogram-ping"/>
+        <job enabled='false' name='testing-icmp' schedule='* * * * *'>
+            <generic type='io.github.greyp9.irby.core.widget.net.icmp.PingRunnable'
+                     parameters='amazon.com PT3S application histogram-ping'/>
         </job>
-        <job enabled="false" name="save-histograms" schedule="*/15 * * * *">
-            <generic type="io.github.greyp9.arwo.core.metric.histogram.cron.TimeHistogramSaveRunnable"
-                     parameters="application" />
+        <job enabled='false' name='save-histograms' schedule='*/15 * * * *'>
+            <generic type='io.github.greyp9.arwo.core.metric.histogram.cron.TimeHistogramSaveRunnable'
+                     parameters='application' />
         </job>
-        <job enabled="false" name="testing-http" schedule="* * * * *">
-            <generic type="io.github.greyp9.irby.core.widget.net.http.WgetRunnable"
-                     parameters="https://localhost:8443/ TLS +RYAe+CiKp1pJ8+pBCIPQGNl1Q2rPhvo0MtOqSso3IU= GET YXJ3bzphcndv ./cron/wget/wget.$DATE.html"/>
+        <job enabled='false' name='testing-http' schedule='* * * * *'>
+            <generic type='io.github.greyp9.irby.core.widget.net.http.WgetRunnable'
+                     parameters='https://localhost:8443/ TLS +RYAe+CiKp1pJ8+pBCIPQGNl1Q2rPhvo0MtOqSso3IU= GET YXJ3bzphcndv ./cron/wget/wget.$DATE.html'/>
         </job>
     </cron>
 </irby:application>
