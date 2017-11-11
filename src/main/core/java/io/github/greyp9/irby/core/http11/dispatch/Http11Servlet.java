@@ -41,6 +41,7 @@ public class Http11Servlet {
         try {
             final Http11Authenticator authenticator = new Http11Authenticator(realm, servletConfig.getConfig());
             final Principal principal = authenticator.authorize(authenticator.authenticate(http11Request));
+            http11Request.setUser((principal == null) ? null : principal.getName());
             final HttpServletRequest request = new Http11ServletRequest(http11Request, servletConfig, principal);
             final HttpServletResponse response = new Http11ServletResponse(http11Response);
             // hand off to servlet implementation

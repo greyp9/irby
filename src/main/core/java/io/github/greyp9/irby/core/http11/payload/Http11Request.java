@@ -16,6 +16,8 @@ public class Http11Request {
     private final Http11Header header;
     private final byte[] entity;
 
+    private String user;
+
     public final Socket getSocket() {
         return socket;
     }
@@ -28,6 +30,14 @@ public class Http11Request {
         return new ByteArrayInputStream((entity == null) ? new byte[0] : entity);
     }
 
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
     public final ServletInputStream getInputStream() throws IOException {
         return new Http11ServletInputStream(getEntity());
     }
@@ -38,6 +48,7 @@ public class Http11Request {
         final byte[] headerBytes = StreamU.readUntil(bis, Const.DELIMITER);
         this.header = new Http11Header(headerBytes);
         this.entity = getEntity(header, bis);
+        this.user = null;
     }
 
     private static byte[] getEntity(final Http11Header header, final BufferedInputStream bis) throws IOException {

@@ -157,6 +157,7 @@
             <include name='io/github/greyp9/irby/app/trigger/AppTrigger.java'/>
             <include name='io/github/greyp9/irby/core/cron/impl/*Runnable.java'/>
             <include name='io/github/greyp9/irby/core/cron/impl/file/*Runnable.java'/>
+            <include name='io/github/greyp9/irby/core/logging/*FileHandler.java'/>
             <include name='io/github/greyp9/irby/core/servlet/cron/CronServiceServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/cron/CronTabServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/echo/EchoServlet.java'/>

@@ -2,6 +2,7 @@ package io.github.greyp9.irby.core.http11.payload;
 
 import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.http.Http;
+import io.github.greyp9.arwo.core.lang.NumberU;
 import io.github.greyp9.arwo.core.value.NameTypeValue;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
 import io.github.greyp9.irby.core.http11.servlet25.Http11ServletOutputStream;
@@ -37,6 +38,14 @@ public class Http11Response {
 
     public final ServletOutputStream getOutputStream() throws IOException {
         return new Http11ServletOutputStream(entity);
+    }
+
+    public final int getStatus() {
+        return NumberU.toInt(properties.getProperty(""), 0);
+    }
+
+    public final int getSize() {
+        return entity.size();
     }
 
     public final void setStatus(final int status) {

@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.http11.dispatch;
 
+import io.github.greyp9.irby.core.http11.access.AccessLogger;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
 import io.github.greyp9.irby.core.http11.payload.Http11Request;
@@ -23,6 +24,7 @@ public class Http11Dispatcher {
     private final Http11Config config;
     private final Realms realms;
     private final Map<String, Http11Context> contexts;
+    private final AccessLogger accessLogger;
 
     public final Http11Config getConfig() {
         return config;
@@ -32,6 +34,7 @@ public class Http11Dispatcher {
         this.config = config;
         this.realms = realms;
         this.contexts = new TreeMap<String, Http11Context>();
+        this.accessLogger = new AccessLogger();
     }
 
     public final void unregister() {
@@ -65,7 +68,8 @@ public class Http11Dispatcher {
     }
 
     public final void doSocket(final Socket socket) throws IOException {
-        final Http11Request request = new Http11Request(socket);
+        final long millis = System.currentTimeMillis();
+        final Http11Request http11Request = new Http11Request(socket);
 /*
         logger.finest(request.getHeader().getRequestLine());
         for (String headerLine : request.getHeader().getHeaderLines()) {
@@ -74,20 +78,21 @@ public class Http11Dispatcher {
         final ByteArrayInputStream entity = request.getEntity();
         logger.finest(String.format("[%d]", entity.available()));
 */
-        final Http11Response response = new Http11Response(socket);
-        final String uri = request.getHeader().getRequestURI();
+        final Http11Response http11Response = new Http11Response(socket);
+        final String uri = http11Request.getHeader().getRequestURI();
         if (uri == null) {
-            response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
+            http11Response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
         } else {
             final Http11Context context = selectContext(uri);
             final Http11Servlet servlet = ((context == null) ? null : context.select(uri));
             if (servlet == null) {
-                response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+                http11Response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                servlet.service(request, response);
+                servlet.service(http11Request, http11Response);
             }
         }
-        response.write();
+        accessLogger.log(millis, http11Request, http11Response);
+        http11Response.write();
         socket.close();
     }
 
