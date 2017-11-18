@@ -44,11 +44,13 @@
             <!--static resources-->
             <servlet enabled='true' path='/res' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
                 <init-param name='resource' value='webapp/res'/>
+                <init-param name='expires' value='P1D'/>
                 <init-param name='.css' value='text/css'/>
                 <init-param name='.ico' value='image/x-icon'/>
             </servlet>
             <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
                 <init-param name='resource' value='webapp/arwo'/>
+                <init-param name='expires' value='P1D'/>
                 <init-param name='index' value='index.html'/>
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
             </servlet>

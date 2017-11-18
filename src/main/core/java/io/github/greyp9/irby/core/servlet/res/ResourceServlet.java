@@ -1,5 +1,8 @@
 package io.github.greyp9.irby.core.servlet.res;
 
+import io.github.greyp9.arwo.core.date.DateU;
+import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.date.HttpDateU;
 import io.github.greyp9.arwo.core.file.FileX;
 import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.io.StreamU;
@@ -13,9 +16,10 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 public class ResourceServlet extends javax.servlet.http.HttpServlet {
-
+    private static final long serialVersionUID = -7121477612798528644L;
 
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
@@ -56,6 +60,7 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
             final String contentType = getInitParameter(Http.Token.DOT + new FileX(resource).getExtension());
             final byte[] entity = StreamU.read(is);
             response.setStatus(HttpURLConnection.HTTP_OK);
+            addHeaderExpires(response);
             response.setContentType(Value.defaultOnEmpty(contentType, Http.Mime.TEXT_PLAIN_UTF8));
             response.getOutputStream().write(entity);
         }
@@ -81,7 +86,16 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
         return false;
     }
 
+    private void addHeaderExpires(final HttpServletResponse response) {
+        final String initParamExpires = getInitParameter(Const.INIT_PARAM_EXPIRES);
+        if (initParamExpires != null) {
+            final Date dateExpires = DurationU.add(new Date(), DateU.Const.TZ_GMT, initParamExpires);
+            response.setHeader(Http.Header.EXPIRES, HttpDateU.toHttpZ(dateExpires));
+        }
+    }
+
     private static class Const {
+        private static final String INIT_PARAM_EXPIRES = "expires";  // i18n internal
         private static final String INIT_PARAM_INDEX = "index";  // i18n internal
         private static final String INIT_PARAM_RESOURCE = "resource";  // i18n internal
     }

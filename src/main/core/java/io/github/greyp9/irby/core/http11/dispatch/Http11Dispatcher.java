@@ -82,7 +82,6 @@ public class Http11Dispatcher {
             doSocket(http11Request, http11Response);
         } finally {
             accessLogger.log(http11Request.getMillis(), http11Request, http11Response);
-            socket.close();
         }
     }
 

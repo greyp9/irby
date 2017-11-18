@@ -15,7 +15,7 @@ public class Http11Request {
     private final long millis;
     private final Socket socket;
     private final Http11Header header;
-    private final BufferedInputStream bis;
+    private final byte[] entity;
 
     private String user;
 
@@ -31,8 +31,7 @@ public class Http11Request {
         return header;
     }
 
-    public final ByteArrayInputStream getEntity() throws IOException {
-        final byte[] entity = getEntity(header, bis);
+    public final ByteArrayInputStream getEntity() {
         return new ByteArrayInputStream((entity == null) ? new byte[0] : entity);
     }
 
@@ -51,9 +50,10 @@ public class Http11Request {
     public Http11Request(final Socket socket) throws IOException {
         this.millis = System.currentTimeMillis();
         this.socket = socket;
-        this.bis = new BufferedInputStream(socket.getInputStream());
+        final BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         final byte[] headerBytes = StreamU.readUntil(bis, Const.DELIMITER);
         this.header = new Http11Header(headerBytes);
+        this.entity = getEntity(header, bis);
         this.user = null;
     }
 
