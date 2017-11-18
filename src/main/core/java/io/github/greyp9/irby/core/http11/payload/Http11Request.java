@@ -14,6 +14,7 @@ import java.net.Socket;
 public class Http11Request {
     private final long millis;
     private final Socket socket;
+    private final boolean isValid;
     private final Http11Header header;
     private final byte[] entity;
 
@@ -25,6 +26,10 @@ public class Http11Request {
 
     public final Socket getSocket() {
         return socket;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 
     public final Http11Header getHeader() {
@@ -52,8 +57,9 @@ public class Http11Request {
         this.socket = socket;
         final BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         final byte[] headerBytes = StreamU.readUntil(bis, Const.DELIMITER);
-        this.header = new Http11Header(headerBytes);
-        this.entity = getEntity(header, bis);
+        this.isValid = (headerBytes.length >= Const.DELIMITER.length);
+        this.header = (isValid ? new Http11Header(headerBytes) : null);
+        this.entity = (isValid ? getEntity(header, bis) : null);
         this.user = null;
     }
 

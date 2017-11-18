@@ -78,10 +78,12 @@ public class Http11Dispatcher {
         logger.finest(String.format("[%d]", entity.available()));
 */
         final Http11Response http11Response = new Http11Response(socket);
-        try {
-            doSocket(http11Request, http11Response);
-        } finally {
-            accessLogger.log(http11Request.getMillis(), http11Request, http11Response);
+        if (http11Request.isValid()) {
+            try {
+                doSocket(http11Request, http11Response);
+            } finally {
+                accessLogger.log(http11Request.getMillis(), http11Request, http11Response);
+            }
         }
     }
 
