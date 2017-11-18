@@ -12,11 +12,16 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class Http11Request {
+    private final long millis;
     private final Socket socket;
     private final Http11Header header;
-    private final byte[] entity;
+    private final BufferedInputStream bis;
 
     private String user;
+
+    public final long getMillis() {
+        return millis;
+    }
 
     public final Socket getSocket() {
         return socket;
@@ -26,7 +31,8 @@ public class Http11Request {
         return header;
     }
 
-    public final ByteArrayInputStream getEntity() {
+    public final ByteArrayInputStream getEntity() throws IOException {
+        final byte[] entity = getEntity(header, bis);
         return new ByteArrayInputStream((entity == null) ? new byte[0] : entity);
     }
 
@@ -43,11 +49,11 @@ public class Http11Request {
     }
 
     public Http11Request(final Socket socket) throws IOException {
+        this.millis = System.currentTimeMillis();
         this.socket = socket;
-        final BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+        this.bis = new BufferedInputStream(socket.getInputStream());
         final byte[] headerBytes = StreamU.readUntil(bis, Const.DELIMITER);
         this.header = new Http11Header(headerBytes);
-        this.entity = getEntity(header, bis);
         this.user = null;
     }
 

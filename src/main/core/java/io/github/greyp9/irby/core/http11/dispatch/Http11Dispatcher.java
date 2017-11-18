@@ -68,7 +68,6 @@ public class Http11Dispatcher {
     }
 
     public final void doSocket(final Socket socket) throws IOException {
-        final long millis = System.currentTimeMillis();
         final Http11Request http11Request = new Http11Request(socket);
 /*
         logger.finest(request.getHeader().getRequestLine());
@@ -79,6 +78,16 @@ public class Http11Dispatcher {
         logger.finest(String.format("[%d]", entity.available()));
 */
         final Http11Response http11Response = new Http11Response(socket);
+        try {
+            doSocket(http11Request, http11Response);
+        } finally {
+            accessLogger.log(http11Request.getMillis(), http11Request, http11Response);
+            socket.close();
+        }
+    }
+
+    private void doSocket(final Http11Request http11Request,
+                          final Http11Response http11Response) throws IOException {
         final String uri = http11Request.getHeader().getRequestURI();
         if (uri == null) {
             http11Response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
@@ -91,9 +100,7 @@ public class Http11Dispatcher {
                 servlet.service(http11Request, http11Response);
             }
         }
-        accessLogger.log(millis, http11Request, http11Response);
         http11Response.write();
-        socket.close();
     }
 
     private Http11Context selectContext(final String uri) {
