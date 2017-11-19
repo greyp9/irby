@@ -1,11 +1,17 @@
 package io.github.greyp9.irby.core.servlet.res;
 
+import io.github.greyp9.arwo.app.core.servlet.ServletU;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.HttpDateU;
 import io.github.greyp9.arwo.core.file.FileX;
 import io.github.greyp9.arwo.core.http.Http;
+import io.github.greyp9.arwo.core.http.HttpResponse;
+import io.github.greyp9.arwo.core.http.gz.HttpResponseGZipU;
+import io.github.greyp9.arwo.core.http.servlet.ServletHttpRequest;
 import io.github.greyp9.arwo.core.io.StreamU;
+import io.github.greyp9.arwo.core.value.NTV;
+import io.github.greyp9.arwo.core.value.NameTypeValues;
 import io.github.greyp9.arwo.core.value.Value;
 
 import javax.servlet.ServletException;
@@ -40,11 +46,12 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
         if (pathInfo == null) {
             response.sendRedirect(request.getRequestURI() + Http.Token.SLASH);
         } else {
-            doGet(pathInfo, response, initParamResource, initParamIndex);
+            doGet(pathInfo, request, response, initParamResource, initParamIndex);
         }
     }
 
-    private void doGet(final String pathInfo, final HttpServletResponse response,
+    private void doGet(final String pathInfo,
+                       final HttpServletRequest request, final HttpServletResponse response,
                        final String initParamResource, final String initParamIndex)
             throws ServletException, IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
@@ -57,13 +64,20 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
         if (is == null) {
             response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         } else {
-            final String contentType = getInitParameter(Http.Token.DOT + new FileX(resource).getExtension());
-            final byte[] entity = StreamU.read(is);
-            response.setStatus(HttpURLConnection.HTTP_OK);
-            addHeaderExpires(response);
-            response.setContentType(Value.defaultOnEmpty(contentType, Http.Mime.TEXT_PLAIN_UTF8));
-            response.getOutputStream().write(entity);
+            doGet(request, response, resource, StreamU.read(is));
         }
+    }
+
+    private void doGet(final HttpServletRequest request, final HttpServletResponse response,
+                       final String resource, final byte[] entity) throws IOException {
+        final ServletHttpRequest httpRequest = ServletU.read(request);
+        final NameTypeValues headers = NTV.create();
+        final String contentType = getInitParameter(Http.Token.DOT + new FileX(resource).getExtension());
+        headers.add(Http.Header.CONTENT_TYPE, Value.defaultOnEmpty(contentType, Http.Mime.TEXT_PLAIN_UTF8));
+        headers.addNN(Http.Header.EXPIRES, getExpires());
+        final HttpResponse httpResponse = new HttpResponse(HttpURLConnection.HTTP_OK, headers, entity);
+        final HttpResponse httpResponseGZ = HttpResponseGZipU.toHttpResponseGZip(httpRequest, httpResponse);
+        ServletU.write(httpResponseGZ, response);
     }
 
     private boolean isFolder(InputStream is) throws IOException {
@@ -86,12 +100,14 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
         return false;
     }
 
-    private void addHeaderExpires(final HttpServletResponse response) {
+    private String getExpires() {
+        String expires = null;
         final String initParamExpires = getInitParameter(Const.INIT_PARAM_EXPIRES);
         if (initParamExpires != null) {
             final Date dateExpires = DurationU.add(new Date(), DateU.Const.TZ_GMT, initParamExpires);
-            response.setHeader(Http.Header.EXPIRES, HttpDateU.toHttpZ(dateExpires));
+            expires = HttpDateU.toHttpZ(dateExpires);
         }
+        return expires;
     }
 
     private static class Const {
