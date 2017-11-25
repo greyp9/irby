@@ -20,8 +20,9 @@ public class Http11ServletFactory {
             final Class<?> c = Class.forName(config.getClassName());
             final HttpServlet httpServlet = (HttpServlet) c.newInstance();
             final Http11ServletConfig servletConfig = new Http11ServletConfig(config, servletContext);
+            final Http11Authenticator authenticator = new Http11Authenticator(realm, servletConfig.getConfig());
             httpServlet.init(servletConfig);
-            servlet = new Http11Servlet(servletConfig, realm, httpServlet);
+            servlet = new Http11Servlet(servletConfig, authenticator, httpServlet);
         } catch (ClassNotFoundException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         } catch (InstantiationException e) {
