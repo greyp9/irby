@@ -2,6 +2,7 @@ package io.github.greyp9.irby.core.cron.impl.file;
 
 import io.github.greyp9.arwo.core.date.DateX;
 import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.file.FileU;
 import io.github.greyp9.arwo.core.file.find.FindInFolderQuery;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.lang.SystemU;
@@ -34,14 +35,17 @@ public class CopyFileRunnable extends CronRunnable {
         logger.entering(className, methodName);
         final String source = SystemU.resolve(ElementU.getAttribute(getElement(), Const.SOURCE));
         final String target = SystemU.resolve(ElementU.getAttribute(getElement(), Const.TARGET));
-        logger.log(Level.FINEST, String.format("[%s][%s][%s]", XsdDateU.toXSDZMillis(getDate()), source, target));
-        new Job(source, target).execute();
+        final String move = SystemU.resolve(ElementU.getAttribute(getElement(), Const.MOVE));
+        logger.log(Level.FINEST, String.format("[%s][%s][%s][%s]",
+                XsdDateU.toXSDZMillis(getDate()), source, target, move));
+        new Job(source, target, Boolean.parseBoolean(move)).execute();
         logger.exiting(className, methodName);
     }
 
     private static class Const {
         private static final String SOURCE = "source";  // i18n internal
         private static final String TARGET = "target";  // i18n internal
+        private static final String MOVE = "move";  // i18n internal
     }
 
     private static class Job {
@@ -49,10 +53,12 @@ public class CopyFileRunnable extends CronRunnable {
 
         private final String source;
         private final String target;
+        private final boolean move;
 
-        public Job(final String source, final String target) {
+        public Job(final String source, final String target, final boolean move) {
             this.source = source;
             this.target = target;
+            this.move = move;
         }
 
         public void execute() {
@@ -90,6 +96,9 @@ public class CopyFileRunnable extends CronRunnable {
                 logger.finest(String.format("%d [%s]", bytes.length, fileSource.getAbsolutePath()));
                 StreamU.write(fileTarget, bytes);
                 logger.finest(String.format("%d [%s]", bytes.length, fileTarget.getAbsolutePath()));
+                if (move) {
+                    logger.finest(String.format("%s [%s]", FileU.delete(fileSource), fileSource.getAbsolutePath()));
+                }
             } catch (IOException e) {
                 logger.warning(e.getMessage());
             }

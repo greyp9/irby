@@ -218,6 +218,7 @@
     <xsd:complexType name="jobCopyFileType">
         <xsd:attribute name='source' type='xsd:string'/>
         <xsd:attribute name='target' type='xsd:string'/>
+        <xsd:attribute name='move' type='xsd:boolean'/>
     </xsd:complexType>
 
     <xsd:complexType name="jobCompressFileType">
