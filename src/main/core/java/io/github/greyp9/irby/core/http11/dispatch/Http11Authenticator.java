@@ -89,8 +89,10 @@ public class Http11Authenticator {
         } else if (principal instanceof AppPrincipal) {
             final AppPrincipal appPrincipal = (AppPrincipal) principal;
             if (appPrincipal.isAuthenticated()) {
-                logger.info(String.format("blacklist; remove address [%s]", hostAddress));
-                blacklist.remove(hostAddress);
+                final Counters.Counter counterRemoved = blacklist.remove(hostAddress);
+                if (counterRemoved != null) {
+                    logger.info(String.format("blacklist; remove address [%s]", hostAddress));
+                }
             } else {
                 blacklist.add(hostAddress, 1);
             }
