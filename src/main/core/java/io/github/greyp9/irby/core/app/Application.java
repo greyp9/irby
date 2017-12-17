@@ -3,6 +3,7 @@ package io.github.greyp9.irby.core.app;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
+import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
@@ -31,7 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -82,11 +82,7 @@ public class Application {
         }
         // record executor state (should be no queued tasks)
         final Collection<String> results = new ArrayList<String>();
-        if (executorService instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
-            results.add(String.format("%s,TASKS=%d,ACTIVE=%d,QUEUED=%d", tpe.getClass().getSimpleName(),
-                    tpe.getTaskCount(), tpe.getActiveCount(), tpe.getQueue().size()));
-        }
+        results.add(ThreadPoolU.getTelemetry(executorService));
         // wait until shutdown signaled
         while (reference.get() == null) {
             MutexU.waitUntil(reference, DurationU.add(DateU.now(), DateU.Const.TZ_GMT, DurationU.Const.ONE_HOUR));
