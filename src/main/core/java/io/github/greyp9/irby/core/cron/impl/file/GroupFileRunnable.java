@@ -8,6 +8,7 @@ import io.github.greyp9.arwo.core.file.filter.FilterFiles;
 import io.github.greyp9.arwo.core.file.find.FindInFolderQuery;
 import io.github.greyp9.arwo.core.file.group.FileGrouper;
 import io.github.greyp9.arwo.core.file.zip.ZipAppender;
+import io.github.greyp9.arwo.core.lang.NumberU;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.xml.ElementU;
@@ -39,10 +40,11 @@ public class GroupFileRunnable extends CronRunnable {
         final String source = SystemU.resolve(ElementU.getAttribute(getElement(), Const.SOURCE));
         final String target = SystemU.resolve(ElementU.getAttribute(getElement(), Const.TARGET));
         final String interval = ElementU.getAttribute(getElement(), Const.INTERVAL);
+        final String ignore = SystemU.resolve(ElementU.getAttribute(getElement(), Const.IGNORE));
         final String comment = XsdDateU.toXSDZ(getDate());
         logger.log(Level.FINEST, String.format("[%s][%s][%s]", XsdDateU.toXSDZMillis(getDate()), source, target));
         try {
-            new Job(getDate(), source, target, interval, comment).execute();
+            new Job(getDate(), source, target, interval, ignore, comment).execute();
         } catch (IOException e) {
             logger.severe(e.getMessage());
         }
@@ -53,6 +55,7 @@ public class GroupFileRunnable extends CronRunnable {
         private static final String SOURCE = "source";  // i18n internal
         private static final String TARGET = "target";  // i18n internal
         private static final String INTERVAL = "interval";  // i18n internal
+        private static final String IGNORE = "ignore";  // i18n internal
     }
 
     private static class Job {
@@ -62,14 +65,16 @@ public class GroupFileRunnable extends CronRunnable {
         private final String source;
         private final String target;
         private final String interval;
+        private final int ignore;
         private final String comment;
 
         public Job(final Date date, final String source, final String target,
-                   final String interval, final String comment) {
+                   final String interval, final String ignore, final String comment) {
             this.date = date;
             this.source = source;
             this.target = target;
             this.interval = interval;
+            this.ignore = NumberU.toInt(ignore, 0);
             this.comment = comment;
         }
 
@@ -84,6 +89,8 @@ public class GroupFileRunnable extends CronRunnable {
             final Collection<File> files = query.getFound();
             logger.finest("" + files.size());
             FilterFiles.byAgeMin(files, date, DurationU.Const.ONE_MINUTE);
+            logger.finest("" + files.size());
+            FilterFiles.byOldest(files, ignore);
             logger.finest("" + files.size());
             final FileGrouper fileGrouper = new FileGrouper(interval);
             for (File file : files) {
