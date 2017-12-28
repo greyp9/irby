@@ -264,6 +264,46 @@
         <concat destfile='${webapp.res.dir}/css/webapp.css' description='assemble single CSS resource'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war/css' includes='*.css'/>
         </concat>
+        <!--mozilla theme CSS (derived from default)-->
+        <copy overwrite='true' tofile='${webapp.res.dir}/css/webapp.moz.css'
+              file='${webapp.res.dir}/css/webapp.css' description='mozilla theme'>
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from='HighlightText' to='#ffffff'/>
+                    <replacestring from='Highlight' to='#4a90d9'/>
+                    <replacestring from='InfoBackground' to='#000000'/>
+                    <replacestring from='InfoText' to='#ffffff'/>
+                    <replacestring from='Window' to='#ededed'/>
+                    <replacestring from='ButtonFace' to='#ededed'/>
+                    <replacestring from='ButtonText' to='#2e3436'/>
+                </tokenfilter>
+            </filterchain>
+        </copy>
+        <!--chrome theme CSS (derived from default)-->
+        <copy overwrite='true' tofile='${webapp.res.dir}/css/webapp.crm.css'
+              file='${webapp.res.dir}/css/webapp.css' description='chrome theme'>
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from='HighlightText' to='#000000'/>
+                    <replacestring from='Highlight' to='#b5d5ff'/>
+                    <replacestring from='InfoBackground' to='#fbfcc5'/>
+                    <replacestring from='InfoText' to='#000000'/>
+                    <replacestring from='Window' to='#ffffff'/>
+                    <replacestring from='ButtonFace' to='#dddddd'/>
+                    <replacestring from='ButtonText' to='#000000'/>
+                </tokenfilter>
+            </filterchain>
+        </copy>
+<!--
+        <replace file='${webapp.res.dir}/css/webapp.moz.css'
+-->
+<!--
+            <filterset begintoken='' endtoken=''>
+                <filter token='InfoBackground' value='rgb(0,0,0)'/>
+                <filter token='InfoText' value='rgb(255,255,255)'/>
+            </filterset>
+        </copy>
+-->
         <!--icons-->
         <copy overwrite='true' todir='${webapp.res.dir}' description='static resources'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
