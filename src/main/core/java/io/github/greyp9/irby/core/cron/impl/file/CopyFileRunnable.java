@@ -70,6 +70,7 @@ public class CopyFileRunnable extends CronRunnable {
             final Pattern pattern = Pattern.compile(filePatternSource.getName());
             final FindInFolderQuery query = new FindInFolderQuery(folderSource, pattern, false);
             final Collection<File> files = query.getFound();
+            logger.finest("FOUND=%s" + files.size());
             for (File file : files) {
                 executeOne(file);
             }
