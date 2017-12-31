@@ -40,11 +40,12 @@ public class GroupFileRunnable extends CronRunnable {
         final String source = SystemU.resolve(ElementU.getAttribute(getElement(), Const.SOURCE));
         final String target = SystemU.resolve(ElementU.getAttribute(getElement(), Const.TARGET));
         final String interval = ElementU.getAttribute(getElement(), Const.INTERVAL);
+        final String minAge = ElementU.getAttribute(getElement(), Const.MIN_AGE);
         final String ignore = SystemU.resolve(ElementU.getAttribute(getElement(), Const.IGNORE));
         final String comment = XsdDateU.toXSDZ(getDate());
         logger.log(Level.FINEST, String.format("[%s][%s][%s]", XsdDateU.toXSDZMillis(getDate()), source, target));
         try {
-            new Job(getDate(), source, target, interval, ignore, comment).execute();
+            new Job(getDate(), source, target, interval, minAge, ignore, comment).execute();
         } catch (IOException e) {
             logger.severe(e.getMessage());
         }
@@ -55,6 +56,7 @@ public class GroupFileRunnable extends CronRunnable {
         private static final String SOURCE = "source";  // i18n internal
         private static final String TARGET = "target";  // i18n internal
         private static final String INTERVAL = "interval";  // i18n internal
+        private static final String MIN_AGE = "min-age";  // i18n internal
         private static final String IGNORE = "ignore";  // i18n internal
     }
 
@@ -65,15 +67,17 @@ public class GroupFileRunnable extends CronRunnable {
         private final String source;
         private final String target;
         private final String interval;
+        private final String minAge;
         private final int ignore;
         private final String comment;
 
         public Job(final Date date, final String source, final String target,
-                   final String interval, final String ignore, final String comment) {
+                   final String interval, final String minAge, final String ignore, final String comment) {
             this.date = date;
             this.source = source;
             this.target = target;
             this.interval = interval;
+            this.minAge = minAge;
             this.ignore = NumberU.toInt(ignore, 0);
             this.comment = comment;
         }
@@ -89,6 +93,8 @@ public class GroupFileRunnable extends CronRunnable {
             final Collection<File> files = query.getFound();
             logger.finest("" + files.size());
             FilterFiles.byAgeMin(files, date, DurationU.Const.ONE_MINUTE);
+            logger.finest("" + files.size());
+            FilterFiles.byAgeMin(files, date, minAge);
             logger.finest("" + files.size());
             FilterFiles.byOldest(files, ignore);
             logger.finest("" + files.size());

@@ -230,6 +230,7 @@
         <xsd:attribute name='source' type='xsd:string'/>
         <xsd:attribute name='target' type='xsd:string'/>
         <xsd:attribute name='interval' type='xsd:duration'/>
+        <xsd:attribute name='min-age' type='xsd:duration'/>
         <xsd:attribute name='ignore' type='xsd:unsignedShort'/>
     </xsd:complexType>
 
