@@ -244,6 +244,7 @@
     <xsd:complexType name="jobHttpType">
         <xsd:attribute name='protocol' type='xsd:string'/>
         <xsd:attribute name='certificate' type='xsd:string'/>
+        <xsd:attribute name='proxy' type='xsd:string'/>
         <xsd:attribute name='method' type='xsd:string'/>
         <xsd:attribute name='authorization' type='xsd:string'/>
         <xsd:attribute name='source-url' type='xsd:string'/>

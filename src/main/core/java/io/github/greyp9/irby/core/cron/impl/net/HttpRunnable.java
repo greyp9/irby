@@ -10,6 +10,8 @@ import io.github.greyp9.arwo.core.http.HttpResponse;
 import io.github.greyp9.arwo.core.httpclient.HttpClientU;
 import io.github.greyp9.arwo.core.httpclient.HttpsClient;
 import io.github.greyp9.arwo.core.io.StreamU;
+import io.github.greyp9.arwo.core.net.ProxyU;
+import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.value.NTV;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
 import io.github.greyp9.arwo.core.value.Value;
@@ -19,6 +21,7 @@ import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
@@ -42,6 +45,7 @@ public class HttpRunnable extends CronRunnable {
         logger.entering(className, methodName);
         final String protocol = ElementU.getAttribute(getElement(), Const.PROTOCOL);
         final String certificate = ElementU.getAttribute(getElement(), Const.CERTIFICATE);
+        final String proxy = ElementU.getAttribute(getElement(), Const.PROXY);
         final String method = ElementU.getAttribute(getElement(), Const.METHOD);
         final String authorization = ElementU.getAttribute(getElement(), Const.AUTHORIZATION);
         final String sourceUrl = ElementU.getAttribute(getElement(), Const.SOURCE_URL);
@@ -49,7 +53,7 @@ public class HttpRunnable extends CronRunnable {
         logger.log(Level.FINEST, String.format("[%s][%s][%s]",
                 XsdDateU.toXSDZMillis(getDate()), sourceUrl, targetFile));
         try {
-            new Job(getDate(), protocol, certificate, method, authorization, sourceUrl, targetFile).execute();
+            new Job(getDate(), protocol, certificate, proxy, method, authorization, sourceUrl, targetFile).execute();
         } catch (IOException e) {
             logger.severe(e.getMessage());
         } catch (GeneralSecurityException e) {
@@ -61,6 +65,7 @@ public class HttpRunnable extends CronRunnable {
     private static class Const {
         private static final String PROTOCOL = "protocol";  // i18n internal
         private static final String CERTIFICATE = "certificate";  // i18n internal
+        private static final String PROXY = "proxy";  // i18n internal
         private static final String METHOD = "method";  // i18n internal
         private static final String AUTHORIZATION = "authorization";  // i18n internal
         private static final String SOURCE_URL = "source-url";  // i18n internal
@@ -73,16 +78,18 @@ public class HttpRunnable extends CronRunnable {
         private final Date date;
         private final String protocol;
         private final String certificate;
+        private final String proxy;
         private final String method;
         private final String authorization;
         private final String sourceUrl;
         private final String targetFile;
 
-        public Job(final Date date, final String protocol, final String certificate, final String method,
-                   final String authorization, final String sourceUrl, final String targetFile) {
+        public Job(final Date date, final String protocol, final String certificate, final String proxy,
+                   final String method, final String authorization, final String sourceUrl, final String targetFile) {
             this.date = date;
             this.protocol = protocol;
             this.certificate = certificate;
+            this.proxy = proxy;
             this.method = method;
             this.authorization = authorization;
             this.sourceUrl = sourceUrl;
@@ -92,7 +99,9 @@ public class HttpRunnable extends CronRunnable {
         public void execute() throws IOException, GeneralSecurityException {
             final X509Certificate certificate = Value.isEmpty(this.certificate) ? null :
                     CertificateU.toX509(UTF8Codec.toBytes(this.certificate));
-            final HttpsClient httpsClient = new HttpsClient(certificate, false);
+            final URL urlProxy = Value.isEmpty(proxy) ? null : URLCodec.toURL(proxy);
+            final Proxy proxyRunnable = ProxyU.toHttpProxy(urlProxy);
+            final HttpsClient httpsClient = new HttpsClient(certificate, false, proxyRunnable);
             final URL url = new URL(sourceUrl);
             final NameTypeValues headersRequest = NTV.create(
                     Http.Header.AUTHORIZATION, HttpClientU.toBasicAuth(authorization));
