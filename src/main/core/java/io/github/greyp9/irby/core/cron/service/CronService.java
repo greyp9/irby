@@ -132,6 +132,8 @@ public class CronService {
             className = "io.github.greyp9.irby.core.cron.impl.file.GroupFileRunnable";
         } else if ("regroup-file".equals(type)) {
             className = "io.github.greyp9.irby.core.cron.impl.file.RegroupFileRunnable";
+        } else if ("http".equals(type)) {
+            className = "io.github.greyp9.irby.core.cron.impl.net.HttpRunnable";
         }
         return className;
     }

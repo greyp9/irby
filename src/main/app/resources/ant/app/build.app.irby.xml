@@ -157,6 +157,7 @@
             <include name='io/github/greyp9/irby/app/trigger/AppTrigger.java'/>
             <include name='io/github/greyp9/irby/core/cron/impl/*Runnable.java'/>
             <include name='io/github/greyp9/irby/core/cron/impl/file/*Runnable.java'/>
+            <include name='io/github/greyp9/irby/core/cron/impl/net/*Runnable.java'/>
             <include name='io/github/greyp9/irby/core/logging/*FileHandler.java'/>
             <include name='io/github/greyp9/irby/core/servlet/cron/CronServiceServlet.java'/>
             <include name='io/github/greyp9/irby/core/servlet/cron/CronTabServlet.java'/>
@@ -294,16 +295,6 @@
                 </tokenfilter>
             </filterchain>
         </copy>
-<!--
-        <replace file='${webapp.res.dir}/css/webapp.moz.css'
--->
-<!--
-            <filterset begintoken='' endtoken=''>
-                <filter token='InfoBackground' value='rgb(0,0,0)'/>
-                <filter token='InfoText' value='rgb(255,255,255)'/>
-            </filterset>
-        </copy>
--->
         <!--icons-->
         <copy overwrite='true' todir='${webapp.res.dir}' description='static resources'>
             <fileset dir='${arwo.src.app.dir}/resources/webapp/arwo-war'>
@@ -374,6 +365,7 @@
             <fileset dir='${src.app.dir}/resources/irby-jar'>
                 <include name='io/github/greyp9/irby/xsd/**/*.properties'/>
                 <include name='io/github/greyp9/irby/xsd/**/*.xsd'/>
+                <include name='io/github/greyp9/irby/xsd/**/*.xslt'/>
             </fileset>
             <!--<fileset dir='${arwo.src.app.dir}/resources'>-->
                 <!--<include name='webapp/arwo-war/**/*.css'/>-->

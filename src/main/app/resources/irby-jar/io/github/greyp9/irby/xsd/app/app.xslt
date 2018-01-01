@@ -29,4 +29,13 @@
         </xsl:copy>
     </xsl:template>
 
+    <xsl:template match='/xsd:schema/xsd:complexType[@name="jobHttpType"]/xsd:attribute[@name="certificate"]'>
+        <xsl:copy>
+            <xsl:attribute name='xed:rows'>12</xsl:attribute>
+            <xsl:attribute name='xed:cols'>80</xsl:attribute>
+            <xsl:attribute name='xed:hideInTable'>true</xsl:attribute>
+            <xsl:apply-templates select='@*|node()'/>
+        </xsl:copy>
+    </xsl:template>
+
 </xsl:stylesheet>

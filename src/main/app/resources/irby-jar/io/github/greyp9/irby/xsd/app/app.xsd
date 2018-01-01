@@ -188,6 +188,7 @@
             <xsd:element name='compress-file' type='irby:jobCompressFileType'/>
             <xsd:element name='group-file' type='irby:jobGroupFileType'/>
             <xsd:element name='regroup-file' type='irby:jobRegroupFileType'/>
+            <xsd:element name='http' type='irby:jobHttpType'/>
         </xsd:choice>
         <xsd:attributeGroup ref='irby:jobAttributes'/>
     </xsd:complexType>
@@ -238,6 +239,15 @@
         <xsd:attribute name='source' type='xsd:string'/>
         <xsd:attribute name='target' type='xsd:string'/>
         <xsd:attribute name='interval' type='xsd:duration'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobHttpType">
+        <xsd:attribute name='protocol' type='xsd:string'/>
+        <xsd:attribute name='certificate' type='xsd:string'/>
+        <xsd:attribute name='method' type='xsd:string'/>
+        <xsd:attribute name='authorization' type='xsd:string'/>
+        <xsd:attribute name='source-url' type='xsd:string'/>
+        <xsd:attribute name='target-file' type='xsd:string'/>
     </xsd:complexType>
 
 </xsd:schema>
