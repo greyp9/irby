@@ -9,6 +9,7 @@ import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSocket;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,14 +28,16 @@ public class ProxysSocketRunnable implements Runnable {
     private final ProxysConfig config;
     private final Host host;
     private final ExecutorService executorService;
+    private final File folder;
 
     public ProxysSocketRunnable(final Socket socket, final SocketFactory socketFactory,
-                                final ProxysConfig config, final ExecutorService executorService) {
+                                final ProxysConfig config, final ExecutorService executorService, final File folder) {
         this.socket = socket;
         this.socketFactory = socketFactory;
         this.config = config;
         this.host = new Host(config.getHost());
         this.executorService = executorService;
+        this.folder = folder;
     }
 
     @Override
@@ -89,8 +92,8 @@ public class ProxysSocketRunnable implements Runnable {
         final OutputStream osS = socketServer.getOutputStream();
         final InputStream isS = socketServer.getInputStream();
         final OutputStream osC = socketClient.getOutputStream();
-        executorService.execute(new ProxyStreamRunnable("c2s", isC, osS, reference));  // i18n internal
-        executorService.execute(new ProxyStreamRunnable("s2c", isS, osC, reference));  // i18n internal
+        executorService.execute(new ProxyStreamRunnable("c2s", folder, isC, osS, reference));  // i18n internal
+        executorService.execute(new ProxyStreamRunnable("s2c", folder, isS, osC, reference));  // i18n internal
         while (reference.get() == null) {
             ThreadU.sleepMillis(DurationU.Const.HUNDRED_MILLIS);
         }

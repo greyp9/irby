@@ -53,8 +53,8 @@ public class ProxysConfig extends ProxyConfig {
     public ProxysConfig(final String name, final int port, final int threads, final String host,
                         final String keyStoreFile, final String keyStoreType, final String keyStorePass,
                         final String clientTrustFile, final String clientTrustType, final String clientTrustPass,
-                        final String serverTrustFile, final String protocol) {
-        super(name, port, threads, host);
+                        final String serverTrustFile, final String protocol, final String folder) {
+        super(name, port, threads, host, folder);
         this.keyStoreFile = keyStoreFile;
         this.keyStoreType = keyStoreType;
         this.keyStorePass = keyStorePass;

@@ -136,6 +136,7 @@
         <xsd:attribute name='port' type='xsd:unsignedShort'/>
         <xsd:attribute name='threads' type='xsd:unsignedShort'/>
         <xsd:attribute name='host' type='xsd:string'/>
+        <xsd:attribute name='folder' type='xsd:string'/>
     </xsd:complexType>
 
     <!--proxys-->
@@ -154,6 +155,7 @@
         <xsd:attribute name='clientTrustPass' type='xsd:string'/>
         <xsd:attribute name='serverTrustFile' type='xsd:string'/>
         <xsd:attribute name='protocol' type='xsd:string'/>
+        <xsd:attribute name='folder' type='xsd:string'/>
     </xsd:complexType>
 
     <!--udp-->

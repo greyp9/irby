@@ -4,6 +4,7 @@ import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.http.header.Host;
 import io.github.greyp9.arwo.core.vm.thread.ThreadU;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,13 +21,15 @@ public class ProxySocketRunnable implements Runnable {
     private final Socket socket;
     private final Host host;
     private final ExecutorService executorService;
+    private final File folder;
     private final AtomicReference<String> reference;
 
     public ProxySocketRunnable(final Socket socket, final Host host, final ExecutorService executorService,
-                               final AtomicReference<String> reference) {
+                               final File folder, final AtomicReference<String> reference) {
         this.socket = socket;
         this.host = host;
         this.executorService = executorService;
+        this.folder = folder;
         this.reference = reference;
     }
 
@@ -71,8 +74,8 @@ public class ProxySocketRunnable implements Runnable {
         final OutputStream osS = socketServer.getOutputStream();
         final InputStream isS = socketServer.getInputStream();
         final OutputStream osC = socketClient.getOutputStream();
-        executorService.execute(new ProxyStreamRunnable("c2s", isC, osS, referenceSocket));  // i18n internal
-        executorService.execute(new ProxyStreamRunnable("s2c", isS, osC, referenceSocket));  // i18n internal
+        executorService.execute(new ProxyStreamRunnable("c2s", folder, isC, osS, referenceSocket));  // i18n internal
+        executorService.execute(new ProxyStreamRunnable("s2c", folder, isS, osC, referenceSocket));  // i18n internal
         while ((reference.get() == null) && (referenceSocket.get() == null)) {
             ThreadU.sleepMillis(DurationU.Const.HUNDRED_MILLIS);
         }

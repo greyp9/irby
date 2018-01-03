@@ -2,6 +2,7 @@ package io.github.greyp9.irby.core.proxys.server;
 
 import io.github.greyp9.arwo.core.cer.CertificateU;
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.file.FileU;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.tls.context.TLSContext;
 import io.github.greyp9.arwo.core.tls.manage.TLSKeyManager;
@@ -26,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 public class ProxysServer {
     private final ProxysConfig config;
     private final ExecutorService executorService;
+    private final File folder;
 
     // lifecycle start/stop
     private SocketFactory socketFactory;
@@ -40,6 +42,7 @@ public class ProxysServer {
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
         this.executorService = (config.isLocalExecutor() ?
                 ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.folder = FileU.toFileIfExists(config.getFolder());
         this.serverSocket = null;
     }
 
@@ -60,7 +63,7 @@ public class ProxysServer {
     public final void accept() throws IOException {
         try {
             final Socket socket = serverSocket.accept();
-            executorService.execute(new ProxysSocketRunnable(socket, socketFactory, config, executorService));
+            executorService.execute(new ProxysSocketRunnable(socket, socketFactory, config, executorService, folder));
         } catch (SocketTimeoutException e) {
             e.getClass();  // ignore; serverSocket.setSoTimeout()
         }
@@ -114,8 +117,12 @@ public class ProxysServer {
 
     private static TLSTrustManager getTrustManagerServer(final ProxysConfig config)
             throws GeneralSecurityException, IOException {
-        final File certificateFile = new File(config.getServerTrustFile());
-        final X509Certificate certificate = CertificateU.toX509(StreamU.read(certificateFile));
-        return new TLSTrustManager(new X509Certificate[] { certificate });
+        TLSTrustManager trustManager = null;  // default is to handle by delegating to builtin trust CAs
+        final File certificateFile = FileU.toFileIfExists(config.getServerTrustFile());
+        if (certificateFile != null) {
+            final X509Certificate certificate = CertificateU.toX509(StreamU.read(certificateFile));
+            trustManager = new TLSTrustManager(new X509Certificate[] { certificate });
+        }
+        return trustManager;
     }
 }

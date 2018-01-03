@@ -1,12 +1,14 @@
 package io.github.greyp9.irby.core.proxy.server;
 
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.file.FileU;
 import io.github.greyp9.arwo.core.http.header.Host;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.proxy.socket.ProxySocketRunnable;
 
 import javax.net.ServerSocketFactory;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ProxyServer {
     private final ProxyConfig config;
     private final ExecutorService executorService;
+    private final File folder;
     private final AtomicReference<String> reference;
 
     // lifecycle start/stop
@@ -33,6 +36,7 @@ public class ProxyServer {
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
         this.executorService = (config.isLocalExecutor() ?
                 ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.folder = FileU.toFileIfExists(config.getFolder());
         this.reference = reference;
         this.serverSocket = null;
     }
@@ -54,7 +58,7 @@ public class ProxyServer {
         try {
             final Socket socket = serverSocket.accept();
             executorService.execute(new ProxySocketRunnable(
-                    socket, new Host(config.getHost()), executorService, reference));
+                    socket, new Host(config.getHost()), executorService, folder, reference));
         } catch (SocketTimeoutException e) {
             e.getClass();  // ignore; serverSocket.setSoTimeout()
         }

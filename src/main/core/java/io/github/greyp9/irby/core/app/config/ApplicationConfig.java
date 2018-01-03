@@ -269,7 +269,8 @@ public class ApplicationConfig {
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final String host = xpather.getTextAttr("@host");
-        return new ProxyConfig(name, port, threadsPort, host);
+        final String folder = xpather.getTextAttr("@folder");
+        return new ProxyConfig(name, port, threadsPort, host, folder);
     }
 
     private void doElementsProxys(final List<Element> elements) throws IOException {
@@ -292,8 +293,9 @@ public class ApplicationConfig {
         final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
         final String serverTrustFile = xpather.getTextAttr("@serverTrustFile");
         final String protocol = xpather.getTextAttr("@protocol");
+        final String folder = xpather.getTextAttr("@folder");
         return new ProxysConfig(name, port, threadsPort, host, keyStoreFile, keyStoreType, keyStorePass,
-                clientTrustFile, clientTrustType, clientTrustPass, serverTrustFile, protocol);
+                clientTrustFile, clientTrustType, clientTrustPass, serverTrustFile, protocol, folder);
     }
 
     private void doElementsUDP(final List<Element> elements) throws IOException {
