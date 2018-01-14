@@ -25,7 +25,7 @@ public class ProxysRunnable implements Runnable {
     public ProxysRunnable(final ProxysConfig config,
                           final ExecutorService executorService,
                           final AtomicReference<String> reference) {
-        this.server = new ProxysServer(config, executorService);
+        this.server = new ProxysServer(config, executorService, reference);
         this.reference = reference;
     }
 
@@ -41,7 +41,7 @@ public class ProxysRunnable implements Runnable {
             server.stop();
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
-            // should component failure cause application failure?
+            // should component failure cause application failure?  if so, compareAndSet() signals process
             //reference.compareAndSet(null, String.format("[%d][%s]", server.getConfig().getPort(), e.getMessage()));
         }
         MutexU.notifyAll(reference);

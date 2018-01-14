@@ -6,6 +6,7 @@ import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("PMD.DoNotUseThreads")
@@ -39,7 +40,9 @@ public class ProxyRunnable implements Runnable {
             }
             server.stop();
         } catch (IOException e) {
-            reference.compareAndSet(null, String.format("[%d][%s]", server.getConfig().getPort(), e.getMessage()));
+            logger.log(Level.SEVERE, e.getMessage(), e);
+            // should component failure cause application failure?  if so, compareAndSet() signals process
+            //reference.compareAndSet(null, String.format("[%d][%s]", server.getConfig().getPort(), e.getMessage()));
         }
         MutexU.notifyAll(reference);
         logger.exiting(getClass().getSimpleName(), methodName);

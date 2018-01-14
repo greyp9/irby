@@ -24,13 +24,18 @@ public class ProxySocketRunnable implements Runnable {
     private final File folder;
     private final AtomicReference<String> reference;
 
+
+
     public ProxySocketRunnable(final Socket socket, final Host host, final ExecutorService executorService,
                                final File folder, final AtomicReference<String> reference) {
+
         this.socket = socket;
         this.host = host;
         this.executorService = executorService;
         this.folder = folder;
         this.reference = reference;
+
+
     }
 
     @Override
@@ -41,6 +46,9 @@ public class ProxySocketRunnable implements Runnable {
         try {
             logger.entering(className, methodName);
             doSocket();
+
+
+
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         } finally {

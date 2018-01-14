@@ -25,6 +25,7 @@ public class ProxyServer {
     // lifecycle start/stop
     private ServerSocket serverSocket;
 
+
     public final ProxyConfig getConfig() {
         return config;
     }
@@ -42,6 +43,7 @@ public class ProxyServer {
     }
 
     public final void start() throws IOException {
+
         serverSocket = startServerSocket(config);
     }
 
