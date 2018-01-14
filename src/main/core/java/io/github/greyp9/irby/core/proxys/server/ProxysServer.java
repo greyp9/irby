@@ -82,7 +82,7 @@ public class ProxysServer {
             final TLSKeyManager keyManager = getKeyManager(config);
             // trusted client SSL params
             final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManagerClient(config) : null);
-            // context
+            // context implements TLS server with optional client X.509 authentication
             final TLSContext context = new TLSContext(keyManager, trustManager, config.getProtocol());
             final SSLServerSocketFactory ssf = context.getServerSocketFactory();
             final ServerSocket serverSocket = ssf.createServerSocket(config.getPort());
@@ -95,6 +95,7 @@ public class ProxysServer {
 
     private static TLSKeyManager getKeyManager(final ProxysConfig config)
             throws GeneralSecurityException, IOException {
+        // the TLS key used by the proxy server to authenticate itself to incoming connections [@ApplicationConfig]
         final KeyStore keyStore = KeyStore.getInstance(config.getKeyStoreType());
         final File keyStoreFile = new File(config.getKeyStoreFile());
         final char[] password = config.getKeyStorePass().toCharArray();
@@ -104,6 +105,7 @@ public class ProxysServer {
 
     private static TLSTrustManager getTrustManagerClient(final ProxysConfig config)
             throws GeneralSecurityException, IOException {
+        // the TLS certificate used by the proxy server to authenticate incoming connections [@ApplicationConfig]
         final String clientTrustType = config.getClientTrustType();
         final KeyStore keyStore = KeyStore.getInstance(clientTrustType);
         final File keyStoreFile = new File(config.getClientTrustFile());
@@ -115,6 +117,7 @@ public class ProxysServer {
     private static SocketFactory getSocketFactory(final ProxysConfig config) throws IOException {
         try {
             final TLSTrustManager trustManager = getTrustManagerServer(config);
+            // context implements TLS client with optional server certificate pinning
             final TLSContext context = new TLSContext(null, trustManager, config.getProtocol());
             return context.getSocketFactory();
         } catch (GeneralSecurityException e) {
@@ -125,6 +128,7 @@ public class ProxysServer {
     private static TLSTrustManager getTrustManagerServer(final ProxysConfig config)
             throws GeneralSecurityException, IOException {
         TLSTrustManager trustManager = null;  // default is to handle by delegating to builtin trust CAs
+        // the TLS certificate used by the proxy to authenticate the server on outgoing connections [@ProxysServer]
         final File certificateFile = FileU.toFileIfExists(config.getServerTrustFile());
         if (certificateFile != null) {
             final X509Certificate certificate = CertificateU.toX509(StreamU.read(certificateFile));

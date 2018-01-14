@@ -241,9 +241,11 @@ public class ApplicationConfig {
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        // the TLS key used by the server to authenticate itself to incoming connections
         final String keyStoreFile = xpather.getTextAttr("@keyStoreFile");
         final String keyStoreType = xpather.getTextAttr("@keyStoreType");
         final String keyStorePass = xpather.getTextAttr("@keyStorePass");
+        // the TLS certificate(s) used by the server to authenticate incoming connections
         final String clientTrustFile = xpather.getTextAttr("@clientTrustFile");
         final String clientTrustType = xpather.getTextAttr("@clientTrustType");
         final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
@@ -285,12 +287,15 @@ public class ApplicationConfig {
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final String host = xpather.getTextAttr("@host");
+        // the TLS key used by the proxy to authenticate itself to incoming connections [@ProxysServer]
         final String keyStoreFile = xpather.getTextAttr("@keyStoreFile");
         final String keyStoreType = xpather.getTextAttr("@keyStoreType");
         final String keyStorePass = xpather.getTextAttr("@keyStorePass");
+        // the TLS certificate(s) used by the proxy to authenticate incoming connections [@ProxysServer]
         final String clientTrustFile = xpather.getTextAttr("@clientTrustFile");
         final String clientTrustType = xpather.getTextAttr("@clientTrustType");
         final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
+        // the TLS certificate used by the proxy to authenticate the server on outgoing connections [@ProxysServer]
         final String serverTrustFile = xpather.getTextAttr("@serverTrustFile");
         final String protocol = xpather.getTextAttr("@protocol");
         final String folder = xpather.getTextAttr("@folder");

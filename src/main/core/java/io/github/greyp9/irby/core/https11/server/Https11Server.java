@@ -72,7 +72,7 @@ public class Https11Server {
             final TLSKeyManager keyManager = getKeyManager(config);
             // trusted client SSL params
             final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManager(config) : null);
-            // context
+            // context implements TLS server with optional client X.509 authentication
             final TLSContext context = new TLSContext(keyManager, trustManager, config.getProtocol());
             final SSLServerSocketFactory ssf = context.getServerSocketFactory();
             final ServerSocket serverSocket = ssf.createServerSocket(config.getPort());
