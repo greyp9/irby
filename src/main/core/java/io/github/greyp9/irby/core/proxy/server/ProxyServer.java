@@ -2,19 +2,23 @@ package io.github.greyp9.irby.core.proxy.server;
 
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.file.FileU;
+import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.http.header.Host;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.proxy.socket.ProxySocketRunnable;
 
 import javax.net.ServerSocketFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class ProxyServer {
     private final ProxyConfig config;
@@ -38,6 +42,11 @@ public class ProxyServer {
         this.executorService = (config.isLocalExecutor() ?
                 ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
         this.folder = FileU.toFileIfExists(config.getFolder());
+        if (!Value.isEmpty(config.getFolder()) && (this.folder == null)) {
+            final Logger logger = Logger.getLogger(getClass().getName());
+            logger.warning(Value.join(Http.Token.SLASH,
+                    FileNotFoundException.class.getSimpleName(), config.getFolder()));
+        }
         this.reference = reference;
         this.serverSocket = null;
     }
