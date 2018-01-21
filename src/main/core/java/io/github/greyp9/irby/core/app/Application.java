@@ -54,8 +54,8 @@ public class Application {
         final byte[] sysenv = EnvironmentU.getEnv(Collections.<String>emptyList());
         final byte[] sysprops = SysPropsU.getProps(Collections.<String>emptyList());
         final Logger logger = Logger.getLogger(getClass().getName());
-        logger.info(String.format("ENV\n%s\n%s", UTF8Codec.toString(sysenv), FingerPrint.toHex256(sysenv)));
-        logger.info(String.format("PROP\n%s\n%s", UTF8Codec.toString(sysprops), FingerPrint.toHex256(sysprops)));
+        logger.finest(String.format("ENV\n%s\n%s", UTF8Codec.toString(sysenv), FingerPrint.toHex256(sysenv)));
+        logger.finest(String.format("PROP\n%s\n%s", UTF8Codec.toString(sysprops), FingerPrint.toHex256(sysprops)));
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
         new ApplicationResolver(config).resolveDependencies();
