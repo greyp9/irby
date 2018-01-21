@@ -1,10 +1,14 @@
 package io.github.greyp9.irby.core.app;
 
+import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.hash.text.FingerPrint;
+import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
+import io.github.greyp9.arwo.core.vm.props.SysPropsU;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.factory.ContextFactory;
@@ -31,9 +35,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class Application {
     private final String name;
@@ -44,6 +50,13 @@ public class Application {
 
     @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException {
+        // capture procenv
+        final byte[] sysenv = EnvironmentU.getEnv(Collections.<String>emptyList());
+        final byte[] sysprops = SysPropsU.getProps(Collections.<String>emptyList());
+        final Logger logger = Logger.getLogger(getClass().getName());
+        logger.info(String.format("ENV\n%s\n%s", UTF8Codec.toString(sysenv), FingerPrint.toHex256(sysenv)));
+        logger.info(String.format("PROP\n%s\n%s", UTF8Codec.toString(sysprops), FingerPrint.toHex256(sysprops)));
+        // load config
         final ApplicationConfig config = new ApplicationConfig(url);
         new ApplicationResolver(config).resolveDependencies();
         final ExecutorService executorService = ExecutorServiceFactory.create(
