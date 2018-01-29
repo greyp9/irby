@@ -18,6 +18,7 @@
     <property name='classes.arwo-app.dir' value='${target.dir}/app/classes-arwo-app'/>
     <property name='resources.arwo-app.dir' value='${target.dir}/app/resources-arwo-app'/>
     <property name='webapp.dir' value='${target.dir}/app/webapp'/>
+    <property name='webapp.doc.dir' value='${webapp.dir}/doc'/>
     <property name='webapp.res.dir' value='${webapp.dir}/res'/>
     <property name='webapp.arwo.dir' value='${webapp.dir}/arwo'/>
     <property name='webapp.irby.dir' value='${webapp.dir}/irby'/>
@@ -259,6 +260,15 @@
         </replace>
     </target>
 
+    <target name='webapp-doc' description='shared static doc for webapps'>
+        <mkdir dir='${webapp.doc.dir}'/>
+        <copy overwrite='true' todir='${webapp.doc.dir}' description='static resources'>
+            <fileset dir='${src.app.dir}/resources/doc'>
+                <include name='**/*.md'/>
+            </fileset>
+        </copy>
+    </target>
+
     <target name='webapp-res' description='shared static resources for webapps'>
         <mkdir dir='${webapp.res.dir}'/>
         <!--coalesce CSS resource from source components (for runtime efficiency)-->
@@ -335,7 +345,7 @@
         </replace>
     </target>
 
-    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, webapp-res, webapp-arwo, webapp-irby'>
+    <target name='jar-irby-app' depends='init, compile-irby, compile-arwo-app, webapp-doc, webapp-res, webapp-arwo, webapp-irby'>
         <mkdir dir='${artifact.dir}'/>
         <jar destfile='${artifact.dir}/irby.jar'>
             <fileset dir='${classes.special.dir}'>
@@ -348,6 +358,7 @@
                 <include name='**/*.class'/>
             </fileset>
             <fileset dir='${target.dir}/app' description='static resources for webapps'>
+                <include name='webapp/doc/**'/>
                 <include name='webapp/res/**'/>
                 <include name='webapp/arwo/**'/>
                 <include name='webapp/irby/**'/>
