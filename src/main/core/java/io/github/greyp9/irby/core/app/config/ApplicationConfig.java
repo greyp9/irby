@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 // i18nf
 @SuppressWarnings("PMD.TooManyMethods")
@@ -45,6 +46,7 @@ public class ApplicationConfig {
     private final Collection<ProxysConfig> proxysConfigs;
     private final Collection<UDPConfig> udpConfigs;
     private final Collection<CronConfig> cronConfigs;
+    private final Collection<AdvancedConfig> advancedConfigs;
 
     public final int getThreads() {
         return threads;
@@ -86,6 +88,23 @@ public class ApplicationConfig {
         return cronConfigs;
     }
 
+/*
+    public final Collection<AdvancedConfig> getAdvancedConfigs() {
+        return advancedConfigs;
+    }
+*/
+
+    public final AdvancedConfig getAdvancedConfig(final String name) {
+        AdvancedConfig advancedConfig = new AdvancedConfig(name, new Properties());
+        for (AdvancedConfig advancedConfigIt : advancedConfigs) {
+            if (advancedConfigIt.getName().equals(name)) {
+                advancedConfig = advancedConfigIt;
+                break;
+            }
+        }
+        return advancedConfig;
+    }
+
     public ApplicationConfig(final URL url) throws IOException {
         final Document document = DocumentU.toDocument(StreamU.read(url));
         this.context = XPathContextFactory.create(document);
@@ -102,6 +121,7 @@ public class ApplicationConfig {
         this.proxysConfigs = new ArrayList<ProxysConfig>();
         this.udpConfigs = new ArrayList<UDPConfig>();
         this.cronConfigs = new ArrayList<CronConfig>();
+        this.advancedConfigs = new ArrayList<AdvancedConfig>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsContext(xpather.getElements("/irby:application/irby:context[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
@@ -110,6 +130,7 @@ public class ApplicationConfig {
         doElementsProxys(xpather.getElements("/irby:application/irby:proxys[@enabled='true']"));
         doElementsUDP(xpather.getElements("/irby:application/irby:udp[@enabled='true']"));
         doElementsCronTab(xpather.getElements("/irby:application/irby:cron[@enabled='true']"));
+        doElementsAdvanced(xpather.getElements("/irby:application/irby:advanced[@enabled='true']"));
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -345,6 +366,26 @@ public class ApplicationConfig {
         final Element typeElement = xpather.getElement("*");
         final String className = (typeElement == null ? null : typeElement.getTagName());
         return new CronConfigJob(name, schedule, className, typeElement);
+    }
+
+    private void doElementsAdvanced(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            advancedConfigs.add(doElementAdvanced(element));
+        }
+    }
+
+    private AdvancedConfig doElementAdvanced(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final Properties properties = new Properties();
+        final List<Element> elements = xpather.getElements("irby:param");
+        for (final Element elementIt : elements) {
+            final XPather xpatherIt = new XPather(elementIt, context);
+            final String nameIt = xpatherIt.getTextAttr(Const.XPATH_A_NAME);
+            final String valueIt = xpatherIt.getTextAttr(Const.XPATH_A_VALUE);
+            properties.setProperty(nameIt, valueIt);
+        }
+        return new AdvancedConfig(name, properties);
     }
 
     private static class Const {

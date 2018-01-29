@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,15 +49,17 @@ public class Application {
 
     @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException {
+        // load config
+        final ApplicationConfig config = new ApplicationConfig(url);
         // capture procenv
-        final byte[] sysenv = EnvironmentU.getEnv(Collections.<String>emptyList());
-        final byte[] sysprops = SysPropsU.getProps(Collections.<String>emptyList());
+        final byte[] sysenv = EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames());
+        final byte[] sysprops = SysPropsU.getProps(config.getAdvancedConfig("props").getPropertyNames());
         final Logger logger = Logger.getLogger(getClass().getName());
         logger.finest(String.format("ENV\n%s\n%s", UTF8Codec.toString(sysenv), FingerPrint.toHex256(sysenv)));
         logger.finest(String.format("PROP\n%s\n%s", UTF8Codec.toString(sysprops), FingerPrint.toHex256(sysprops)));
-        // load config
-        final ApplicationConfig config = new ApplicationConfig(url);
+        // load missing dependencies
         new ApplicationResolver(config).resolveDependencies();
+        // application setup
         final ExecutorService executorService = ExecutorServiceFactory.create(
                 config.getThreads(), getClass().getSimpleName());
         final AtomicReference<String> reference = new AtomicReference<String>();
