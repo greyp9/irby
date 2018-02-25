@@ -1,9 +1,9 @@
 package io.github.greyp9.irby.core.app;
 
-import io.github.greyp9.arwo.core.charset.UTF8Codec;
+import io.github.greyp9.arwo.core.app.App;
+import io.github.greyp9.arwo.core.data.persist.DataPersist;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
-import io.github.greyp9.arwo.core.hash.text.FingerPrint;
 import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
@@ -31,6 +31,7 @@ import io.github.greyp9.irby.core.udp.config.UDPConfig;
 import io.github.greyp9.irby.core.udp.server.UDPRunnable;
 
 import javax.naming.Context;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 public class Application {
     private final String name;
@@ -51,12 +51,10 @@ public class Application {
     public final String run(final URL url) throws IOException {
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
-        // capture procenv
-        final byte[] sysenv = EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames());
-        final byte[] sysprops = SysPropsU.getProps(config.getAdvancedConfig("props").getPropertyNames());
-        final Logger logger = Logger.getLogger(getClass().getName());
-        logger.finest(String.format("ENV\n%s\n%s", UTF8Codec.toString(sysenv), FingerPrint.toHex256(sysenv)));
-        logger.finest(String.format("PROP\n%s\n%s", UTF8Codec.toString(sysprops), FingerPrint.toHex256(sysprops)));
+        // capture process environment
+        final DataPersist dataPersist = new DataPersist(new File("."), App.Action.XML);
+        dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
+        dataPersist.run("props", SysPropsU.getProps(config.getAdvancedConfig("props").getPropertyNames()));
         // load missing dependencies
         new ApplicationResolver(config).resolveDependencies();
         // application setup
