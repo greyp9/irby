@@ -4,6 +4,7 @@ import io.github.greyp9.irby.core.http11.dispatch.Http11Dispatcher;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,8 @@ public class Http11SocketRunnable implements Runnable {
     public final void run() {
         try {
             dispatcher.doSocket(socket);
+        } catch (SocketException e) {
+            logger.log(Level.INFO, e.getMessage());
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

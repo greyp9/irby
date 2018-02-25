@@ -7,6 +7,7 @@ import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +30,8 @@ public class Https11SocketRunnable implements Runnable {
         } catch (SSLHandshakeException e) {
             final String message = String.format("%s/%s", socket.getInetAddress().getHostAddress(), e.getMessage());
             logger.log(Level.INFO, message);
+        } catch (SocketException e) {
+            logger.log(Level.INFO, e.getMessage());
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
