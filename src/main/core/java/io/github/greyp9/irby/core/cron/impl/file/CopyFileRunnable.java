@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class CopyFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public CopyFileRunnable(String name, Date date, Element element) {
+    public CopyFileRunnable(final String name, final Date date, final Element element) {
         super(name, date, element);
     }
 
@@ -55,7 +55,7 @@ public class CopyFileRunnable extends CronRunnable {
         private final String target;
         private final boolean move;
 
-        public Job(final String source, final String target, final boolean move) {
+        Job(final String source, final String target, final boolean move) {
             this.source = source;
             this.target = target;
             this.move = move;

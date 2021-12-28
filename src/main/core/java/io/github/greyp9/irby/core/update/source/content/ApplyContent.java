@@ -19,11 +19,11 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ApplyContent {
+public final class ApplyContent {
     private final Logger logger = Logger.getLogger(getClass().getName());
     private final File folder;
 
-    public ApplyContent(File folder) {
+    public ApplyContent(final File folder) {
         this.folder = folder;
     }
 
@@ -36,7 +36,7 @@ public class ApplyContent {
         applyMetaFile(fileUpdate, bytes);
     }
 
-    private void applyMetaFile(File fileUpdate, byte[] bytes) {
+    private void applyMetaFile(final File fileUpdate, final byte[] bytes) {
         try {
             // log receipt
             logger.info(String.format("PATH=[%s], SIZE=[%d], SHA1=[%s]",
@@ -59,9 +59,7 @@ public class ApplyContent {
             // signal application (to quit)
             System.setProperty(Application.class.getName(), Value.join(
                     Http.Token.DOT, Application.Const.QUIT_TOKEN, getClass().getName()));
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        } catch (GeneralSecurityException e) {
+        } catch (IOException | GeneralSecurityException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }

@@ -28,7 +28,7 @@ public class Http11Request {
         return socket;
     }
 
-    public boolean isValid() {
+    public final boolean isValid() {
         return isValid;
     }
 
@@ -40,11 +40,11 @@ public class Http11Request {
         return new ByteArrayInputStream((entity == null) ? new byte[0] : entity);
     }
 
-    public String getUser() {
+    public final String getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public final void setUser(final String user) {
         this.user = user;
     }
 

@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
-public class WgetRunnable implements Runnable {
+public final class WgetRunnable implements Runnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final String name;
@@ -36,10 +36,12 @@ public class WgetRunnable implements Runnable {
     private final String authorization;
     private final String fileTo;
 
+    @SuppressWarnings("checkstyle:magicnumber")
     public WgetRunnable(final String name, final Date date, final String... params) {
         this(name, date, params[0], params[1], params[2], params[3], params[4], params[5]);
     }
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public WgetRunnable(final String name, final Date date,
                         final String url, final String protocol, final String certificateHash,
                         final String method, final String authorization, final String fileTo) {
@@ -61,9 +63,7 @@ public class WgetRunnable implements Runnable {
         try {
             httpsMethod();
             logger.fine(String.format("%s:[%s]:%s", name, XsdDateU.toXSDZMillis(date), urlFrom));
-        } catch (IOException e) {
-            logger.severe(e.getMessage());
-        } catch (GeneralSecurityException e) {
+        } catch (IOException | GeneralSecurityException e) {
             logger.severe(e.getMessage());
         }
         logger.exiting(className, methodName);

@@ -2,7 +2,7 @@ package io.github.greyp9.irby.core.cron.job;
 
 import java.util.Date;
 
-public class CronJobQ {
+public final class CronJobQ {
     private final String name;
     private final Date date;
 
@@ -14,7 +14,7 @@ public class CronJobQ {
         return date;
     }
 
-    public CronJobQ(String name, Date date) {
+    public CronJobQ(final String name, final Date date) {
         this.name = name;
         this.date = date;
     }

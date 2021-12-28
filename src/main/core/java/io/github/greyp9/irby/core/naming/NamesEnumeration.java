@@ -5,8 +5,8 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.util.Enumeration;
 
-public class NamesEnumeration implements NamingEnumeration<NameClassPair> {
-    final Enumeration<NameClassPair> pairs;
+public final class NamesEnumeration implements NamingEnumeration<NameClassPair> {
+    private final Enumeration<NameClassPair> pairs;
 
     public NamesEnumeration(final Enumeration<NameClassPair> pairs) {
         this.pairs = pairs;

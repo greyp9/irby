@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-public class ApplicationResolver {
+public final class ApplicationResolver {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final ApplicationConfig appConfig;

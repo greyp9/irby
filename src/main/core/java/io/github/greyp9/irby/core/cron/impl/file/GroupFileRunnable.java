@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class GroupFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GroupFileRunnable(String name, Date date, Element element) {
+    public GroupFileRunnable(final String name, final Date date, final Element element) {
         super(name, date, element);
     }
 
@@ -71,8 +71,8 @@ public class GroupFileRunnable extends CronRunnable {
         private final int ignore;
         private final String comment;
 
-        public Job(final Date date, final String source, final String target,
-                   final String interval, final String minAge, final String ignore, final String comment) {
+        Job(final Date date, final String source, final String target,
+            final String interval, final String minAge, final String ignore, final String comment) {
             this.date = date;
             this.source = source;
             this.target = target;
@@ -114,8 +114,7 @@ public class GroupFileRunnable extends CronRunnable {
             final File filePatternTarget = new File(target);
             final File folderTarget = filePatternTarget.getParentFile();
             // target filename timestamp
-            final String date = DateX.toFilenameMM(dateGroup);
-            final String dateNN = Value.defaultOnEmpty(date, "");
+            final String dateNN = Value.defaultOnEmpty(DateX.toFilenameMM(dateGroup), "");
             final String filenameTarget = filePatternTarget.getName().replace("$DATE", dateNN);
             final File fileTarget = new File(folderTarget, filenameTarget);
             // target file content

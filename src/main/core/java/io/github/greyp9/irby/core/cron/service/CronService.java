@@ -49,8 +49,8 @@ public class CronService {
             jobsX.add(CronJobX.create(job));
         }
         final String prefix = String.format("%s-%s", getClass().getSimpleName(), config.getName());
-        this.executorService = (config.isLocalExecutor() ?
-                ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.executorService = (config.isLocalExecutor()
+                ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
         this.reference = reference;
     }
 

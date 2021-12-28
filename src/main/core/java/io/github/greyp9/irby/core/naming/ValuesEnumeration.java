@@ -5,8 +5,8 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.util.Enumeration;
 
-public class ValuesEnumeration implements NamingEnumeration<Binding> {
-    final Enumeration<Binding> objects;
+public final class ValuesEnumeration implements NamingEnumeration<Binding> {
+    private final Enumeration<Binding> objects;
 
     public ValuesEnumeration(final Enumeration<Binding> objects) {
         this.objects = objects;

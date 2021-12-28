@@ -17,7 +17,7 @@ public class AccessFileHandler extends FileHandler {
     private static class AccessFilter implements Filter {
 
         @Override
-        public boolean isLoggable(LogRecord record) {
+        public boolean isLoggable(final LogRecord record) {
             return record.getSourceClassName().equals(AccessLogger.class.getName());
         }
     }

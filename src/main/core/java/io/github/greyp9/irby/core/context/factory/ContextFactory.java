@@ -12,7 +12,14 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ContextFactory {
+public final class ContextFactory {
+
+    /**
+     * Constructor.
+     * https://checkstyle.sourceforge.io/config_design.html#HideUtilityClassConstructor
+     */
+    private ContextFactory() {
+    }
 
     public static Context create(final ContextConfig contextConfig) {
         final Context context = AppNaming.createSubcontext(contextConfig.getName());
@@ -22,7 +29,7 @@ public class ContextFactory {
         return context;
     }
 
-    private static Object create(ContextObject objectConfig) {
+    private static Object create(final ContextObject objectConfig) {
         Logger logger = Logger.getLogger(ContextFactory.class.getName());
         final ArrayList<String> parameters = new ArrayList<String>(objectConfig.getParameters());
         parameters.add(0, objectConfig.getName());

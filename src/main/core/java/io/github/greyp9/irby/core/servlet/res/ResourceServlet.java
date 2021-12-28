@@ -78,19 +78,20 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(httpResponseGZ, response);
     }
 
-    private boolean isFolder(InputStream is) throws IOException {
+    private boolean isFolder(final InputStream is) throws IOException {
         return (isFileSystemResource(is) || isJarResource(is));
     }
 
-    private boolean isFileSystemResource(InputStream is) {
+    private boolean isFileSystemResource(final InputStream is) {
         return (is instanceof ByteArrayInputStream);
     }
 
-    private boolean isJarResource(InputStream is) throws IOException {
+    private boolean isJarResource(final InputStream is) throws IOException {
         if (is instanceof FilterInputStream) {
             try {
-                if (is.available() == 0)
+                if (is.available() == 0) {
                     return true;
+                }
             } catch (NullPointerException e) {
                 return true;
             }

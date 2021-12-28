@@ -5,13 +5,20 @@ import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
-public class IrbyContextU {
+public final class IrbyContextU {
+
+    /**
+     * Constructor.
+     * https://checkstyle.sourceforge.io/config_design.html#HideUtilityClassConstructor
+     */
+    private IrbyContextU() {
+    }
 
     public static String enumerate(final IrbyContext context) {
         StringBuilder buffer = new StringBuilder();
         try {
-            final NamingEnumeration<Binding> bindings = ((context == null) ?
-                    new InitialContext().listBindings(".*") : context.listBindings(".*"));
+            final NamingEnumeration<Binding> bindings = ((context == null)
+                    ? new InitialContext().listBindings(".*") : context.listBindings(".*"));
             while (bindings.hasMore()) {
                 final Binding binding = bindings.next();
                 buffer.append(String.format("\n[%s][%s]=[%s]",

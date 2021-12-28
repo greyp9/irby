@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * https://en.wikipedia.org/wiki/Common_Log_Format
  */
-public class HttpAccess {
+public final class HttpAccess {
     private final String remoteHost;
     private final String rfc1413;
     private final String remoteUser;
@@ -18,8 +18,8 @@ public class HttpAccess {
     private final int status;
     private final int size;
 
-    public HttpAccess(String remoteHost, String rfc1413, String remoteUser, Date date,
-                      String requestLine, int status, int size) {
+    public HttpAccess(final String remoteHost, final String rfc1413, final String remoteUser, final Date date,
+                      final String requestLine, final int status, final int size) {
         this.remoteHost = remoteHost;
         this.rfc1413 = rfc1413;
         this.remoteUser = remoteUser;

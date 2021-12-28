@@ -37,8 +37,8 @@ public class Https11Server {
         this.config = config;
         this.dispatcher = new Http11Dispatcher(config, realms);
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
-        this.executorService = (config.isLocalExecutor() ?
-                ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.executorService = (config.isLocalExecutor()
+                ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
         this.serverSocket = null;
     }
 

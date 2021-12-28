@@ -3,7 +3,7 @@ package io.github.greyp9.irby.core.context.config;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ContextConfig {
+public final class ContextConfig {
     private final String name;
     private final Collection<ContextObject> objects;
 
@@ -15,12 +15,12 @@ public class ContextConfig {
         return objects;
     }
 
-    public ContextConfig(String name) {
+    public ContextConfig(final String name) {
         this.name = name;
         this.objects = new ArrayList<ContextObject>();
     }
 
-    public final void addObject(final ContextObject object) {
+    public void addObject(final ContextObject object) {
         objects.add(object);
     }
 }

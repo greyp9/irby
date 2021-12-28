@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class HttpRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public HttpRunnable(String name, Date date, Element element) {
+    public HttpRunnable(final String name, final Date date, final Element element) {
         super(name, date, element);
     }
 
@@ -54,9 +54,7 @@ public class HttpRunnable extends CronRunnable {
                 XsdDateU.toXSDZMillis(getDate()), sourceUrl, targetFile));
         try {
             new Job(getDate(), protocol, certificate, proxy, method, authorization, sourceUrl, targetFile).execute();
-        } catch (IOException e) {
-            logger.severe(e.getMessage());
-        } catch (GeneralSecurityException e) {
+        } catch (IOException | GeneralSecurityException e) {
             logger.severe(e.getMessage());
         }
         logger.exiting(className, methodName);
@@ -84,8 +82,9 @@ public class HttpRunnable extends CronRunnable {
         private final String sourceUrl;
         private final String targetFile;
 
-        public Job(final Date date, final String protocol, final String certificate, final String proxy,
-                   final String method, final String authorization, final String sourceUrl, final String targetFile) {
+        @SuppressWarnings("checkstyle:parameternumber")
+        Job(final Date date, final String protocol, final String certificate, final String proxy,
+            final String method, final String authorization, final String sourceUrl, final String targetFile) {
             this.date = date;
             this.protocol = protocol;
             this.certificate = certificate;
@@ -97,11 +96,11 @@ public class HttpRunnable extends CronRunnable {
         }
 
         public void execute() throws IOException, GeneralSecurityException {
-            final X509Certificate certificate = Value.isEmpty(this.certificate) ? null :
-                    CertificateU.toX509(UTF8Codec.toBytes(this.certificate));
+            final X509Certificate x509Certificate = Value.isEmpty(this.certificate)
+                    ? null : CertificateU.toX509(UTF8Codec.toBytes(this.certificate));
             final URL urlProxy = Value.isEmpty(proxy) ? null : URLCodec.toURL(proxy);
             final Proxy proxyRunnable = ProxyU.toHttpProxy(urlProxy);
-            final HttpsClient httpsClient = new HttpsClient(certificate, false, proxyRunnable);
+            final HttpsClient httpsClient = new HttpsClient(x509Certificate, false, proxyRunnable);
             final URL url = new URL(sourceUrl);
             final NameTypeValues headersRequest = NTV.create(
                     Http.Header.AUTHORIZATION, HttpClientU.toBasicAuth(authorization));

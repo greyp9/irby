@@ -49,8 +49,8 @@ public class ProxysServer {
                         final AtomicReference<String> reference) {
         this.config = config;
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
-        this.executorService = (config.isLocalExecutor() ?
-                ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.executorService = (config.isLocalExecutor()
+                ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
         this.folder = FileU.toFileIfExists(config.getFolder());
         if (!Value.isEmpty(config.getFolder()) && (this.folder == null)) {
             final Logger logger = Logger.getLogger(getClass().getName());

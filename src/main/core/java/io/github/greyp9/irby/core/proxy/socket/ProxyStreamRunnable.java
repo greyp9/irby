@@ -88,7 +88,8 @@ public class ProxyStreamRunnable implements Runnable {
         reference.compareAndSet(null, String.format("[%s][%s]", interrupted, reference.get()));
     }
 
-    private synchronized void doPersist(final byte[] bytes, Date datePersist, int ordinal) throws IOException {
+    private synchronized void doPersist(
+            final byte[] bytes, final Date datePersist, final int ordinal) throws IOException {
         final String pattern = String.format("$DATE.%s.%d.txt", name, ordinal);
         final File file = FilenameFactory.getUnused(folder, pattern, datePersist);
         StreamU.write(file, bytes);

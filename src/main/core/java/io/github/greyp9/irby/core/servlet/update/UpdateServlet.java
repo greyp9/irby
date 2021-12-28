@@ -69,7 +69,7 @@ public class UpdateServlet extends javax.servlet.http.HttpServlet {
         return (metaFile == null) ? httpResponseDefault : doMetaFile(httpRequest, metaFile);
     }
 
-    private MetaFile toMetaFile(MimePart mimePart, Properties propertiesPart) {
+    private MetaFile toMetaFile(final MimePart mimePart, final Properties propertiesPart) {
         final String filename = propertiesPart.getProperty(App.Post.CD_FILENAME);
         final String contentType = propertiesPart.getProperty(Http.Header.CONTENT_TYPE);
         final byte[] bytes = mimePart.getBody().toByteArray();

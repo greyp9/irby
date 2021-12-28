@@ -32,7 +32,7 @@ import java.util.Properties;
 
 // i18nf
 @SuppressWarnings("PMD.TooManyMethods")
-public class ApplicationConfig {
+public final class ApplicationConfig {
     private final XPathContext context;
 
     private final int threads;
@@ -48,15 +48,15 @@ public class ApplicationConfig {
     private final Collection<CronConfig> cronConfigs;
     private final Collection<AdvancedConfig> advancedConfigs;
 
-    public final int getThreads() {
+    public int getThreads() {
         return threads;
     }
 
-    public final long getInterval() {
+    public long getInterval() {
         return interval;
     }
 
-    public final Collection<RealmConfig> getRealmConfigs() {
+    public Collection<RealmConfig> getRealmConfigs() {
         return realmConfigs;
     }
 
@@ -64,27 +64,27 @@ public class ApplicationConfig {
         return contextConfigs;
     }
 
-    public final Collection<Http11Config> getHttp11Configs() {
+    public Collection<Http11Config> getHttp11Configs() {
         return http11Configs;
     }
 
-    public final Collection<Https11Config> getHttps11Configs() {
+    public Collection<Https11Config> getHttps11Configs() {
         return https11Configs;
     }
 
-    public final Collection<ProxyConfig> getProxyConfigs() {
+    public Collection<ProxyConfig> getProxyConfigs() {
         return proxyConfigs;
     }
 
-    public final Collection<ProxysConfig> getProxysConfigs() {
+    public Collection<ProxysConfig> getProxysConfigs() {
         return proxysConfigs;
     }
 
-    public final Collection<UDPConfig> getUDPConfigs() {
+    public Collection<UDPConfig> getUDPConfigs() {
         return udpConfigs;
     }
 
-    public final Collection<CronConfig> getCronConfigs() {
+    public Collection<CronConfig> getCronConfigs() {
         return cronConfigs;
     }
 
@@ -94,7 +94,7 @@ public class ApplicationConfig {
     }
 */
 
-    public final AdvancedConfig getAdvancedConfig(final String name) {
+    public AdvancedConfig getAdvancedConfig(final String name) {
         AdvancedConfig advancedConfig = new AdvancedConfig(name, new Properties());
         for (AdvancedConfig advancedConfigIt : advancedConfigs) {
             if (advancedConfigIt.getName().equals(name)) {

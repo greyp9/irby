@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class UpdateFolder {
+public final class UpdateFolder {
     private final Logger logger = Logger.getLogger(getClass().getName());
-    private File folderTarget;
+    private final File folderTarget;
 
     public UpdateFolder(final File folderTarget) {
         this.folderTarget = folderTarget;

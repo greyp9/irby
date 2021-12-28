@@ -4,27 +4,27 @@ import io.github.greyp9.arwo.core.cron.job.CronJob;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import org.w3c.dom.Element;
 
-public class CronJobX {
+public final class CronJobX {
     private final CronConfigJob config;
     private final CronJob job;
 
-    public final String getName() {
+    public String getName() {
         return config.getName();
     }
 
-    public final String getSchedule() {
+    public String getSchedule() {
         return config.getSchedule();
     }
 
-    public final String getClassName() {
+    public String getClassName() {
         return config.getClassName();
     }
 
-    public final Element getElement() {
+    public Element getElement() {
         return config.getElement();
     }
 
-    public final CronJob getJob() {
+    public CronJob getJob() {
         return job;
     }
 

@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ApplyContentThread extends Thread {
+public final class ApplyContentThread extends Thread {
     private final Logger logger = Logger.getLogger(getClass().getName());
     private final String[] cmdarray;
     private final File dir;
 
-    public ApplyContentThread(String[] cmdarray, File dir) {
+    public ApplyContentThread(final String[] cmdarray, final File dir) {
         super();
         this.cmdarray = cmdarray;
         this.dir = dir;

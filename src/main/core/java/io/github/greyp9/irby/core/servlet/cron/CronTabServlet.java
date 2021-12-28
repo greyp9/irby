@@ -76,8 +76,8 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        final HttpResponse httpResponse = (cronService == null) ?
-                HttpResponseU.to404() : getHttpResponse(request, cronService, submitID);
+        final HttpResponse httpResponse = (cronService == null)
+                ? HttpResponseU.to404() : getHttpResponse(request, cronService, submitID);
         ServletU.write(httpResponse, response);
     }
 
@@ -101,13 +101,14 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(HttpResponseU.to302(""), response);
     }
 
-    private HttpResponse getHttpResponse(HttpServletRequest request, CronService cronService, String submitID) throws IOException {
-        logger.info(cronService.toString());
-        final RowSetMetaData metaData = createMetaData(cronService.getConfig().getName());
-        final RowSet rowSet = createRowSet(metaData, cronService.getConfig().getJobs(), submitID);
+    private HttpResponse getHttpResponse(final HttpServletRequest request,
+                                         final CronService cronServiceQ, final String submitIDQ) throws IOException {
+        logger.fine(cronServiceQ.toString());
+        final RowSetMetaData metaData = createMetaData(cronServiceQ.getConfig().getName());
+        final RowSet rowSet = createRowSet(metaData, cronServiceQ.getConfig().getJobs(), submitIDQ);
         final Table table = new Table(rowSet, new Sorts(), new Filters(), metaData.getID(), metaData.getID());
         final TableContext tableContext = new TableContext(
-                new ViewState(null), null, submitID, App.CSS.TABLE, new Bundle(), null);
+                new ViewState(null), null, submitIDQ, App.CSS.TABLE, new Bundle(), null);
         final TableView tableView = new TableView(table, tableContext);
         final Document html = DocumentU.toDocument(StreamU.read(ResourceU.resolve(Const.HTML)));
         final Element body = new XPather(html, null).getElement(Html.XPath.BODY);
@@ -121,7 +122,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
     }
 
-    private RowSetMetaData createMetaData(String name) {
+    private RowSetMetaData createMetaData(final String name) {
         final ColumnMetaData[] columns = new ColumnMetaData[] {
                 new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("line", Types.VARCHAR),  // i18n metadata
@@ -133,21 +134,21 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
     private RowSet createRowSet(
             final RowSetMetaData metaData,
             final Collection<CronConfigJob> jobs,
-            String submitID) throws IOException {
+            final String submitIDQ) {
         final RowSet rowSet = new RowSet(metaData, null, null);
         for (final CronConfigJob job : jobs) {
-            addRow(rowSet, job, submitID);
+            addRow(rowSet, job, submitIDQ);
         }
         return rowSet;
     }
 
-    private void addRow(final RowSet rowSet, final CronConfigJob job, String submitID) throws IOException {
+    private void addRow(final RowSet rowSet, final CronConfigJob job, final String submitIDQ) {
         final SubmitToken tokenNow = new SubmitToken(
                 getClass().getSimpleName(), App.Action.CRON_NOW, job.getName(), job.getName());
         final InsertRow insertRow = new InsertRow(rowSet);
         insertRow.setNextColumn(job.getName());
         insertRow.setNextColumn(job.getSchedule());
-        insertRow.setNextColumn(new TableViewButton(UTF16.PLAY, submitID, tokenNow.toString()));
+        insertRow.setNextColumn(new TableViewButton(UTF16.PLAY, submitIDQ, tokenNow.toString()));
         rowSet.add(insertRow.getRow());
     }
 

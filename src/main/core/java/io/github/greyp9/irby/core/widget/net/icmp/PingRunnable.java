@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
-public class PingRunnable implements Runnable {
+public final class PingRunnable implements Runnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final String name;
@@ -23,12 +23,13 @@ public class PingRunnable implements Runnable {
     private final String toContext;
     private final String toObject;
 
+    @SuppressWarnings("checkstyle:magicnumber")
     public PingRunnable(final String name, final Date date, final String... params) {
         this(name, date, params[0], params[1], params[2], params[3]);
     }
 
     public PingRunnable(final String name, final Date date,
-                        String host, String timeout, String toContext, String toObject) {
+                        final String host, final String timeout, final String toContext, final String toObject) {
         this.name = name;
         this.date = DateU.copy(date);
         this.host = host;
@@ -57,10 +58,10 @@ public class PingRunnable implements Runnable {
         logger.exiting(className, methodName);
     }
 
-    private void recordMetric(boolean isReachable, long elapsed) {
+    private void recordMetric(final boolean isReachable, final long elapsed) {
         final TimeHistogram histogram = (TimeHistogram) AppNaming.lookup(toContext, toObject);
         if (histogram != null) {
-            histogram.normalize(date);
+            histogram.expireCache(date);
             histogram.add(date, isReachable ? elapsed : Integer.MAX_VALUE);
         }
     }

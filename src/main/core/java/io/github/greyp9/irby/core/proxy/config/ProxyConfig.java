@@ -23,7 +23,7 @@ public class ProxyConfig {
         return host;
     }
 
-    public String getFolder() {
+    public final String getFolder() {
         return folder;
     }
 

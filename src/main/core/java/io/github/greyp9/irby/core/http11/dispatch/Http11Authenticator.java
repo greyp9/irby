@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Http11Authenticator {
+public final class Http11Authenticator {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final Realm realm;
@@ -41,7 +41,7 @@ public class Http11Authenticator {
         return realm;
     }
 
-    public final Principal authenticate(final Http11Request request) throws LoginException, IOException {
+    public Principal authenticate(final Http11Request request) throws LoginException, IOException {
         Principal principal;
         if (realm == null) {
             principal = null;
@@ -66,7 +66,7 @@ public class Http11Authenticator {
         return authenticateBasic(UTF8Codec.toString(Base64Codec.decode(base64)));
     }
 
-    private Principal authenticateBasic(final String headerDecoded) throws IOException {
+    private Principal authenticateBasic(final String headerDecoded) {
         final int index = (headerDecoded == null) ? -1 : headerDecoded.indexOf(Http.Token.COLON);
         final String user = (index < 0) ? headerDecoded : headerDecoded.substring(0, index);
         final String password = (index < 0) ? "" : headerDecoded.substring(index + Http.Token.COLON.length());
@@ -80,7 +80,7 @@ public class Http11Authenticator {
     }
 
     /**
-     * On authentication failures, the requestor address should be blacklisted.
+     * On authentication failures, the requester address should be blacklisted.
      */
     private void updateState(final Http11Request request, final Principal principal) {
         final String hostAddress = request.getSocket().getInetAddress().getHostAddress();
@@ -118,7 +118,7 @@ public class Http11Authenticator {
         }
     }
 
-    public final Principal authorize(final Principal principal) throws LoginException {
+    public Principal authorize(final Principal principal) throws LoginException {
         Principal authorized;
         if (authConstraint == null) {
             authorized = principal;

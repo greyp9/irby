@@ -10,7 +10,7 @@ public abstract class CronRunnable implements Runnable {
     private final Date date;
     private final Element element;
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 

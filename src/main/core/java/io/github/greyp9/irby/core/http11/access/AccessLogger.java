@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class AccessLogger {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public final void log(long millis, Http11Request request, Http11Response response) {
+    public final void log(final long millis, final Http11Request request, final Http11Response response) {
         final String host = request.getSocket().getInetAddress().getHostAddress();
         final String user = request.getUser();
         final Date date = new Date(millis);
