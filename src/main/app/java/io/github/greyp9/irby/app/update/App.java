@@ -13,7 +13,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class App {
+public final class App {
 
     private App() {
     }

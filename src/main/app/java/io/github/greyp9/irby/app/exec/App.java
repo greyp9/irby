@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class App {
+public final class App {
 
     private App() {
     }

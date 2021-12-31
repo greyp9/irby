@@ -25,13 +25,13 @@ public class AppConfigTest extends TestCase {
         final String initialURL = URLCodec.toExternalForm(urlInitial);
         final byte[] xsd = StreamU.read(urlInitial);
         Assert.assertNotNull(xsd);
-        Assert.assertEquals(7563, xsd.length);
-        Assert.assertEquals("425829fd", CRCU.crc32String(xsd));
+        Assert.assertEquals(11_760, xsd.length);
+        Assert.assertEquals("15e799ee", CRCU.crc32String(xsd));
         final URL urlAugmentXSLT = new URL(initialURL.replace(".xsd", ".xslt"));
         final byte[] xslt = StreamU.readSafe(urlAugmentXSLT);
         Assert.assertNotNull(xslt);
-        Assert.assertEquals(1156, xslt.length);
-        Assert.assertEquals("e0183594", CRCU.crc32String(xslt));
+        Assert.assertEquals(1_576, xslt.length);
+        Assert.assertEquals("f47dd507", CRCU.crc32String(xslt));
     }
 
     public void testHideInTable() throws Exception {

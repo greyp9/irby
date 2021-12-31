@@ -56,6 +56,10 @@
             </servlet>
             <!--static resources-->
             <servlet enabled='true' path='/res' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
+<!--
+                <init-param name='resource' value='webapp/res' comment='binary context'/>
+                <init-param name='resource' value='' comment='IDE context'/>
+-->
                 <init-param name='resource' value='webapp/res'/>
                 <init-param name='expires' value='P1D'/>
                 <init-param name='.css' value='text/css'/>

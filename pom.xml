@@ -95,6 +95,7 @@
                         <configuration>
                             <sources>
                                 <source>src/main/core/java</source>
+                                <source>src/main/app/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -107,6 +108,7 @@
                         <configuration>
                             <sources>
                                 <source>src/test/core/java</source>
+                                <source>src/test/app/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -154,7 +156,11 @@
                 <version>3.9.1</version>  <!-- 2020-06-21 -->
             </plugin>
         </plugins>
-        <resources/>
+        <resources>
+            <resource>
+                <directory>src/main/app/resources/irby-jar</directory>
+            </resource>
+        </resources>
         <testResources/>
     </build>
     <reporting>

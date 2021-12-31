@@ -25,7 +25,7 @@ public final class App {
         return 0;
     }
 
-    private String applicationRunLoop(URL url) throws IOException {
+    private String applicationRunLoop(final URL url) throws IOException {
         String signal = "";
         while (!signal.contains(io.github.greyp9.arwo.core.app.App.Application.QUIT)) {
             signal = new Application(io.github.greyp9.arwo.core.app.App.Application.NAME).run(url);

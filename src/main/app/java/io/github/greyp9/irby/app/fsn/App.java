@@ -27,7 +27,7 @@ public final class App {
         return 0;
     }
 
-    private String applicationRunLoop(URL url) throws IOException {
+    private String applicationRunLoop(final URL url) throws IOException {
         String signal = "";
         while (!signal.contains(Application.Const.QUIT_TOKEN)) {
             signal = new Application(null).run(url);
