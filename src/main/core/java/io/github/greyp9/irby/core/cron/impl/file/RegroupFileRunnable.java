@@ -82,9 +82,9 @@ public class RegroupFileRunnable extends CronRunnable {
             final String filenameSource = filePatternSource.getName();
             final FindInFolderQuery query = new FindInFolderQuery(folderSource, filenameSource, false);
             final Collection<File> files = query.getFound();
-            logger.finest("FOUND=%s" + files.size());
+            logger.finest("FOUND=%d" + files.size());
             FilterFiles.byAgeMin(files, date, DurationU.Const.ONE_MINUTE);
-            logger.finest("FOUND-OP=%s" + files.size());
+            logger.finest("FOUND-OP=%d" + files.size());
             final FileRegrouper fileRegrouper = new FileRegrouper(interval);
             for (File file : files) {
                 fileRegrouper.add(file);
