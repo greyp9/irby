@@ -124,6 +124,54 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+<!--
+                    <execution>
+                        <id>with-no-version</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <includeArtifactIds/>
+                        </configuration>
+                    </execution>
+-->
+                    <execution>
+                        <id>with-version</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <stripVersion>false</stripVersion>
+                            <includeArtifactIds>arwo,servlet-api</includeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>  <!-- 2019-10-29 -->
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>io.github.greyp9.irby.app.arwo.App</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>lib/arwo-0.0.1.jar lib/servlet-api-2.5.jar</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
 <!-- uncomment this to fail build on checkstyle failure
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
