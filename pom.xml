@@ -172,6 +172,24 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 <!-- uncomment this to fail build on checkstyle failure
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -207,6 +225,9 @@
         <resources>
             <resource>
                 <directory>src/main/app/resources/irby-jar</directory>
+            </resource>
+            <resource>
+                <directory>src/main/core/resources/core</directory>
             </resource>
         </resources>
         <testResources/>

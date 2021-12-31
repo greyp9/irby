@@ -60,7 +60,7 @@
                 <init-param name='resource' value='webapp/res' comment='binary context'/>
                 <init-param name='resource' value='' comment='IDE context'/>
 -->
-                <init-param name='resource' value='webapp/res'/>
+                <init-param name='resource' value='arwo-war'/>
                 <init-param name='expires' value='P1D'/>
                 <init-param name='.css' value='text/css'/>
                 <init-param name='.ico' value='image/x-icon'/>
