@@ -4,8 +4,8 @@ import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.hash.CRCU;
 import io.github.greyp9.arwo.core.lang.NumberU;
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,9 +13,10 @@ import java.net.InetAddress;
 import java.util.Date;
 import java.util.logging.Logger;
 
-public class UDPClientTest extends TestCase {
+public class UDPClientTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
+    @Test
     public void testSendPacket() throws Exception {
         final String className = getClass().getName();
         final String methodName = "testSendOnePacket()";  // i18n trace

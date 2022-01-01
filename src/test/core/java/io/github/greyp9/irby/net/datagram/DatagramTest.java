@@ -1,7 +1,8 @@
 package io.github.greyp9.irby.net.datagram;
 
 import io.github.greyp9.arwo.core.hash.CRCU;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -10,15 +11,15 @@ import java.net.InetSocketAddress;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class DatagramTest extends TestCase {
+public class DatagramTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         //io.github.greyp9.arwo.core.logging.LoggerU.adjust(Logger.getLogger(""));
     }
 
+    @Test
     public void testSendPacket() throws Exception {
         // setup
         final byte[] bytes = new byte[16];

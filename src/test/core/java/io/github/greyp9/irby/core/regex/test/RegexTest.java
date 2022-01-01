@@ -1,12 +1,13 @@
 package io.github.greyp9.irby.core.regex.test;
 
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.regex.Pattern;
 
-public class RegexTest extends TestCase {
+public class RegexTest {
 
+    @Test
     public void testAnyString() throws Exception {
         Pattern patternAny = Pattern.compile(".*");
         Assert.assertTrue(patternAny.matcher("").matches());

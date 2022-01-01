@@ -1,15 +1,16 @@
 package io.github.greyp9.irby.net.icmp.test;
 
 import io.github.greyp9.arwo.core.time.Stopwatch;
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.net.InetAddress;
 import java.util.logging.Logger;
 
-public class PingTest extends TestCase {
+public class PingTest {
     Logger logger = Logger.getLogger(getClass().getName());
 
+    @Test
     public void testPing() throws Exception {
         String[] hostnames = {
                 "amazon.com",

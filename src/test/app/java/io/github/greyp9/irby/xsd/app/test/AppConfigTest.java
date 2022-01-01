@@ -7,19 +7,20 @@ import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.xsd.data.DataType;
 import io.github.greyp9.arwo.core.xsd.instance.TypeInstance;
 import io.github.greyp9.arwo.core.xsd.model.XsdTypes;
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.net.URL;
 
-public class AppConfigTest extends TestCase {
+public class AppConfigTest {
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         //io.github.greyp9.arwo.core.logging.LoggerU.adjust(java.util.logging.Logger.getLogger(""));
     }
 
+    @Test
     public void testXSD() throws Exception {
         final URL urlInitial = ResourceU.resolve(Const.XSD);
         final String initialURL = URLCodec.toExternalForm(urlInitial);
@@ -34,6 +35,7 @@ public class AppConfigTest extends TestCase {
         Assert.assertEquals("f47dd507", CRCU.crc32String(xslt));
     }
 
+    @Test
     public void testHideInTable() throws Exception {
         final URL urlInitial = ResourceU.resolve(Const.XSD);
         final XsdTypes xsdTypes = new XsdTypes(urlInitial);

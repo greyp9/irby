@@ -6,17 +6,18 @@ import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.irby.core.cron.impl.file.RegroupFileRunnable;
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Test;
 import org.w3c.dom.Element;
 
 import java.io.File;
 import java.util.Date;
 import java.util.logging.Logger;
 
-public class RegroupFileRunnableTest extends TestCase {
+public class RegroupFileRunnableTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
+    @Test
     public void testGroupFile() throws Exception {
         // setup (filesystem folder for test files)
         final File tempDir = new File(SystemU.tempDir());

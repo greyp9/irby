@@ -1,21 +1,22 @@
 package io.github.greyp9.irby.core.naming;
 
 import io.github.greyp9.arwo.core.naming.AppNaming;
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.naming.Context;
 import java.util.logging.Logger;
 
-public class ContextTest extends TestCase {
+public class ContextTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         io.github.greyp9.arwo.core.logging.LoggerU.adjust(Logger.getLogger(""));
     }
 
+    @Test
     public void testMultipleCreates() throws Exception {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         final Context context1a = AppNaming.createSubcontext("/test1");
@@ -30,6 +31,7 @@ public class ContextTest extends TestCase {
         logger.info(context1c.toString());
     }
 
+    @Test
     public void testMultipleSubcontexts() throws Exception {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         final Context context1 = AppNaming.createSubcontext("/test1");
@@ -55,6 +57,7 @@ public class ContextTest extends TestCase {
         Assert.assertNull("root context has no parent", rootContext.getParentContext());
     }
 
+    @Test
     public void testBinding() throws Exception {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         final Context context1 = AppNaming.createSubcontext("/test1");
