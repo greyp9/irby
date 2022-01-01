@@ -66,7 +66,7 @@
                 <init-param name='.ico' value='image/x-icon'/>
             </servlet>
             <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
-                <init-param name='resource' value='webapp/arwo'/>
+                <init-param name='resource' value='arwo-war'/>
                 <init-param name='expires' value='P1D'/>
                 <init-param name='index' value='index.html'/>
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
