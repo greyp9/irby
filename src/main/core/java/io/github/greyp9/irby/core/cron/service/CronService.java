@@ -2,7 +2,6 @@ package io.github.greyp9.irby.core.cron.service;
 
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
-import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.CollectionU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
@@ -14,6 +13,7 @@ import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.job.CronJobX;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
@@ -43,10 +43,10 @@ public class CronService {
                        final AtomicReference<String> reference) {
         this.config = config;
         this.timeZone = TimeZone.getTimeZone(config.getTimezone());
-        this.jobsX = new ArrayList<CronJobX>();
-        this.jobsQ = new ArrayList<CronJobQ>();
+        this.jobsX = new ArrayList<>();
+        this.jobsQ = new ArrayList<>();
         for (final CronConfigJob job : config.getJobs()) {
-            jobsX.add(CronJobX.create(job));
+            jobsX.add(CronJobX.create(config, job));
         }
         final String prefix = String.format("%s-%s", getClass().getSimpleName(), config.getName());
         this.executorService = (config.isLocalExecutor()
@@ -54,9 +54,9 @@ public class CronService {
         this.reference = reference;
     }
 
-    public final void run(final String name, final Date date) {
-        final Date dateRun = Value.defaultOnNull(date, new Date());
-        CollectionU.add(jobsQ, new CronJobQ(name, dateRun));
+    public final void run(final CronJobQ... cronJobQ) {
+        //Arrays.stream(cronJobQ).map(CronJobQ::toString).forEach(logger::info);
+        Arrays.stream(cronJobQ).forEach(cronJobQ1 -> CollectionU.add(jobsQ, cronJobQ1));
         MutexU.notifyAll(this);
     }
 
@@ -64,48 +64,56 @@ public class CronService {
         Date dateNext = new Date();
         while (reference.get() == null) {
             dateNext = getNextTime(dateNext, Const.DURATION_WORKLOOP);
-            logger.log(Level.FINEST, XsdDateU.toXSDZMillis(dateNext));
+            logger.log(Level.FINEST, "run()::dateNext=" + XsdDateU.toXSDZMillis(dateNext));
             MutexU.waitUntil(this, dateNext);
-            final Collection<CronJobQ> jobs = CollectionU.move(new ArrayList<CronJobQ>(), jobsQ);
-            dateNext = (jobs.isEmpty() ? dateNext : new Date());
+            final Collection<CronJobQ> jobs = CollectionU.move(new ArrayList<>(), jobsQ);
             if (reference.get() == null) {
-                doJobs(jobs, dateNext);
+                if (jobs.isEmpty()) {
+                    doJobsScheduled(dateNext);
+                } else {
+                    doJobsRequested(jobs);
+                    dateNext = new Date();
+                }
             }
         }
     }
 
     private Date getNextTime(final Date date, final String duration) {
         Date dateNext = DurationU.add(date, timeZone, duration);
+        //logger.log(Level.FINEST, "getNextTime()::dateNext=" + XsdDateU.toXSDZMillis(dateNext));
         for (final CronJobX job : jobsX) {
             final Date dateNextJob = job.getJob().getDateNext(date, timeZone, duration);
             final boolean isEarlier = ((dateNextJob != null) && (dateNextJob.before(dateNext)));
             dateNext = (isEarlier ? dateNextJob : dateNext);
         }
+        //logger.log(Level.FINEST, "getNextTime()::dateNext=" + XsdDateU.toXSDZMillis(dateNext));
         return dateNext;
     }
 
-    private void doJobs(final Collection<CronJobQ> jobs, final Date date) {
-        // requested jobs
+    private void doJobsRequested(final Collection<CronJobQ> jobs) {
+        logger.finest(String.format("REQUESTED:[%s]", jobs));
         for (final CronJobQ jobQ : jobs) {
             for (final CronJobX jobX : jobsX) {
                 if (jobX.getName().equals(jobQ.getName())) {
-                    doJob(jobQ.getName(), jobQ.getDate(), jobX);
+                    doJob(jobQ.getTab(), jobQ.getName(), jobQ.getDate(), jobX);
                 }
-            }
-        }
-        // scheduled jobs
-        for (final CronJobX job : jobsX) {
-            if (job.getJob().isReady(date, timeZone)) {
-                doJob(job.getJob().getName(), date, job);
             }
         }
     }
 
-    private void doJob(final String name, final Date date, final CronJobX job) {
-        //job.getName();  // should pass name along to invocation (logging)
+    private void doJobsScheduled(final Date date) {
+        logger.finest(String.format("SCHEDULED:[%s]", XsdDateU.toXSDZMillis(date)));
+        for (final CronJobX job : jobsX) {
+            if (job.getJob().isReady(date, timeZone)) {
+                doJob(job.getTab(), job.getJob().getName(), date, job);
+            }
+        }
+    }
+
+    private void doJob(final String tab, final String jobName, final Date date, final CronJobX job) {
         final JobFactory factory = new JobFactory();
         final String className = lookupClassName(job.getClassName());
-        final Runnable runnable = factory.getRunnable(className, job.getElement(), name, date);
+        final Runnable runnable = factory.getRunnable(className, job.getElement(), tab, jobName, date);
         if (runnable instanceof CommandRunnable) {
             ((CommandRunnable) runnable).setExecutorService(executorService);
         }
@@ -124,6 +132,8 @@ public class CronService {
             className = "io.github.greyp9.irby.core.cron.impl.CommandRunnable";
         } else if ("generic".equals(type)) {
             className = "io.github.greyp9.irby.core.cron.impl.GenericRunnable";
+        } else if ("batch".equals(type)) {
+            className = "io.github.greyp9.irby.core.cron.impl.BatchRunnable";
         } else if ("copy-file".equals(type)) {
             className = "io.github.greyp9.irby.core.cron.impl.file.CopyFileRunnable";
         } else if ("compress-file".equals(type)) {

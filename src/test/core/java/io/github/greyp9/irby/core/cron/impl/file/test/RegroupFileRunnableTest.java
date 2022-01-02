@@ -45,7 +45,7 @@ public class RegroupFileRunnableTest {
         // run job
         final Element element = DocumentU.toDocument(config).getDocumentElement();
         final RegroupFileRunnable runnable = new RegroupFileRunnable(
-                getClass().getSimpleName(), new Date(), element);
+                "tab", getClass().getSimpleName(), new Date(), element);
         try {
             runnable.run();
         } catch (Throwable e) {

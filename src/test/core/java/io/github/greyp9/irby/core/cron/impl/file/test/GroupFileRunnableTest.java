@@ -42,7 +42,7 @@ public class GroupFileRunnableTest {
         // run job
         final Element element = DocumentU.toDocument(config).getDocumentElement();
         final GroupFileRunnable runnable = new GroupFileRunnable(
-                getClass().getSimpleName(), new Date(), element);
+                "tab", getClass().getSimpleName(), new Date(), element);
         runnable.run();
     }
 

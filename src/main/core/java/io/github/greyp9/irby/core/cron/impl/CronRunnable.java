@@ -6,9 +6,14 @@ import java.util.Date;
 
 @SuppressWarnings({ "PMD.AbstractNaming", "PMD.DoNotUseThreads" })
 public abstract class CronRunnable implements Runnable {
+    private final String tab;
     private final String name;
     private final Date date;
     private final Element element;
+
+    public final String getTab() {
+        return tab;
+    }
 
     public final String getName() {
         return name;
@@ -22,7 +27,8 @@ public abstract class CronRunnable implements Runnable {
         return element;
     }
 
-    protected CronRunnable(final String name, final Date date, final Element element) {
+    protected CronRunnable(final String tab, final String name, final Date date, final Element element) {
+        this.tab = tab;
         this.name = name;
         this.date = date;
         this.element = element;

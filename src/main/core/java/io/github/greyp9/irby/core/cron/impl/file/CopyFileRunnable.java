@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 public class CopyFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public CopyFileRunnable(final String name, final Date date, final Element element) {
-        super(name, date, element);
+    public CopyFileRunnable(final String tab, final String name, final Date date, final Element element) {
+        super(tab, name, date, element);
     }
 
     @Override

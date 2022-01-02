@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 public class SleepRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public SleepRunnable(final String name, final Date date, final Element element) {
-        super(name, date, element);
+    public SleepRunnable(final String tab, final String name, final Date date, final Element element) {
+        super(tab, name, date, element);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SleepRunnable extends CronRunnable {
         final String duration = ElementU.getAttribute(getElement(), Const.DURATION, DurationU.Const.ZERO_SECONDS);
         final Date dateUntil = DurationU.add(getDate(), DateU.Const.TZ_GMT, duration);
         final boolean interrupted = ThreadU.sleepUntil(dateUntil);
-        logger.log(Level.FINEST, String.format("[%s][%s][%s]",
+        logger.log(Level.FINE, String.format("[%s][%s][%s]",
                 XsdDateU.toXSDZMillis(getDate()), duration, interrupted));
         logger.exiting(className, methodName);
     }

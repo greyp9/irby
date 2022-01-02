@@ -187,6 +187,7 @@
             <xsd:element name='sleep' type='irby:jobSleepType'/>
             <xsd:element name='command' type='irby:jobCommandType'/>
             <xsd:element name='generic' type='irby:jobGenericType'/>
+            <xsd:element name='batch' type='irby:jobBatchType'/>
             <xsd:element name='copy-file' type='irby:jobCopyFileType'/>
             <xsd:element name='compress-file' type='irby:jobCompressFileType'/>
             <xsd:element name='group-file' type='irby:jobGroupFileType'/>
@@ -217,6 +218,10 @@
     <xsd:complexType name="jobGenericType">
         <xsd:attribute name='type' type='xsd:string'/>
         <xsd:attribute name='parameters' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobBatchType">
+        <xsd:attribute name='jobs' type='xsd:string'/>
     </xsd:complexType>
 
     <xsd:complexType name="jobCopyFileType">

@@ -33,8 +33,8 @@ import java.util.logging.Logger;
 public class HttpRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public HttpRunnable(final String name, final Date date, final Element element) {
-        super(name, date, element);
+    public HttpRunnable(final String tab, final String name, final Date date, final Element element) {
+        super(tab, name, date, element);
     }
 
     @Override

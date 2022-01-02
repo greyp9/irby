@@ -30,8 +30,8 @@ public class CommandRunnable extends CronRunnable {
         this.executorService = executorService;
     }
 
-    public CommandRunnable(final String name, final Date date, final Element element) {
-        super(name, date, element);
+    public CommandRunnable(final String tab, final String name, final Date date, final Element element) {
+        super(tab, name, date, element);
     }
 
     @Override

@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 public class RegroupFileRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public RegroupFileRunnable(final String name, final Date date, final Element element) {
-        super(name, date, element);
+    public RegroupFileRunnable(final String tab, final String name, final Date date, final Element element) {
+        super(tab, name, date, element);
     }
 
     @Override

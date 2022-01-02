@@ -12,6 +12,7 @@ import io.github.greyp9.arwo.core.submit.SubmitToken;
 import io.github.greyp9.arwo.core.submit.SubmitTokenU;
 import io.github.greyp9.arwo.core.value.NameTypeValue;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
+import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.service.CronService;
 import io.github.greyp9.irby.core.cron.view.CronServiceView;
 
@@ -21,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -69,7 +71,7 @@ public class CronServiceServlet extends javax.servlet.http.HttpServlet {
                         logger.info(String.format("[%s][%s]", cronTab, jobName));
                         final Object o = AppNaming.lookup(context, cronTab);
                         if (o instanceof CronService) {
-                            ((CronService) o).run(jobName, null);
+                            ((CronService) o).run(new CronJobQ(cronTab, jobName, new Date()));
                         }
                     }
                 }

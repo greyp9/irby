@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 public class GenericRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GenericRunnable(final String name, final Date date, final Element element) {
-        super(name, date, element);
+    public GenericRunnable(final String tab, final String name, final Date date, final Element element) {
+        super(tab, name, date, element);
     }
 
     @Override
