@@ -27,7 +27,7 @@ public class AppConfigTest {
         final byte[] xsd = StreamU.read(urlInitial);
         Assert.assertNotNull(xsd);
         Assert.assertEquals(11_946, xsd.length);
-        Assert.assertEquals("dc528803", CRCU.crc32String(xsd));
+        Assert.assertEquals("7b6abc71", CRCU.crc32String(xsd));
         final URL urlAugmentXSLT = new URL(initialURL.replace(".xsd", ".xslt"));
         final byte[] xslt = StreamU.readSafe(urlAugmentXSLT);
         Assert.assertNotNull(xslt);

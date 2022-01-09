@@ -5,6 +5,7 @@ import io.github.greyp9.arwo.core.command.local.ScriptRunnable;
 import io.github.greyp9.arwo.core.date.DateX;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.io.script.Script;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.link.MetaLink;
@@ -16,6 +17,7 @@ import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
@@ -25,9 +27,19 @@ public class CommandRunnable extends CronRunnable {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private ExecutorService executorService;
+    private ExecutorService executorServiceCmd;
+    private Collection<CommandWork> commands;
 
     public final void setExecutorService(final ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public final void setExecutorServiceCmd(final ExecutorService executorServiceCmd) {
+        this.executorServiceCmd = executorServiceCmd;
+    }
+
+    public final void setCommands(final Collection<CommandWork> commands) {
+        this.commands = commands;
     }
 
     public CommandRunnable(final String tab, final String name, final Date date, final Element element) {
@@ -50,8 +62,9 @@ public class CommandRunnable extends CronRunnable {
             final ResultsContext resultsContext = new ResultsContext(
                     null, null, locus, null, null, null, metaLink);
             final ScriptContext scriptContext = new ScriptContext(
-                    executorService, resultsContext, DurationU.Const.TEN_MILLIS, new File(SystemU.userHome()));
+                    executorServiceCmd, resultsContext, DurationU.Const.TEN_MILLIS, new File(SystemU.userHome()));
             final ScriptRunnable runnable = new ScriptRunnable(script, scriptContext);
+            runnable.setCommands(commands);
             executorService.execute(runnable);
         } catch (IOException e) {
             logger.severe(e.getMessage());

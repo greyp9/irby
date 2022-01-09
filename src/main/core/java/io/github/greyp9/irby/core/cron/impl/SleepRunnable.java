@@ -24,11 +24,11 @@ public class SleepRunnable extends CronRunnable {
         final String className = getClass().getName();
         final String date = XsdDateU.toXSDZMillis(getDate());
         final String methodName = String.format("run(%s)", date);
-        logger.entering(className, methodName);
+        logger.entering(className, methodName + "::" + Thread.currentThread().getName());
         final String duration = ElementU.getAttribute(getElement(), Const.DURATION, DurationU.Const.ZERO_SECONDS);
-        final Date dateUntil = DurationU.add(getDate(), DateU.Const.TZ_GMT, duration);
+        final Date dateUntil = DurationU.add(new Date(), DateU.Const.TZ_GMT, duration);
         final boolean interrupted = ThreadU.sleepUntil(dateUntil);
-        logger.log(Level.FINE, String.format("[%s][%s][%s]",
+        logger.log(Level.FINE, String.format("[%s][%s][%s][%s]", Thread.currentThread().getName(),
                 XsdDateU.toXSDZMillis(getDate()), duration, interrupted));
         logger.exiting(className, methodName);
     }

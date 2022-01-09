@@ -1,7 +1,9 @@
 package io.github.greyp9.irby.core.cron.service;
 
+import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.CollectionU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
@@ -19,7 +21,6 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("PMD.DoNotUseThreads")
@@ -31,11 +32,17 @@ public class CronService {
     private final Collection<CronJobX> jobsX;
     private final Collection<CronJobQ> jobsQ;
 
+    private final Collection<CommandWork> commands;
     private final ExecutorService executorService;
+    private final ExecutorService executorServiceCmd;
     private final AtomicReference<String> reference;
 
     public final CronConfig getConfig() {
         return config;
+    }
+
+    public final Collection<CommandWork> getCommands() {
+        return commands;
     }
 
     public CronService(final CronConfig config,
@@ -45,12 +52,14 @@ public class CronService {
         this.timeZone = TimeZone.getTimeZone(config.getTimezone());
         this.jobsX = new ArrayList<>();
         this.jobsQ = new ArrayList<>();
+        this.commands = new ArrayList<>();
         for (final CronConfigJob job : config.getJobs()) {
             jobsX.add(CronJobX.create(config, job));
         }
         final String prefix = String.format("%s-%s", getClass().getSimpleName(), config.getName());
         this.executorService = (config.isLocalExecutor()
                 ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
+        this.executorServiceCmd = ExecutorServiceFactory.create(4, prefix);
         this.reference = reference;
     }
 
@@ -61,21 +70,22 @@ public class CronService {
     }
 
     public final void run() {
-        Date dateNext = new Date();
+        Date dateNextScheduled = DateU.ceiling(new Date(), Const.DURATION_WORKLOOP);
         while (reference.get() == null) {
-            dateNext = getNextTime(dateNext, Const.DURATION_WORKLOOP);
-            logger.log(Level.FINEST, "run()::dateNext=" + XsdDateU.toXSDZMillis(dateNext));
-            MutexU.waitUntil(this, dateNext);
-            final Collection<CronJobQ> jobs = CollectionU.move(new ArrayList<>(), jobsQ);
+            //logger.log(Level.FINEST, "run()::dateNext=" + XsdDateU.toXSDZMillis(dateNextScheduled));
             if (reference.get() == null) {
-                if (jobs.isEmpty()) {
-                    doJobsScheduled(dateNext);
-                } else {
+                final Collection<CronJobQ> jobs = CollectionU.move(new ArrayList<>(), jobsQ);
+                if (!jobs.isEmpty()) {
                     doJobsRequested(jobs);
-                    dateNext = new Date();
+                }
+                MutexU.waitUntil(this, dateNextScheduled);
+                if (new Date().compareTo(dateNextScheduled) >= 0) {
+                    doJobsScheduled(dateNextScheduled);
+                    dateNextScheduled = getNextTime(dateNextScheduled, Const.DURATION_WORKLOOP);
                 }
             }
         }
+        executorServiceCmd.shutdown();
     }
 
     private Date getNextTime(final Date date, final String duration) {
@@ -91,7 +101,7 @@ public class CronService {
     }
 
     private void doJobsRequested(final Collection<CronJobQ> jobs) {
-        logger.finest(String.format("REQUESTED:[%s]", jobs));
+        logger.finest(String.format("REQUESTED:[%d]", jobs.size()));
         for (final CronJobQ jobQ : jobs) {
             for (final CronJobX jobX : jobsX) {
                 if (jobX.getName().equals(jobQ.getName())) {
@@ -99,6 +109,7 @@ public class CronService {
                 }
             }
         }
+        //logger.finest(config.getName() + ":" + ThreadPoolU.getTelemetry(this.executorService));
     }
 
     private void doJobsScheduled(final Date date) {
@@ -108,6 +119,7 @@ public class CronService {
                 doJob(job.getTab(), job.getJob().getName(), date, job);
             }
         }
+        //logger.finest(config.getName() + ":" + ThreadPoolU.getTelemetry(this.executorService));
     }
 
     private void doJob(final String tab, final String jobName, final Date date, final CronJobX job) {
@@ -116,9 +128,11 @@ public class CronService {
         final Runnable runnable = factory.getRunnable(className, job.getElement(), tab, jobName, date);
         if (runnable instanceof CommandRunnable) {
             ((CommandRunnable) runnable).setExecutorService(executorService);
+            ((CommandRunnable) runnable).setExecutorServiceCmd(executorServiceCmd);
+            ((CommandRunnable) runnable).setCommands(commands);
         }
         if (runnable != null) {
-            executorService.execute(runnable);
+            executorService.submit(runnable);
         }
     }
 

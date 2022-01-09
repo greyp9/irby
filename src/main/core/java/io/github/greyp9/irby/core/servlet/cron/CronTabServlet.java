@@ -5,6 +5,8 @@ import io.github.greyp9.arwo.core.app.App;
 import io.github.greyp9.arwo.core.app.AppHtml;
 import io.github.greyp9.arwo.core.app.AppTitle;
 import io.github.greyp9.arwo.core.bundle.Bundle;
+import io.github.greyp9.arwo.core.date.DateX;
+import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.glyph.UTF16;
 import io.github.greyp9.arwo.core.html.Html;
 import io.github.greyp9.arwo.core.http.Http;
@@ -13,11 +15,17 @@ import io.github.greyp9.arwo.core.http.HttpResponse;
 import io.github.greyp9.arwo.core.http.HttpResponseU;
 import io.github.greyp9.arwo.core.http.servlet.ServletHttpRequest;
 import io.github.greyp9.arwo.core.io.StreamU;
+import io.github.greyp9.arwo.core.io.buffer.ByteBuffer;
+import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.naming.AppNaming;
+import io.github.greyp9.arwo.core.number.NumberScale;
 import io.github.greyp9.arwo.core.res.ResourceU;
+import io.github.greyp9.arwo.core.resource.PathU;
+import io.github.greyp9.arwo.core.resource.Pather;
 import io.github.greyp9.arwo.core.submit.SubmitToken;
 import io.github.greyp9.arwo.core.submit.SubmitTokenU;
 import io.github.greyp9.arwo.core.table.cell.TableViewButton;
+import io.github.greyp9.arwo.core.table.cell.TableViewLink;
 import io.github.greyp9.arwo.core.table.filter.Filters;
 import io.github.greyp9.arwo.core.table.html.TableView;
 import io.github.greyp9.arwo.core.table.insert.InsertRow;
@@ -105,20 +113,51 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(HttpResponseU.to302(""), response);
     }
 
+    private HttpResponse getHttpResponse(final ByteBuffer byteBuffer) throws IOException {
+        final byte[] entity = byteBuffer.getBytes();
+        final NameTypeValues headers = new NameTypeValues(
+                new NameTypeValue(Http.Header.CONTENT_TYPE, Http.Mime.TEXT_PLAIN_UTF8),
+                new NameTypeValue(Http.Header.CONTENT_LENGTH, entity.length));
+        return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
+    }
+
     private HttpResponse getHttpResponse(final HttpServletRequest request,
                                          final CronService cronServiceQ, final String submitIDQ) throws IOException {
-        logger.fine(cronServiceQ.toString());
-        final RowSetMetaData metaData = createMetaData(cronServiceQ.getConfig().getName());
-        final RowSet rowSet = createRowSet(metaData, cronServiceQ.getConfig(), submitIDQ);
-        final Table table = new Table(rowSet, new Sorts(), new Filters(), metaData.getID(), metaData.getID());
-        final TableContext tableContext = new TableContext(
+        logger.finest(cronServiceQ.toString());
+        final Pather patherName = new Pather(request.getPathInfo());
+        final Pather patherDate = new Pather(patherName.getRight());
+        final Pather patherStream = new Pather(patherDate.getRight());
+        final CommandWork commandWork = cronServiceQ.getCommands().stream()
+                .filter(c -> c.getName().equals(patherName.getLeftToken()))
+                .filter(c -> c.getStart().equals(DateX.fromFilename(patherDate.getLeftToken())))
+                .findFirst().orElse(null);
+        if (commandWork != null) {
+            return ("stderr".equals(patherStream.getLeftToken()))
+                    ? getHttpResponse(commandWork.getByteBufferStderr())
+                    : getHttpResponse(commandWork.getByteBufferStdout());
+        }
+
+        final RowSetMetaData metaData1 = createMetaData1(cronServiceQ.getConfig().getName());
+        final RowSet rowSet1 = createRowSet1(metaData1, cronServiceQ.getConfig(), submitIDQ);
+        final Table table1 = new Table(rowSet1, new Sorts(), new Filters(), metaData1.getID(), metaData1.getID());
+        final TableContext tableContext1 = new TableContext(
                 new ViewState(null), null, submitIDQ, App.CSS.TABLE, new Bundle(), null);
-        final TableView tableView = new TableView(table, tableContext);
+        final TableView tableView1 = new TableView(table1, tableContext1);
+
+        final RowSetMetaData metaData2 = createMetaData2("COMMANDS");
+        final String basePath = PathU.toPath("", request.getContextPath(), request.getServletPath());
+        final RowSet rowSet2 = createRowSet2(metaData2, basePath, cronServiceQ.getCommands());
+        final Table table2 = new Table(rowSet2, new Sorts(), new Filters(), metaData2.getID(), metaData2.getID());
+        final TableContext tableContext2 = new TableContext(
+                new ViewState(null), null, submitIDQ, App.CSS.TABLE, new Bundle(), null);
+        final TableView tableView2 = new TableView(table2, tableContext2);
+
         final Document html = DocumentU.toDocument(StreamU.read(ResourceU.resolve(Const.HTML)));
         final Element body = new XPather(html, null).getElement(Html.XPath.BODY);
-        tableView.addContentTo(body);
+        tableView1.addContentTo(body);
+        tableView2.addContentTo(body);
         final ServletHttpRequest httpRequest = ServletU.read(request);
-        new AppHtml(httpRequest).fixup(html, new AppTitle(table.getID()));
+        new AppHtml(httpRequest).fixup(html, new AppTitle(table1.getID()));
         final byte[] entity = DocumentU.toXHtml(html);
         final NameTypeValue contentType = new NameTypeValue(Http.Header.CONTENT_TYPE, Http.Mime.TEXT_HTML_UTF8);
         final NameTypeValue contentLength = new NameTypeValue(Http.Header.CONTENT_LENGTH, entity.length);
@@ -126,7 +165,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
     }
 
-    private RowSetMetaData createMetaData(final String name) {
+    private RowSetMetaData createMetaData1(final String name) {
         final ColumnMetaData[] columns = new ColumnMetaData[] {
                 new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
@@ -136,19 +175,19 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new RowSetMetaData(name, columns);  // i18n metadata
     }
 
-    private RowSet createRowSet(
+    private RowSet createRowSet1(
             final RowSetMetaData metaData,
             final CronConfig cronConfig,
             final String submitIDQ) {
         final Collection<CronConfigJob> jobs = cronConfig.getJobs();
         final RowSet rowSet = new RowSet(metaData, null, null);
         for (final CronConfigJob job : jobs) {
-            addRow(rowSet, cronConfig, job, submitIDQ);
+            addRow1(rowSet, cronConfig, job, submitIDQ);
         }
         return rowSet;
     }
 
-    private void addRow(final RowSet rowSet, final CronConfig tab,
+    private void addRow1(final RowSet rowSet, final CronConfig tab,
                         final CronConfigJob job, final String submitIDQ) {
         final SubmitToken tokenNow = new SubmitToken(
                 getClass().getSimpleName(), App.Action.CRON_NOW, tab.getName(), job.getName());
@@ -157,6 +196,39 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         insertRow.setNextColumn(job.getName());
         insertRow.setNextColumn(job.getSchedule());
         insertRow.setNextColumn(new TableViewButton(UTF16.PLAY, submitIDQ, tokenNow.toString()));
+        rowSet.add(insertRow.getRow());
+    }
+
+    private RowSetMetaData createMetaData2(final String name) {
+        final ColumnMetaData[] columns = new ColumnMetaData[] {
+                new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
+                new ColumnMetaData("date", Types.VARCHAR),  // i18n metadata
+                new ColumnMetaData("stdout", Types.VARCHAR),  // i18n metadata
+                new ColumnMetaData("stderr", Types.VARCHAR),  // i18n metadata
+        };
+        return new RowSetMetaData(name, columns);  // i18n metadata
+    }
+
+    private RowSet createRowSet2(
+            final RowSetMetaData metaData,
+            final String basePath,
+            final Collection<CommandWork> commands) {
+        final RowSet rowSet = new RowSet(metaData, null, null);
+        for (final CommandWork command : commands) {
+            addRow2(rowSet, basePath, command);
+        }
+        return rowSet;
+    }
+
+    private void addRow2(final RowSet rowSet, final String basePath, final CommandWork command) {
+        final String href = PathU.toPath(basePath, command.getName(), DateX.toFilename(command.getStart()));
+        final InsertRow insertRow = new InsertRow(rowSet);
+        insertRow.setNextColumn(command.getName());
+        insertRow.setNextColumn(XsdDateU.toXSDZMillis(command.getStart()));
+        insertRow.setNextColumn(new TableViewLink(NumberScale.toString(
+                command.getByteBufferStdout().getLength()), null, href));
+        insertRow.setNextColumn(new TableViewLink(NumberScale.toString(
+                command.getByteBufferStderr().getLength()), null, PathU.toPath(href, "stderr")));
         rowSet.add(insertRow.getRow());
     }
 
