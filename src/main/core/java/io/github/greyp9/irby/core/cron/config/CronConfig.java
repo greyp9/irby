@@ -6,7 +6,8 @@ import java.util.Collection;
 public class CronConfig {
     private final String name;
     private final String timezone;
-    private final int threads;
+    private final int threadsJob;
+    private final int threadsStream;
     private final Collection<CronConfigJob> jobs;
 
     public final String getName() {
@@ -17,23 +18,24 @@ public class CronConfig {
         return timezone;
     }
 
-    public final int getThreads() {
-        return threads;
+    public final int getThreadsJob() {
+        return threadsJob;
+    }
+
+    public final int getThreadsStream() {
+        return threadsStream;
     }
 
     public final Collection<CronConfigJob> getJobs() {
         return jobs;
     }
 
-    public CronConfig(final String name, final String timezone, final int threads) {
+    public CronConfig(final String name, final String timezone, final int threadsJob, final int threadsStream) {
         this.name = name;
         this.timezone = timezone;
-        this.threads = threads;
+        this.threadsJob = threadsJob;
+        this.threadsStream = threadsStream;
         this.jobs = new ArrayList<CronConfigJob>();
-    }
-
-    public final boolean isLocalExecutor() {
-        return (threads > 0);
     }
 
     public final void addJob(final CronConfigJob job) {

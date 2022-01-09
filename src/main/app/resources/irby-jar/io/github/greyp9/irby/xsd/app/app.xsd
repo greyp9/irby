@@ -179,6 +179,7 @@
         <xsd:attribute name='name' type='xsd:string'/>
         <xsd:attribute name='tz' type='xsd:string'/>
         <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+        <xsd:attribute name='streams' type='xsd:unsignedShort'/>
     </xsd:complexType>
 
     <xsd:complexType name='jobType'>

@@ -349,8 +349,9 @@ public final class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String timezone = xpather.getTextAttr("@tz");
-        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
-        final CronConfig cronConfig = new CronConfig(name, timezone, threadsPort);
+        final int threadsJob = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final int threadsStream = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_STREAMS), 0);
+        final CronConfig cronConfig = new CronConfig(name, timezone, threadsJob, threadsStream);
         final List<Element> elements = xpather.getElements("irby:job[@enabled='true']");
         for (final Element elementIt : elements) {
             cronConfig.addJob(doElementCronJob(elementIt));
@@ -393,6 +394,7 @@ public final class ApplicationConfig {
         private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_TARGET = "@target";
         private static final String XPATH_A_THREADS = "@threads";
+        private static final String XPATH_A_STREAMS = "@streams";
         private static final String XPATH_A_TYPE = "@type";
         private static final String XPATH_A_VALUE = "@value";
     }

@@ -56,10 +56,12 @@ public class CronService {
         for (final CronConfigJob job : config.getJobs()) {
             jobsX.add(CronJobX.create(config, job));
         }
-        final String prefix = String.format("%s-%s", getClass().getSimpleName(), config.getName());
-        this.executorService = (config.isLocalExecutor()
-                ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);
-        this.executorServiceCmd = ExecutorServiceFactory.create(4, prefix);
+        final String prefix = String.join("-", getClass().getSimpleName(), config.getName());
+        final String prefixCmd = String.join("-", prefix, "cmd");
+        this.executorService = ((config.getThreadsJob() > 0)
+                ? ExecutorServiceFactory.create(config.getThreadsJob(), prefix) : executorService);
+        this.executorServiceCmd = ((config.getThreadsStream() > 0)
+                ? ExecutorServiceFactory.create(config.getThreadsStream(), prefixCmd) : executorService);
         this.reference = reference;
     }
 
