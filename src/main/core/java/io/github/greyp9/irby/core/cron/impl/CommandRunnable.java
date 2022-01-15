@@ -54,7 +54,7 @@ public class CommandRunnable extends CronRunnable {
         logger.entering(className, methodName);
         final String command = ElementU.getAttribute(getElement(), Const.COMMAND);
         try {
-            final Script script = new Script(null, getDate(), null, command);
+            final Script script = new Script(null, getDate(), getName(), command);
             final File folder = new File(System.getProperty("user.dir"));
             final String filename = String.format("command.%s.%s.txt", getName(), DateX.toFilename(getDate()));
             final MetaLink metaLink = new MetaLink(new File(folder, filename), null);

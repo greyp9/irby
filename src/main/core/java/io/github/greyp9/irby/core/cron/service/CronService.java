@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("PMD.DoNotUseThreads")
@@ -35,6 +36,8 @@ public class CronService {
     private final Collection<CommandWork> commands;
     private final ExecutorService executorService;
     private final ExecutorService executorServiceCmd;
+
+    private final AtomicReference<Date> dateStandbyUntil;
     private final AtomicReference<String> reference;
 
     public final CronConfig getConfig() {
@@ -42,7 +45,16 @@ public class CronService {
     }
 
     public final Collection<CommandWork> getCommands() {
-        return commands;
+        return CollectionU.copy(new ArrayList<>(), commands);
+    }
+
+    public final Date getDateStandby() {
+        return dateStandbyUntil.get();
+    }
+
+    public final void setStandby(final String duration) {
+        dateStandbyUntil.set(DurationU.add(new Date(), timeZone, duration));
+        logger.info(XsdDateU.toXSDZMillis(dateStandbyUntil.get()));
     }
 
     public CronService(final CronConfig config,
@@ -62,6 +74,7 @@ public class CronService {
                 ? ExecutorServiceFactory.create(config.getThreadsJob(), prefix) : executorService);
         this.executorServiceCmd = ((config.getThreadsStream() > 0)
                 ? ExecutorServiceFactory.create(config.getThreadsStream(), prefixCmd) : executorService);
+        this.dateStandbyUntil = new AtomicReference<>(new Date());
         this.reference = reference;
     }
 
@@ -74,15 +87,17 @@ public class CronService {
     public final void run() {
         Date dateNextScheduled = DateU.ceiling(new Date(), Const.DURATION_WORKLOOP);
         while (reference.get() == null) {
-            //logger.log(Level.FINEST, "run()::dateNext=" + XsdDateU.toXSDZMillis(dateNextScheduled));
+            logger.log(Level.FINEST, "run()::dateNext=" + XsdDateU.toXSDZMillis(dateNextScheduled));
+            // requested jobs
+            doJobsRequested(CollectionU.move(new ArrayList<>(), jobsQ));
+            MutexU.waitUntil(this, dateNextScheduled);
+            // scheduled jobs
             if (reference.get() == null) {
-                final Collection<CronJobQ> jobs = CollectionU.move(new ArrayList<>(), jobsQ);
-                if (!jobs.isEmpty()) {
-                    doJobsRequested(jobs);
-                }
-                MutexU.waitUntil(this, dateNextScheduled);
-                if (new Date().compareTo(dateNextScheduled) >= 0) {
-                    doJobsScheduled(dateNextScheduled);
+                final Date date = new Date();
+                if (date.compareTo(dateNextScheduled) >= 0) {
+                    if (date.compareTo(dateStandbyUntil.get()) >= 0) {
+                        doJobsScheduled(dateNextScheduled);
+                    }
                     dateNextScheduled = getNextTime(dateNextScheduled, Const.DURATION_WORKLOOP);
                 }
             }
@@ -91,27 +106,30 @@ public class CronService {
     }
 
     private Date getNextTime(final Date date, final String duration) {
-        Date dateNext = DurationU.add(date, timeZone, duration);
-        //logger.log(Level.FINEST, "getNextTime()::dateNext=" + XsdDateU.toXSDZMillis(dateNext));
+        final Date dateIterate = DurationU.add(date, timeZone, duration);
+        Date dateNext = dateIterate;
+        logger.log(Level.FINEST, "getNextTime()::beginCheckSchedules=" + XsdDateU.toXSDZMillis(dateNext));
         for (final CronJobX job : jobsX) {
             final Date dateNextJob = job.getJob().getDateNext(date, timeZone, duration);
             final boolean isEarlier = ((dateNextJob != null) && (dateNextJob.before(dateNext)));
             dateNext = (isEarlier ? dateNextJob : dateNext);
         }
-        //logger.log(Level.FINEST, "getNextTime()::dateNext=" + XsdDateU.toXSDZMillis(dateNext));
+        logger.log(Level.FINEST, "getNextTime()::endCheckSchedules=" + XsdDateU.toXSDZMillis(dateNext));
         return dateNext;
     }
 
     private void doJobsRequested(final Collection<CronJobQ> jobs) {
-        logger.finest(String.format("REQUESTED:[%d]", jobs.size()));
-        for (final CronJobQ jobQ : jobs) {
-            for (final CronJobX jobX : jobsX) {
-                if (jobX.getName().equals(jobQ.getName())) {
-                    doJob(jobQ.getTab(), jobQ.getName(), jobQ.getDate(), jobX);
+        if (!jobs.isEmpty()) {
+            logger.finest(String.format("REQUESTED:[%d]", jobs.size()));
+            for (final CronJobQ jobQ : jobs) {
+                for (final CronJobX jobX : jobsX) {
+                    if (jobX.getName().equals(jobQ.getName())) {
+                        doJob(jobQ.getTab(), jobQ.getName(), jobQ.getDate(), jobX);
+                    }
                 }
             }
+            //logger.finest(config.getName() + ":" + ThreadPoolU.getTelemetry(this.executorService));
         }
-        //logger.finest(config.getName() + ":" + ThreadPoolU.getTelemetry(this.executorService));
     }
 
     private void doJobsScheduled(final Date date) {
