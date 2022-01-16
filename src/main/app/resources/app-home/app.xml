@@ -92,22 +92,22 @@
             <servlet enabled='true' path='/lfs' class='io.github.greyp9.arwo.app.local.servlet.LFSServlet' auth-constraint='*'/>
             <servlet enabled='true' path='/lsh' class='io.github.greyp9.arwo.app.local.servlet.SHServlet' auth-constraint='*'/>
             <!--ssh - [http://repo1.maven.org/maven2/ch/ethz/ganymed/ganymed-ssh2/]-->
-            <servlet enabled='false' path='/sftp' class='io.github.greyp9.arwo.app.ssh.servlet.SFTPServlet' auth-constraint='*'/>
-            <servlet enabled='false' path='/ssh' class='io.github.greyp9.arwo.app.ssh.servlet.SHServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/sftp' class='io.github.greyp9.arwo.app.ssh.servlet.SFTPServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/ssh' class='io.github.greyp9.arwo.app.ssh.servlet.SHServlet' auth-constraint='*'/>
             <!--cifs - [http://repo1.maven.org/maven2/jcifs/jcifs/]-->
-            <servlet enabled='false' path='/cifs' class='io.github.greyp9.arwo.app.cifs.servlet.CIFSServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/cifs' class='io.github.greyp9.arwo.app.cifs.servlet.CIFSServlet' auth-constraint='*'/>
             <!--j-interop - [http://repo1.maven.org/maven2/org/glassfish/main/external/j-interop-repackaged/]-->
-            <servlet enabled='false' path='/wsh' class='io.github.greyp9.arwo.app.interop.servlet.SHServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/wsh' class='io.github.greyp9.arwo.app.interop.servlet.SHServlet' auth-constraint='*'/>
             <!--webdav - [http://repo1.maven.org/maven2/com/github/lookfirst/sardine/]-->
-            <servlet enabled='false' path='/webdav' class='io.github.greyp9.arwo.app.webdav.servlet.WebDAVServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/webdav' class='io.github.greyp9.arwo.app.webdav.servlet.WebDAVServlet' auth-constraint='*'/>
             <!--mail - [http://repo1.maven.org/maven2/com/sun/mail/javax.mail/]-->
-            <servlet enabled='false' path='/smtp' class='io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet' auth-constraint='*'/>
-            <servlet enabled='false' path='/imap' class='io.github.greyp9.arwo.app.mail.imap.servlet.IMAPServlet' auth-constraint='*'/>
-            <servlet enabled='false' path='/pop3' class='io.github.greyp9.arwo.app.mail.pop3.servlet.POP3Servlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/smtp' class='io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/imap' class='io.github.greyp9.arwo.app.mail.imap.servlet.IMAPServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/pop3' class='io.github.greyp9.arwo.app.mail.pop3.servlet.POP3Servlet' auth-constraint='*'/>
             <!--jdbc-->
-            <servlet enabled='false' path='/jdbc' class='io.github.greyp9.arwo.app.jdbc.servlet.JDBCServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/jdbc' class='io.github.greyp9.arwo.app.jdbc.servlet.JDBCServlet' auth-constraint='*'/>
             <!--jdbc - [cache BLOBs and CLOBs]-->
-            <servlet enabled='false' path='/cache' class='io.github.greyp9.arwo.app.cache.servlet.CacheServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/cache' class='io.github.greyp9.arwo.app.cache.servlet.CacheServlet' auth-constraint='*'/>
         </web-app>
         <web-app enabled='true' path='/irby' realm='Irby-Arwo'>
             <!--static resources-->
