@@ -19,7 +19,8 @@ public class RegexTest {
     @Test
     public void testSplitSpaces() {
         final String[] split = "a b c d e".split("\\s+");
-        Assert.assertEquals(5, split.length);
+        final int lengthExpected = 5;
+        Assert.assertEquals(lengthExpected, split.length);
         int token = -1;
         Assert.assertEquals("a", split[++token]);
         Assert.assertEquals("b", split[++token]);

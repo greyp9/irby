@@ -8,7 +8,7 @@ import java.net.InetAddress;
 import java.util.logging.Logger;
 
 public class PingTest {
-    Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Test
     public void testPing() throws Exception {

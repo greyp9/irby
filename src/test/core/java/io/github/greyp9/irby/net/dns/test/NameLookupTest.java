@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.util.logging.Logger;
 
 public class NameLookupTest {
-    Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Test
     public void testNameLookup() throws Exception {

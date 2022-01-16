@@ -31,17 +31,18 @@ public class RegroupFileRunnableTest {
         Assert.assertTrue(regroupDir.exists());
         // setup (test files)
         if (!SystemU.isTrue()) {
-            StreamU.write(toFile(testDir, 1), UTF8Codec.toBytes("123"));
-            StreamU.write(toFile(testDir, 2), UTF8Codec.toBytes("234"));
-            StreamU.write(toFile(testDir, 3), UTF8Codec.toBytes("345"));
-            StreamU.write(toFile(testDir, 4), UTF8Codec.toBytes("123"));
-            StreamU.write(toFile(testDir, 5), UTF8Codec.toBytes("234"));
-            StreamU.write(toFile(testDir, 6), UTF8Codec.toBytes("345"));
+            int ordinal = 0;
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("123"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("234"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("345"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("123"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("234"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("345"));
         }
         // job configuration
-        final String config = "<regroup-file " +
-                "interval='P14D' source='/tmp/RegroupFileRunnableTest/*.zip' " +
-                "target='/tmp/RegroupFileRunnableTest/regroup/$DATE.zip'/>";
+        final String config = "<regroup-file "
+                + "interval='P14D' source='/tmp/RegroupFileRunnableTest/*.zip' "
+                + "target='/tmp/RegroupFileRunnableTest/regroup/$DATE.zip'/>";
         // run job
         final Element element = DocumentU.toDocument(config).getDocumentElement();
         final RegroupFileRunnable runnable = new RegroupFileRunnable(
@@ -53,7 +54,7 @@ public class RegroupFileRunnableTest {
         }
     }
 
-    private File toFile(File folder, int ordinal) {
+    private File toFile(final File folder, final int ordinal) {
         return new File(folder, String.format("%s%d.txt", getClass().getSimpleName(), ordinal));
     }
 }

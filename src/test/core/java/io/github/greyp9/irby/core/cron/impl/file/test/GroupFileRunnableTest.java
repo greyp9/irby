@@ -27,18 +27,19 @@ public class GroupFileRunnableTest {
         FileU.ensureFolder(testDir);
         Assert.assertTrue(testDir.exists());
         // setup (test files)
-        if (SystemU.isTrue()) {
-            StreamU.write(toFile(testDir, 1), UTF8Codec.toBytes("123"));
-            StreamU.write(toFile(testDir, 2), UTF8Codec.toBytes("234"));
-            StreamU.write(toFile(testDir, 3), UTF8Codec.toBytes("345"));
-            StreamU.write(toFile(testDir, 4), UTF8Codec.toBytes("123"));
-            StreamU.write(toFile(testDir, 5), UTF8Codec.toBytes("234"));
-            StreamU.write(toFile(testDir, 6), UTF8Codec.toBytes("345"));
+        if (!SystemU.isTrue()) {
+            int ordinal = 0;
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("123"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("234"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("345"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("123"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("234"));
+            StreamU.write(toFile(testDir, ++ordinal), UTF8Codec.toBytes("345"));
         }
         // job configuration
-        final String config = "<group-file " +
-                "interval='P1D' source='/tmp/GroupFileRunnableTest/*.txt' " +
-                "target='/tmp/GroupFileRunnableTest/$DATE.zip'/>";
+        final String config = "<group-file "
+                + "interval='P1D' source='/tmp/GroupFileRunnableTest/*.txt' "
+                + "target='/tmp/GroupFileRunnableTest/$DATE.zip'/>";
         // run job
         final Element element = DocumentU.toDocument(config).getDocumentElement();
         final GroupFileRunnable runnable = new GroupFileRunnable(
@@ -46,7 +47,7 @@ public class GroupFileRunnableTest {
         runnable.run();
     }
 
-    private File toFile(File folder, int ordinal) {
+    private File toFile(final File folder, final int ordinal) {
         return new File(folder, String.format("%s%d.txt", getClass().getSimpleName(), ordinal));
     }
 }

@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.net.URL;
 
+@SuppressWarnings("checkstyle:magicnumber")
 public class AppConfigTest {
 
     @Before
@@ -26,8 +27,8 @@ public class AppConfigTest {
         final String initialURL = URLCodec.toExternalForm(urlInitial);
         final byte[] xsd = StreamU.read(urlInitial);
         Assert.assertNotNull(xsd);
-        Assert.assertEquals(12_011, xsd.length);
-        Assert.assertEquals("c255cd18", CRCU.crc32String(xsd));
+        Assert.assertEquals(12_069, xsd.length);
+        Assert.assertEquals("8b0aec87", CRCU.crc32String(xsd));
         final URL urlAugmentXSLT = new URL(initialURL.replace(".xsd", ".xslt"));
         final byte[] xslt = StreamU.readSafe(urlAugmentXSLT);
         Assert.assertNotNull(xslt);

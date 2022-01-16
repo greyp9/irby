@@ -22,7 +22,8 @@ public class DatagramTest {
     @Test
     public void testSendPacket() throws Exception {
         // setup
-        final byte[] bytes = new byte[16];
+        final int length = 16;
+        final byte[] bytes = new byte[length];
         new Random().nextBytes(bytes);
         final String crc = Long.toHexString(CRCU.crc32(bytes));
         final InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getByName("localhost"), 2055);
