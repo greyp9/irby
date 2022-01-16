@@ -271,6 +271,7 @@
     <xsd:complexType name='advancedParamType'>
         <xsd:attribute name='name' type='xsd:string'/>
         <xsd:attribute name='value' type='xsd:string'/>
+        <xsd:attribute name='comment' type='xsd:string'/>
     </xsd:complexType>
 
 </xsd:schema>

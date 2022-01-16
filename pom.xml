@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.greyp9</groupId>
     <artifactId>irby</artifactId>
-    <version>0.0.1</version>
+    <version>0.2.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.version>8.45.1</checkstyle.version>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>io.github.greyp9</groupId>
             <artifactId>arwo</artifactId>
-            <version>0.0.1</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -115,6 +115,28 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <replace token="SPECIFICATION_VERSION" value="${project.version}" dir="target/classes">
+                                    <include name="irby-war/index.html"/>
+                                </replace>
+                                <replace token="IMPLEMENTATION_VERSION" value="${maven.build.timestamp}" dir="target/classes">
+                                    <include name="irby-war/index.html"/>
+                                </replace>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
@@ -167,7 +189,10 @@
                             <mainClass>io.github.greyp9.irby.app.arwo.App</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/arwo-0.0.1.jar lib/servlet-api-2.5.jar</Class-Path>
+                            <Class-Path>lib/arwo-0.2.0-SNAPSHOT.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar
+                                lib/jcifs.jar lib/j-interop.jar lib/sardine.jar lib/httpclient.jar lib/httpcore.jar
+                                lib/commons-logging.jar lib/javax.mail.jar
+                            </Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -225,6 +250,9 @@
         <resources>
             <resource>
                 <directory>src/main/app/resources/irby-jar</directory>
+            </resource>
+            <resource>
+                <directory>src/main/app/resources/webapp</directory>
             </resource>
             <resource>
                 <directory>src/main/core/resources/core</directory>

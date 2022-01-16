@@ -18,12 +18,8 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/app/resources/webapp/irby-war</directory>
-            <outputDirectory>.</outputDirectory>
-        </fileSet>
-        <fileSet>
             <directory>${project.basedir}</directory>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory>doc</outputDirectory>
             <includes>
                 <include>README*.*</include>
             </includes>

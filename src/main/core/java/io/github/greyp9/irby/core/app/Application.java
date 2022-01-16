@@ -52,7 +52,7 @@ public class Application {
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
         // capture process environment
-        final DataPersist dataPersist = new DataPersist(new File("."), App.Action.XML);
+        final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
         dataPersist.run("props", SysPropsU.getProps(config.getAdvancedConfig("props").getPropertyNames()));
         // load missing dependencies

@@ -35,6 +35,8 @@ public final class App {
     }
 
     public static void main(final String[] args) throws Exception {
+        new File(".", "data").mkdir();
+        new File(".", "log").mkdir();
         System.exit(new App().run());
     }
 }

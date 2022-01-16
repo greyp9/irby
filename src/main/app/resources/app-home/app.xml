@@ -112,12 +112,12 @@
         <web-app enabled='true' path='/irby' realm='Irby-Arwo'>
             <!--static resources-->
             <servlet enabled='true' path='/res' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
-                <init-param name='resource' value='webapp/res'/>
+                <init-param name='resource' value='arwo-war'/>
                 <init-param name='.css' value='text/css'/>
                 <init-param name='.ico' value='image/x-icon'/>
             </servlet>
             <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.res.ResourceServlet' auth-constraint='*'>
-                <init-param name='resource' value='webapp/irby'/>
+                <init-param name='resource' value='irby-war'/>
                 <init-param name='index' value='index.html'/>
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
             </servlet>
@@ -151,4 +151,7 @@
                      parameters='https://localhost:8443/ TLS +RYAe+CiKp1pJ8+pBCIPQGNl1Q2rPhvo0MtOqSso3IU= GET YXJ3bzphcndv ./cron/wget/wget.$DATE.html'/>
         </job>
     </cron>
+    <advanced enabled="true" name="env">
+        <param name="JAVA_MAIN_CLASS.+" value="" comment="MacOS includes PID"/>
+    </advanced>
 </irby:application>
