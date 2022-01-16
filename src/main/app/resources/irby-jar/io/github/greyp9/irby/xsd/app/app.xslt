@@ -14,6 +14,13 @@
         </xsl:copy>
     </xsl:template>
 
+    <xsl:template match='/xsd:schema/xsd:complexType[@name="jobCommandType"]/xsd:attribute[@name="command"]'>
+        <xsl:copy>
+            <xsl:attribute name='xed:size'>120</xsl:attribute>
+            <xsl:apply-templates select='@*|node()'/>
+        </xsl:copy>
+    </xsl:template>
+
     <xsl:template match='/xsd:schema/xsd:complexType[@name="principalType"]/xsd:attribute[@name="credential"]'>
         <xsl:copy>
             <xsl:attribute name='xed:hideInTable'>true</xsl:attribute>
