@@ -123,14 +123,14 @@
             </servlet>
             <!--cron-->
             <servlet enabled='true' path='/cron/tab' class='io.github.greyp9.irby.core.servlet.cron.CronTabServlet' auth-constraint='*'>
-                <init-param name='io.github.greyp9.irby.core.cron.service.CronService' value='Irby-Cron'/>
+                <init-param name='io.github.greyp9.irby.core.cron.service.CronService' value='CronTab'/>
             </servlet>
             <servlet enabled='true' path='/cron/service' class='io.github.greyp9.irby.core.servlet.cron.CronServiceServlet' auth-constraint='*'/>
             <!--update-->
             <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
         </web-app>
     </https11>
-    <cron enabled='true' name='Irby-Cron' tz='GMT'>
+    <cron enabled='false' name='CronTab-default' tz='GMT'>
         <job enabled='false' name='backup-app-log' schedule='0 0 * * *'>
             <copy-file source='./app.[1|2|3|4].log' target='./app.$DATE.log'/>
         </job>
@@ -146,11 +146,8 @@
             <generic type='io.github.greyp9.arwo.core.metric.histogram.cron.TimeHistogramSaveRunnable'
                      parameters='application' />
         </job>
-        <job enabled='false' name='testing-http' schedule='* * * * *'>
-            <generic type='io.github.greyp9.irby.core.widget.net.http.WgetRunnable'
-                     parameters='https://localhost:8443/ TLS +RYAe+CiKp1pJ8+pBCIPQGNl1Q2rPhvo0MtOqSso3IU= GET YXJ3bzphcndv ./cron/wget/wget.$DATE.html'/>
-        </job>
     </cron>
+    <cron enabled='true' name='CronTab' tz='GMT' threads='1' streams='3'/>  <!-- bound to servlet with matching CronService init-param -->
     <advanced enabled="true" name="env">
         <param name="JAVA_MAIN_CLASS.+" value="" comment="MacOS includes PID"/>
     </advanced>

@@ -74,6 +74,7 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -144,34 +145,43 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
 
     private HttpResponse getHttpResponse(final HttpServletRequest request,
                                          final CronService cronServiceQ, final String submitIDQ) throws IOException {
-        logger.finest(cronServiceQ.toString());
+        // allow query of in progress job stdout/stderr
         final Pather patherName = new Pather(request.getPathInfo());
         final Pather patherDate = new Pather(patherName.getRight());
         final Pather patherStream = new Pather(patherDate.getRight());
-        final CommandWork commandWork = cronServiceQ.getCommands().stream()
-                .filter(c -> c.getName().equals(patherName.getLeftToken()))
-                .filter(c -> c.getStart().equals(DateX.fromFilename(patherDate.getLeftToken())))
-                .findFirst().orElse(null);
-        if (commandWork != null) {
-            return (Const.STDERR.equals(patherStream.getLeftToken()))
-                    ? getHttpResponse(commandWork.getByteBufferStderr())
-                    : getHttpResponse(commandWork.getByteBufferStdout());
+        final String name = patherName.getLeftToken();
+        final String date = patherDate.getLeftToken();
+        final String stream = patherStream.getLeftToken();
+        logger.finest(String.format("[%s][%s][%s]", name, date, stream));
+        if ((name != null) || (date != null)) {
+            final CommandWork commandWork = cronServiceQ.getCommands().stream()
+                    .filter(c -> c.getName().equals(name))
+                    .filter(c -> c.getScheduled().equals(DateX.fromFilename(date)))
+                    .findFirst().orElse(null);
+            return (commandWork == null)
+                    ? HttpResponseU.to302(request.getContextPath() + request.getServletPath())
+                    : (getHttpResponse(Const.STDERR.equals(stream)
+                    ? commandWork.getByteBufferStderr()
+                    : commandWork.getByteBufferStdout()));
         }
 
-        final Bundle bundle = new Bundle();
-        final Locus locus = new Locus(Locale.getDefault(), DateX.Factory.createXsdUtcMilli());
+        // serve cron tab status page
+        final Locale locale = Locale.getDefault();
+        final Bundle bundle = new Bundle(ResourceBundle.getBundle("io.github.greyp9.irby.core.core", locale));
+        final Locus locus = new Locus(locale, DateX.Factory.createXsdUtcMilli());
 
-        final RowSetMetaData metaData1 = createMetaData1(cronServiceQ.getConfig().getName());
+        final RowSetMetaData metaData1 = createMetaData1();
         final RowSet rowSet1 = createRowSet1(metaData1, cronServiceQ.getConfig(), submitIDQ);
-        final Table table1 = new Table(rowSet1, new Sorts(), new Filters(), metaData1.getID(), metaData1.getID());
+        final Table table1 = new Table(rowSet1, new Sorts(), new Filters(), null, null);
         final TableContext tableContext1 = new TableContext(
                 new ViewState(null), null, submitIDQ, App.CSS.TABLE, bundle, locus);
         final TableView tableView1 = new TableView(table1, tableContext1);
 
-        final RowSetMetaData metaData2 = createMetaData2(cronServiceQ.getConfig().getName());
+        final RowSetMetaData metaData2 = createMetaData2();
         final String basePath = PathU.toPath("", request.getContextPath(), request.getServletPath());
-        final RowSet rowSet2 = createRowSet2(metaData2, basePath, cronServiceQ.getCommands());
-        final Table table2 = new Table(rowSet2, new Sorts(), new Filters(), metaData2.getID(), metaData2.getID());
+        final String tabName = cronServiceQ.getConfig().getName();
+        final RowSet rowSet2 = createRowSet2(metaData2, basePath, tabName, cronServiceQ.getCommands());
+        final Table table2 = new Table(rowSet2, new Sorts(), new Filters(), null, null);
         final TableContext tableContext2 = new TableContext(
                 new ViewState(null), null, submitIDQ, App.CSS.TABLE, bundle, locus);
         final TableView tableView2 = new TableView(table2, tableContext2);
@@ -209,14 +219,14 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
     }
 
-    private RowSetMetaData createMetaData1(final String name) {
+    private RowSetMetaData createMetaData1() {
         final ColumnMetaData[] columns = new ColumnMetaData[] {
                 new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("line", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("now", Types.DATALINK),  // i18n metadata
         };
-        return new RowSetMetaData(name, columns);  // i18n metadata
+        return new RowSetMetaData("cronTabEntryType", columns);  // i18n metadata
     }
 
     private RowSet createRowSet1(
@@ -243,34 +253,37 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         rowSet.add(insertRow.getRow());
     }
 
-    private RowSetMetaData createMetaData2(final String name) {
+    private RowSetMetaData createMetaData2() {
         final ColumnMetaData[] columns = new ColumnMetaData[] {
+                new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("dateScheduled", Types.TIMESTAMP),  // i18n metadata
                 new ColumnMetaData("dateStarted", Types.TIMESTAMP),  // i18n metadata
                 new ColumnMetaData("stdout", Types.DATALINK),  // i18n metadata
                 new ColumnMetaData("stderr", Types.DATALINK),  // i18n metadata
         };
-        return new RowSetMetaData(name, columns);  // i18n metadata
+        return new RowSetMetaData("cronActiveType", columns);  // i18n metadata
     }
 
     private RowSet createRowSet2(
             final RowSetMetaData metaData,
             final String basePath,
+            final String tabName,
             final Collection<CommandWork> commands) {
         final RowSet rowSet = new RowSet(metaData, null, null);
         for (final CommandWork command : commands) {
-            addRow2(rowSet, basePath, command);
+            addRow2(rowSet, basePath, tabName, command);
         }
         return rowSet;
     }
 
-    private void addRow2(final RowSet rowSet, final String basePath, final CommandWork command) {
+    private void addRow2(final RowSet rowSet, final String basePath, final String tabName, final CommandWork command) {
         final String hrefStdout = PathU.toPath(basePath, command.getName(), DateX.toFilename(command.getScheduled()));
         final String hrefStderr = PathU.toPath(hrefStdout, Const.STDERR);
         final int lengthStdout = command.getByteBufferStdout().getLength();
         final int lengthStderr = command.getByteBufferStderr().getLength();
         final InsertRow insertRow = new InsertRow(rowSet);
+        insertRow.setNextColumn(tabName);
         insertRow.setNextColumn(command.getName());
         insertRow.setNextColumn(command.getScheduled());
         insertRow.setNextColumn(command.getStart());
