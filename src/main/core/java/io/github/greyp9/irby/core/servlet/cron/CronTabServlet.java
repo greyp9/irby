@@ -61,6 +61,7 @@ import io.github.greyp9.irby.core.cron.service.CronService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.naming.Binding;
 import javax.naming.Context;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -77,12 +78,15 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class CronTabServlet extends javax.servlet.http.HttpServlet {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private transient CronService cronService;
     private transient String submitID;
+
+    private transient Collection<CronService> cronTabs;
 
     @Override
     public final void init(final ServletConfig config) throws ServletException {
@@ -92,10 +96,15 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         final Object o = (context == null) ? null : AppNaming.lookup(context, name);
         this.cronService = ((o instanceof CronService) ? (CronService) o : null);
         this.submitID = UUID.randomUUID().toString();
+
+        this.cronTabs = AppNaming.listBindings(AppNaming.lookupSubcontext(CronService.class.getName()), ".*")
+                .stream().map(Binding::getObject).filter(CronService.class::isInstance)
+                .map(CronService.class::cast).collect(Collectors.toList());
     }
 
     @Override
     public final void destroy() {
+        this.cronTabs.clear();
         this.submitID = null;
         this.cronService = null;
         super.destroy();
@@ -170,6 +179,13 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         final Bundle bundle = new Bundle(ResourceBundle.getBundle("io.github.greyp9.irby.core.core", locale));
         final Locus locus = new Locus(locale, DateX.Factory.createXsdUtcMilli());
 
+        final RowSetMetaData metaData0 = createMetaData0();
+        final RowSet rowSet0 = createRowSet0(metaData0, cronTabs);
+        final Table table0 = new Table(rowSet0, new Sorts(), new Filters(), null, null);
+        final TableContext tableContext0 = new TableContext(
+                new ViewState(null), null, submitIDQ, App.CSS.TABLE, bundle, locus);
+        final TableView tableView0 = new TableView(table0, tableContext0);
+
         final RowSetMetaData metaData1 = createMetaData1();
         final RowSet rowSet1 = createRowSet1(metaData1, cronServiceQ.getConfig(), submitIDQ);
         final Table table1 = new Table(rowSet1, new Sorts(), new Filters(), null, null);
@@ -208,15 +224,40 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         final ActionButtons buttons = factory.create(Const.STANDBY, false, actions);
         new PropertyStripHtmlView(pageView, buttons).addContentDiv(body);
 
+        tableView0.addContentTo(body);
         tableView1.addContentTo(body);
         tableView2.addContentTo(body);
         final ServletHttpRequest httpRequest = ServletU.read(request);
-        new AppHtml(httpRequest).fixup(html, new AppTitle(table1.getID()));
+        new AppHtml(httpRequest).fixup(html, new AppTitle(
+                String.format("CronTab(%s)", cronServiceQ.getConfig().getName())));
         final byte[] entity = DocumentU.toXHtml(html);
         final NameTypeValue contentType = new NameTypeValue(Http.Header.CONTENT_TYPE, Http.Mime.TEXT_HTML_UTF8);
         final NameTypeValue contentLength = new NameTypeValue(Http.Header.CONTENT_LENGTH, entity.length);
         final NameTypeValues headers = new NameTypeValues(contentType, contentLength);
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
+    }
+
+    private RowSetMetaData createMetaData0() {
+        final ColumnMetaData[] columns = new ColumnMetaData[] {
+                new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
+        };
+        return new RowSetMetaData("cronTabType", columns);  // i18n metadata
+    }
+
+    private RowSet createRowSet0(
+            final RowSetMetaData metaData,
+            final Collection<CronService> cronTabsQ) {
+        final RowSet rowSet = new RowSet(metaData, null, null);
+        for (CronService cronTab : cronTabsQ) {
+            addRow0(rowSet, cronTab);
+        }
+        return rowSet;
+    }
+
+    private void addRow0(final RowSet rowSet, final CronService cronTab) {
+        final InsertRow insertRow = new InsertRow(rowSet);
+        insertRow.setNextColumn(cronTab.getConfig().getName());
+        rowSet.add(insertRow.getRow());
     }
 
     private RowSetMetaData createMetaData1() {
