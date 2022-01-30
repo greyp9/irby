@@ -26,6 +26,9 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated Functionality migrated to {@link CronTabServlet}.
+ */
 public class CronServiceServlet extends javax.servlet.http.HttpServlet {
     private final Logger logger = Logger.getLogger(getClass().getName());
 

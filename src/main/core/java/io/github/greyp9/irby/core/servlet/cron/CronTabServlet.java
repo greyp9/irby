@@ -1,19 +1,11 @@
 package io.github.greyp9.irby.core.servlet.cron;
 
 import io.github.greyp9.arwo.app.core.servlet.ServletU;
-import io.github.greyp9.arwo.core.action.ActionButtons;
-import io.github.greyp9.arwo.core.action.ActionFactory;
-import io.github.greyp9.arwo.core.alert.Alert;
-import io.github.greyp9.arwo.core.alert.AlertU;
-import io.github.greyp9.arwo.core.alert.Alerts;
-import io.github.greyp9.arwo.core.alert.view.AlertsView;
 import io.github.greyp9.arwo.core.app.App;
 import io.github.greyp9.arwo.core.app.AppHtml;
 import io.github.greyp9.arwo.core.app.AppTitle;
 import io.github.greyp9.arwo.core.bundle.Bundle;
 import io.github.greyp9.arwo.core.date.DateX;
-import io.github.greyp9.arwo.core.date.XsdDateU;
-import io.github.greyp9.arwo.core.glyph.UTF16;
 import io.github.greyp9.arwo.core.html.Html;
 import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.http.HttpArguments;
@@ -25,53 +17,33 @@ import io.github.greyp9.arwo.core.io.buffer.ByteBuffer;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.locus.Locus;
 import io.github.greyp9.arwo.core.naming.AppNaming;
-import io.github.greyp9.arwo.core.number.NumberScale;
 import io.github.greyp9.arwo.core.res.ResourceU;
 import io.github.greyp9.arwo.core.resource.PathU;
-import io.github.greyp9.arwo.core.resource.Pather;
 import io.github.greyp9.arwo.core.submit.SubmitToken;
 import io.github.greyp9.arwo.core.submit.SubmitTokenU;
-import io.github.greyp9.arwo.core.table.cell.TableViewButton;
-import io.github.greyp9.arwo.core.table.cell.TableViewLink;
-import io.github.greyp9.arwo.core.table.filter.Filters;
-import io.github.greyp9.arwo.core.table.html.TableView;
-import io.github.greyp9.arwo.core.table.insert.InsertRow;
-import io.github.greyp9.arwo.core.table.metadata.ColumnMetaData;
-import io.github.greyp9.arwo.core.table.metadata.RowSetMetaData;
-import io.github.greyp9.arwo.core.table.model.Table;
-import io.github.greyp9.arwo.core.table.model.TableContext;
-import io.github.greyp9.arwo.core.table.row.RowSet;
-import io.github.greyp9.arwo.core.table.sort.Sorts;
-import io.github.greyp9.arwo.core.table.state.ViewState;
-import io.github.greyp9.arwo.core.util.CollectionU;
 import io.github.greyp9.arwo.core.value.NameTypeValue;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
-import io.github.greyp9.arwo.core.xed.action.XedAction;
-import io.github.greyp9.arwo.core.xed.model.Xed;
-import io.github.greyp9.arwo.core.xed.model.XedFactory;
-import io.github.greyp9.arwo.core.xed.nav.XedNav;
-import io.github.greyp9.arwo.core.xed.view.XedPropertyPageView;
-import io.github.greyp9.arwo.core.xed.view.html.PropertyStripHtmlView;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.arwo.core.xpath.XPather;
-import io.github.greyp9.irby.core.cron.config.CronConfig;
-import io.github.greyp9.irby.core.cron.config.CronConfigJob;
+import io.github.greyp9.irby.core.cron.core.CronRequest;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.service.CronService;
+import io.github.greyp9.irby.core.cron.view.CronMonitorView;
+import io.github.greyp9.irby.core.cron.view.CronServicesView;
+import io.github.greyp9.irby.core.cron.view.CronStandbyView;
+import io.github.greyp9.irby.core.cron.view.CronTriggerView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.naming.Binding;
-import javax.naming.Context;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -83,48 +55,51 @@ import java.util.stream.Collectors;
 public class CronTabServlet extends javax.servlet.http.HttpServlet {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    private transient CronService cronService;
+    private transient Collection<CronService> cronServices;
     private transient String submitID;
-
-    private transient Collection<CronService> cronTabs;
 
     @Override
     public final void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        final String name = getInitParameter(CronService.class.getName());
-        final Context context = (name == null) ? null : AppNaming.lookupSubcontext(CronService.class.getName());
-        final Object o = (context == null) ? null : AppNaming.lookup(context, name);
-        this.cronService = ((o instanceof CronService) ? (CronService) o : null);
+        logger.entering(getClass().getName(), null);
+        this.cronServices = AppNaming.listBindings(
+                        AppNaming.lookupSubcontext(CronService.class.getName()), ".*")
+                .stream().map(Binding::getObject)
+                .filter(CronService.class::isInstance)
+                .map(CronService.class::cast)
+                .collect(Collectors.toList());
         this.submitID = UUID.randomUUID().toString();
-
-        this.cronTabs = AppNaming.listBindings(AppNaming.lookupSubcontext(CronService.class.getName()), ".*")
-                .stream().map(Binding::getObject).filter(CronService.class::isInstance)
-                .map(CronService.class::cast).collect(Collectors.toList());
     }
 
     @Override
     public final void destroy() {
-        this.cronTabs.clear();
         this.submitID = null;
-        this.cronService = null;
+        this.cronServices.clear();
+        logger.exiting(getClass().getName(), null);
         super.destroy();
     }
 
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        final HttpResponse httpResponse = (cronService == null)
-                ? HttpResponseU.to404() : getHttpResponse(request, cronService, submitID);
+        final ServletHttpRequest servletHttpRequest = ServletU.read(request);
+        final CronRequest cronRequest = new CronRequest(servletHttpRequest, submitID);
+        final HttpResponse httpResponse = (servletHttpRequest.getPathInfo() == null)
+                ? HttpResponseU.to302(servletHttpRequest.getHttpRequest().getResource() + Http.Token.SLASH)
+                : getHttpResponse(cronRequest);
         ServletU.write(httpResponse, response);
     }
 
     @Override
     protected final void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        final ServletHttpRequest servletHttpRequest = ServletU.read(request);
+        final CronRequest cronRequest = new CronRequest(servletHttpRequest, submitID);
+        final String cronTab = cronRequest.getCronTab();
+        final CronService cronService = cronServices.stream()
+                .filter(s -> s.getConfig().getName().equals(cronTab)).findFirst().orElse(null);
         if (cronService != null) {
-            final String cronServiceName = cronService.getConfig().getName();
-            final ServletHttpRequest httpRequest = ServletU.read(request);
-            final byte[] entity = StreamU.read(httpRequest.getHttpRequest().getEntity());
+            final byte[] entity = StreamU.read(servletHttpRequest.getHttpRequest().getEntity());
             final NameTypeValues httpArguments = HttpArguments.toArguments(entity);
             for (final NameTypeValue httpArgument : httpArguments) {
                 if (submitID.equals(httpArgument.getName())) {
@@ -132,7 +107,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
                     if (token != null) {
                         final String subject = token.getSubject();
                         final String action = token.getAction();
-                        if ((subject.equals(cronServiceName)) && (action.equals(App.Action.CRON_NOW))) {
+                        if ((subject.equals(cronTab)) && (action.equals(App.Action.CRON_NOW))) {
                             cronService.run(new CronJobQ(token.getObject(), token.getObject2(), new Date()));
                         } else if ((subject.equals(App.Target.USER_STATE)) && (action.equals(App.Action.UPDATE))) {
                             cronService.setStandby(httpArguments.getValue("standby.standbyType.duration"));
@@ -144,6 +119,43 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(HttpResponseU.to302(""), response);
     }
 
+    private HttpResponse getHttpResponse(final CronRequest cronRequest) throws IOException {
+        final String cronTab = cronRequest.getCronTab();
+        final CronService cronService = cronServices.stream()
+                .filter(s -> s.getConfig().getName().equals(cronTab)).findFirst().orElse(null);
+        final HttpResponse httpResponse;
+        if (Value.isEmpty(cronTab)) {
+            httpResponse = getHttpResponse2(cronRequest, null, null);
+        } else if (cronService == null) {
+            httpResponse = HttpResponseU.to302(cronRequest.getHttpRequest().getBaseURI());
+        } else {
+            httpResponse = getHttpResponse2(cronRequest, cronTab, cronService);
+        }
+        return httpResponse;
+    }
+
+    private HttpResponse getHttpResponse2(final CronRequest cronRequest, final String label,
+                                          final CronService cronService) throws IOException {
+        final ServletHttpRequest request = cronRequest.getHttpRequest();
+        final String name = cronRequest.getCronJob();
+        final String date = cronRequest.getJobDate();
+        final String stream = cronRequest.getJobStream();
+        logger.finest(String.format("[%s][%s][%s]", name, date, stream));
+        if (!Value.isEmpty(name) && !Value.isEmpty(date)) {
+            final CommandWork commandWork = cronService.getCommands().stream()
+                    .filter(c -> c.getName().equals(name))
+                    .filter(c -> c.getScheduled().equals(DateX.fromFilename(date)))
+                    .findFirst().orElse(null);
+            return (commandWork == null)
+                    ? HttpResponseU.to302(PathU.toDir(request.getBaseURI(), cronRequest.getCronTab()))
+                    : (getHttpResponse(Const.STDERR.equals(stream)
+                    ? commandWork.getByteBufferStderr()
+                    : commandWork.getByteBufferStdout()));
+        } else {
+            return getHttpResponse3(cronRequest, label, cronService);
+        }
+    }
+
     private HttpResponse getHttpResponse(final ByteBuffer byteBuffer) throws IOException {
         final byte[] entity = byteBuffer.getBytes();
         final NameTypeValues headers = new NameTypeValues(
@@ -152,84 +164,24 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
     }
 
-    private HttpResponse getHttpResponse(final HttpServletRequest request,
-                                         final CronService cronServiceQ, final String submitIDQ) throws IOException {
-        // allow query of in progress job stdout/stderr
-        final Pather patherName = new Pather(request.getPathInfo());
-        final Pather patherDate = new Pather(patherName.getRight());
-        final Pather patherStream = new Pather(patherDate.getRight());
-        final String name = patherName.getLeftToken();
-        final String date = patherDate.getLeftToken();
-        final String stream = patherStream.getLeftToken();
-        logger.finest(String.format("[%s][%s][%s]", name, date, stream));
-        if ((name != null) || (date != null)) {
-            final CommandWork commandWork = cronServiceQ.getCommands().stream()
-                    .filter(c -> c.getName().equals(name))
-                    .filter(c -> c.getScheduled().equals(DateX.fromFilename(date)))
-                    .findFirst().orElse(null);
-            return (commandWork == null)
-                    ? HttpResponseU.to302(request.getContextPath() + request.getServletPath())
-                    : (getHttpResponse(Const.STDERR.equals(stream)
-                    ? commandWork.getByteBufferStderr()
-                    : commandWork.getByteBufferStdout()));
-        }
-
+    private HttpResponse getHttpResponse3(final CronRequest cronRequest, final String label,
+                                          final CronService cronService) throws IOException {
         // serve cron tab status page
         final Locale locale = Locale.getDefault();
         final Bundle bundle = new Bundle(ResourceBundle.getBundle("io.github.greyp9.irby.core.core", locale));
         final Locus locus = new Locus(locale, DateX.Factory.createXsdUtcMilli());
 
-        final RowSetMetaData metaData0 = createMetaData0();
-        final RowSet rowSet0 = createRowSet0(metaData0, cronTabs);
-        final Table table0 = new Table(rowSet0, new Sorts(), new Filters(), null, null);
-        final TableContext tableContext0 = new TableContext(
-                new ViewState(null), null, submitIDQ, App.CSS.TABLE, bundle, locus);
-        final TableView tableView0 = new TableView(table0, tableContext0);
-
-        final RowSetMetaData metaData1 = createMetaData1();
-        final RowSet rowSet1 = createRowSet1(metaData1, cronServiceQ.getConfig(), submitIDQ);
-        final Table table1 = new Table(rowSet1, new Sorts(), new Filters(), null, null);
-        final TableContext tableContext1 = new TableContext(
-                new ViewState(null), null, submitIDQ, App.CSS.TABLE, bundle, locus);
-        final TableView tableView1 = new TableView(table1, tableContext1);
-
-        final RowSetMetaData metaData2 = createMetaData2();
-        final String basePath = PathU.toPath("", request.getContextPath(), request.getServletPath());
-        final String tabName = cronServiceQ.getConfig().getName();
-        final RowSet rowSet2 = createRowSet2(metaData2, basePath, tabName, cronServiceQ.getCommands());
-        final Table table2 = new Table(rowSet2, new Sorts(), new Filters(), null, null);
-        final TableContext tableContext2 = new TableContext(
-                new ViewState(null), null, submitIDQ, App.CSS.TABLE, bundle, locus);
-        final TableView tableView2 = new TableView(table2, tableContext2);
-
         final Document html = DocumentU.toDocument(StreamU.read(ResourceU.resolve(Const.HTML)));
         final Element body = new XPather(html, null).getElement(Html.XPath.BODY);
 
-        final Date dateStandby = cronServiceQ.getDateStandby();
-        if (dateStandby.after(new Date())) {
-            final String message = String.format("CronService paused until %s", XsdDateU.toXSDZ(dateStandby));
-            final Alerts alerts = AlertU.create(new Alert(Alert.Severity.INFO, message));
-            new AlertsView(true, alerts, locus, bundle, null).addContentTo(body);
+        if (cronService == null) {
+            new CronServicesView().addContent(body, bundle, locus, cronRequest, cronServices);
+        } else {
+            new CronStandbyView().addContentTo(body, bundle, locus, cronRequest, cronService);
+            new CronTriggerView().addContentTo(body, bundle, locus, cronRequest, cronService);
+            new CronMonitorView().addContentTo(body, bundle, locus, cronRequest, cronService);
         }
-
-        final XedAction actionStandby = new XedAction(
-                new QName(App.Actions.URI_ACTION, Const.STANDBY, App.Actions.PREFIX_ACTION),
-                new XedFactory(), locus.getLocale());
-        final Xed xedUI = actionStandby.getXedUI(actionStandby.getXed().getLocale());
-        final XedPropertyPageView pageView = new XedPropertyPageView(null, new XedNav(xedUI).getRoot());
-        final Bundle bundleXed = xedUI.getBundle();
-        final ActionFactory factory = new ActionFactory(
-                submitID, bundleXed, App.Target.USER_STATE, Const.STANDBY, null);
-        final Collection<String> actions = CollectionU.toCollection(App.Action.UPDATE);
-        final ActionButtons buttons = factory.create(Const.STANDBY, false, actions);
-        new PropertyStripHtmlView(pageView, buttons).addContentDiv(body);
-
-        tableView0.addContentTo(body);
-        tableView1.addContentTo(body);
-        tableView2.addContentTo(body);
-        final ServletHttpRequest httpRequest = ServletU.read(request);
-        new AppHtml(httpRequest).fixup(html, new AppTitle(
-                String.format("CronTab(%s)", cronServiceQ.getConfig().getName())));
+        new AppHtml(cronRequest.getHttpRequest()).fixup(html, new AppTitle(Value.join(" - ", label, "CronTab")));
         final byte[] entity = DocumentU.toXHtml(html);
         final NameTypeValue contentType = new NameTypeValue(Http.Header.CONTENT_TYPE, Http.Mime.TEXT_HTML_UTF8);
         final NameTypeValue contentLength = new NameTypeValue(Http.Header.CONTENT_LENGTH, entity.length);
@@ -237,105 +189,8 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
     }
 
-    private RowSetMetaData createMetaData0() {
-        final ColumnMetaData[] columns = new ColumnMetaData[] {
-                new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
-        };
-        return new RowSetMetaData("cronTabType", columns);  // i18n metadata
-    }
-
-    private RowSet createRowSet0(
-            final RowSetMetaData metaData,
-            final Collection<CronService> cronTabsQ) {
-        final RowSet rowSet = new RowSet(metaData, null, null);
-        for (CronService cronTab : cronTabsQ) {
-            addRow0(rowSet, cronTab);
-        }
-        return rowSet;
-    }
-
-    private void addRow0(final RowSet rowSet, final CronService cronTab) {
-        final InsertRow insertRow = new InsertRow(rowSet);
-        insertRow.setNextColumn(cronTab.getConfig().getName());
-        rowSet.add(insertRow.getRow());
-    }
-
-    private RowSetMetaData createMetaData1() {
-        final ColumnMetaData[] columns = new ColumnMetaData[] {
-                new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
-                new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
-                new ColumnMetaData("line", Types.VARCHAR),  // i18n metadata
-                new ColumnMetaData("now", Types.DATALINK),  // i18n metadata
-        };
-        return new RowSetMetaData("cronTabEntryType", columns);  // i18n metadata
-    }
-
-    private RowSet createRowSet1(
-            final RowSetMetaData metaData,
-            final CronConfig cronConfig,
-            final String submitIDQ) {
-        final Collection<CronConfigJob> jobs = cronConfig.getJobs();
-        final RowSet rowSet = new RowSet(metaData, null, null);
-        for (final CronConfigJob job : jobs) {
-            addRow1(rowSet, cronConfig, job, submitIDQ);
-        }
-        return rowSet;
-    }
-
-    private void addRow1(final RowSet rowSet, final CronConfig tab,
-                        final CronConfigJob job, final String submitIDQ) {
-        final SubmitToken tokenNow = new SubmitToken(
-                cronService.getConfig().getName(), App.Action.CRON_NOW, tab.getName(), job.getName());
-        final InsertRow insertRow = new InsertRow(rowSet);
-        insertRow.setNextColumn(tab.getName());
-        insertRow.setNextColumn(job.getName());
-        insertRow.setNextColumn(job.getSchedule());
-        insertRow.setNextColumn(new TableViewButton(UTF16.PLAY, submitIDQ, tokenNow.toString()));
-        rowSet.add(insertRow.getRow());
-    }
-
-    private RowSetMetaData createMetaData2() {
-        final ColumnMetaData[] columns = new ColumnMetaData[] {
-                new ColumnMetaData("tabName", Types.VARCHAR),  // i18n metadata
-                new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
-                new ColumnMetaData("dateScheduled", Types.TIMESTAMP),  // i18n metadata
-                new ColumnMetaData("dateStarted", Types.TIMESTAMP),  // i18n metadata
-                new ColumnMetaData("stdout", Types.DATALINK),  // i18n metadata
-                new ColumnMetaData("stderr", Types.DATALINK),  // i18n metadata
-        };
-        return new RowSetMetaData("cronActiveType", columns);  // i18n metadata
-    }
-
-    private RowSet createRowSet2(
-            final RowSetMetaData metaData,
-            final String basePath,
-            final String tabName,
-            final Collection<CommandWork> commands) {
-        final RowSet rowSet = new RowSet(metaData, null, null);
-        for (final CommandWork command : commands) {
-            addRow2(rowSet, basePath, tabName, command);
-        }
-        return rowSet;
-    }
-
-    private void addRow2(final RowSet rowSet, final String basePath, final String tabName, final CommandWork command) {
-        final String hrefStdout = PathU.toPath(basePath, command.getName(), DateX.toFilename(command.getScheduled()));
-        final String hrefStderr = PathU.toPath(hrefStdout, Const.STDERR);
-        final int lengthStdout = command.getByteBufferStdout().getLength();
-        final int lengthStderr = command.getByteBufferStderr().getLength();
-        final InsertRow insertRow = new InsertRow(rowSet);
-        insertRow.setNextColumn(tabName);
-        insertRow.setNextColumn(command.getName());
-        insertRow.setNextColumn(command.getScheduled());
-        insertRow.setNextColumn(command.getStart());
-        insertRow.setNextColumn(new TableViewLink(NumberScale.toString(lengthStdout), null, hrefStdout));
-        insertRow.setNextColumn(new TableViewLink(NumberScale.toString(lengthStderr), null, hrefStderr));
-        rowSet.add(insertRow.getRow());
-    }
-
     private static class Const {
         private static final String HTML = "io/github/greyp9/irby/html/AppServlet.html";
-        private static final String STANDBY = "standby";
         private static final String STDERR = "stderr";
     }
 }

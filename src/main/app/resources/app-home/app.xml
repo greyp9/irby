@@ -122,10 +122,7 @@
                 <init-param name='.html' value='text/html; charset=&quot;UTF-8&quot;'/>
             </servlet>
             <!--cron-->
-            <servlet enabled='true' path='/cron/tab' class='io.github.greyp9.irby.core.servlet.cron.CronTabServlet' auth-constraint='*'>
-                <init-param name='io.github.greyp9.irby.core.cron.service.CronService' value='CronTab'/>
-            </servlet>
-            <servlet enabled='true' path='/cron/service' class='io.github.greyp9.irby.core.servlet.cron.CronServiceServlet' auth-constraint='*'/>
+            <servlet enabled='true' path='/cron/tab' class='io.github.greyp9.irby.core.servlet.cron.CronTabServlet' auth-constraint='*'/>
             <!--update-->
             <servlet enabled='true' path='/update' class='io.github.greyp9.irby.core.servlet.update.UpdateServlet' auth-constraint='*'/>
         </web-app>
