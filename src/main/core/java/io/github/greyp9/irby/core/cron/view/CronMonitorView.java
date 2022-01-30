@@ -52,7 +52,7 @@ public class CronMonitorView {
                 new ColumnMetaData("jobName", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("dateScheduled", Types.TIMESTAMP),  // i18n metadata
                 new ColumnMetaData("dateStarted", Types.TIMESTAMP),  // i18n metadata
-                new ColumnMetaData("pid", Types.INTEGER),  // i18n metadata
+                new ColumnMetaData("pid", Types.VARCHAR),  // i18n metadata
                 new ColumnMetaData("stdout", Types.DATALINK),  // i18n metadata
                 new ColumnMetaData("stderr", Types.DATALINK),  // i18n metadata
         };
@@ -81,7 +81,7 @@ public class CronMonitorView {
         insertRow.setNextColumn(command.getName());
         insertRow.setNextColumn(command.getScheduled());
         insertRow.setNextColumn(command.getStart());
-        insertRow.setNextColumn(command.getPID());
+        insertRow.setNextColumn(Integer.toString(command.getPID()));
         insertRow.setNextColumn(new TableViewLink(NumberScale.toString(lengthStdout), null, PathU.toDir(hrefStdout)));
         insertRow.setNextColumn(new TableViewLink(NumberScale.toString(lengthStderr), null, PathU.toDir(hrefStderr)));
         rowSet.add(insertRow.getRow());

@@ -30,6 +30,7 @@ import io.github.greyp9.irby.core.cron.core.CronRequest;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.service.CronService;
 import io.github.greyp9.irby.core.cron.view.CronMonitorView;
+import io.github.greyp9.irby.core.cron.view.CronQueueView;
 import io.github.greyp9.irby.core.cron.view.CronServicesView;
 import io.github.greyp9.irby.core.cron.view.CronStandbyView;
 import io.github.greyp9.irby.core.cron.view.CronTriggerView;
@@ -180,6 +181,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
             new CronStandbyView().addContentTo(body, bundle, locus, cronRequest, cronService);
             new CronTriggerView().addContentTo(body, bundle, locus, cronRequest, cronService);
             new CronMonitorView().addContentTo(body, bundle, locus, cronRequest, cronService);
+            new CronQueueView().addContentTo(body, bundle, locus, cronRequest, cronService);
         }
         new AppHtml(cronRequest.getHttpRequest()).fixup(html, new AppTitle(Value.join(" - ", label, "CronTab")));
         final byte[] entity = DocumentU.toXHtml(html);

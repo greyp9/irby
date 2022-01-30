@@ -4,6 +4,12 @@ import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
+import io.github.greyp9.arwo.core.table.filter.Filters;
+import io.github.greyp9.arwo.core.table.metadata.ColumnMetaData;
+import io.github.greyp9.arwo.core.table.metadata.RowSetMetaData;
+import io.github.greyp9.arwo.core.table.model.Table;
+import io.github.greyp9.arwo.core.table.row.RowSet;
+import io.github.greyp9.arwo.core.table.sort.Sorts;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.CollectionU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
@@ -13,13 +19,16 @@ import io.github.greyp9.irby.core.cron.factory.JobFactory;
 import io.github.greyp9.irby.core.cron.impl.CommandRunnable;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.job.CronJobX;
+import io.github.greyp9.irby.core.cron.widget.ExecutorAdaptor;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +55,18 @@ public class CronService {
 
     public final Collection<CommandWork> getCommands() {
         return CollectionU.copy(new ArrayList<>(), commands);
+    }
+
+    public final Table getQueue() {
+        final RowSetMetaData metaData = new RowSetMetaData("cronQueueType",
+                new ColumnMetaData("name", Types.VARCHAR),
+                new ColumnMetaData("type", Types.VARCHAR),
+                new ColumnMetaData("date", Types.TIMESTAMP));
+        final RowSet rowSet = new RowSet(metaData, null, null);
+        if (executorService instanceof ThreadPoolExecutor) {
+            ExecutorAdaptor.addContentTo(rowSet, (ThreadPoolExecutor) executorService);
+        }
+        return new Table(rowSet, new Sorts(), new Filters(), null, null);
     }
 
     public final Date getDateStandby() {
@@ -98,14 +119,15 @@ public class CronService {
                     if (date.compareTo(dateStandbyUntil.get()) >= 0) {
                         doJobsScheduled(dateNextScheduled);
                     }
-                    dateNextScheduled = getNextTime(dateNextScheduled, Const.DURATION_WORKLOOP);
+                    dateNextScheduled = getNextTime(dateNextScheduled);
                 }
             }
         }
         executorServiceCmd.shutdown();
     }
 
-    private Date getNextTime(final Date date, final String duration) {
+    private Date getNextTime(final Date date) {
+        final String duration = Const.DURATION_WORKLOOP;
         final Date dateIterate = DurationU.add(date, timeZone, duration);
         Date dateNext = dateIterate;
         logger.log(Level.FINEST, "getNextTime()::beginCheckSchedules=" + XsdDateU.toXSDZMillis(dateNext));
@@ -152,7 +174,8 @@ public class CronService {
             ((CommandRunnable) runnable).setCommands(commands);
         }
         if (runnable != null) {
-            executorService.submit(runnable);
+            // ExecutorService.submit() queues a FutureTask, with no access to interesting data
+            executorService.execute(runnable);
         }
     }
 
