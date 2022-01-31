@@ -25,27 +25,27 @@ public class CronRequest {
         this.jobStream = patherStream.getLeftToken();
     }
 
-    public ServletHttpRequest getHttpRequest() {
+    public final ServletHttpRequest getHttpRequest() {
         return httpRequest;
     }
 
-    public String getSubmitID() {
+    public final String getSubmitID() {
         return submitID;
     }
 
-    public String getCronTab() {
+    public final String getCronTab() {
         return cronTab;
     }
 
-    public String getCronJob() {
+    public final String getCronJob() {
         return cronJob;
     }
 
-    public String getJobDate() {
+    public final String getJobDate() {
         return jobDate;
     }
 
-    public String getJobStream() {
+    public final String getJobStream() {
         return jobStream;
     }
 }

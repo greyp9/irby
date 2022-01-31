@@ -31,7 +31,7 @@ import java.util.Collection;
  */
 public class CronTriggerView {
 
-    public void addContentTo(final Element body, final Bundle bundle, final Locus locus,
+    public final void addContentTo(final Element body, final Bundle bundle, final Locus locus,
                              final CronRequest request, final CronService cronService) throws IOException {
         final RowSetMetaData metaData = createMetaData();
         final RowSet rowSet = createRowSet(metaData, cronService, cronService.getConfig(), request.getSubmitID());

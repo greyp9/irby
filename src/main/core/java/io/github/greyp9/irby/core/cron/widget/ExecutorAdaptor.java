@@ -13,7 +13,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Query {@link ThreadPoolExecutor} job queue for information to render.
  */
-public class ExecutorAdaptor {
+public final class ExecutorAdaptor {
+
+    private ExecutorAdaptor() {
+    }
 
     public static void addContentTo(final RowSet rowSet, final ThreadPoolExecutor tpe) {
         final Collection<Runnable> queue = CollectionU.copy(new ArrayList<>(), tpe.getQueue());

@@ -31,7 +31,7 @@ import java.util.Date;
  */
 public class CronStandbyView {
 
-    public void addContentTo(final Element body, final Bundle bundle, final Locus locus,
+    public final void addContentTo(final Element body, final Bundle bundle, final Locus locus,
                              final CronRequest cronRequest, final CronService cronService) throws IOException {
         final Date dateStandby = cronService.getDateStandby();
         if (dateStandby.after(new Date())) {

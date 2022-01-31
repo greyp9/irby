@@ -32,7 +32,7 @@ import java.util.Collection;
  */
 public class CronMonitorView {
 
-    public void addContentTo(final Element body, final Bundle bundle, final Locus locus,
+    public final void addContentTo(final Element body, final Bundle bundle, final Locus locus,
                              final CronRequest cronRequest, final CronService cronService) throws IOException {
         final ServletHttpRequest request = cronRequest.getHttpRequest();
         final RowSetMetaData metaData = createMetaData();

@@ -30,8 +30,8 @@ import java.util.Collection;
  */
 public class CronServicesView {
 
-    public void addContent(final Element body, final Bundle bundle, final Locus locus,
-                           final CronRequest request, final Collection<CronService> cronServices) throws IOException {
+    public final void addContent(final Element body, final Bundle bundle, final Locus locus, final CronRequest request,
+                                 final Collection<CronService> cronServices) throws IOException {
         final RowSetMetaData metaData = createMetaData();
         final RowSet rowSet = createRowSet(metaData, cronServices, request.getHttpRequest().getBaseURI());
         final Table table = new Table(rowSet, new Sorts(), new Filters(), null, null);
