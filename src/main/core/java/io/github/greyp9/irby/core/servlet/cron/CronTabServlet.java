@@ -173,6 +173,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         final Locus locus = new Locus(locale, DateX.Factory.createXsdUtcMilli());
 
         final Document html = DocumentU.toDocument(StreamU.read(ResourceU.resolve(Const.HTML)));
+        //new AppRefreshView(new Properties()).addContentTo(html.getDocumentElement());
         final Element body = new XPather(html, null).getElement(Html.XPath.BODY);
 
         if (cronService == null) {
