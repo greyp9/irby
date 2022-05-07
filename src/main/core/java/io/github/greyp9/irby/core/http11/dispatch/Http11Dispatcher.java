@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.http11.dispatch;
 
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.irby.core.http11.access.AccessLogger;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
@@ -33,7 +34,7 @@ public class Http11Dispatcher {
     public Http11Dispatcher(final Http11Config config, final Realms realms) {
         this.config = config;
         this.realms = realms;
-        this.contexts = new TreeMap<String, Http11Context>();
+        this.contexts = new TreeMap<>();
         this.accessLogger = new AccessLogger();
     }
 
@@ -57,7 +58,7 @@ public class Http11Dispatcher {
     private void register(final Http11ConfigContext contextConfig) {
         final String realmName = contextConfig.getRealm();
         final Realm realm = (realmName == null) ? null : realms.getRealm(realmName);
-        if ((realm != null) || (realmName == null)) {
+        if ((realm != null) || (Value.isEmpty(realmName))) {
             final Http11Context context = new Http11Context(contextConfig, realm);
             final Http11ServletContext servletContext = new Http11ServletContext(context);
             context.register(contextConfig.getServlets(), servletContext);
