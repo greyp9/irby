@@ -315,6 +315,21 @@
                     <linkXRef>false</linkXRef>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.6.0.0</version>  <!-- 2022-03-24 -->
+                <configuration>
+                    <!-- https://spotbugs.github.io/spotbugs-maven-plugin/spotbugs-mojo.html -->
+                    <!-- https://spotbugs.readthedocs.io/en/latest/analysisprops.html -->
+                    <!-- https://spotbugs.readthedocs.io/en/latest/filter.html -->
+                    <effort>Min</effort>
+                    <threshold>High</threshold>
+                    <onlyAnalyze>io.github.greyp9.irby.-</onlyAnalyze>
+                    <!-- <includeFilterFile>src/config/spotbugs/spotbugs-include.xml</includeFilterFile> -->
+                    <excludeFilterFile>src/config/spotbugs/spotbugs-exclude.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
 </project>

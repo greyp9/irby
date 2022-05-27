@@ -30,7 +30,9 @@ import java.util.logging.Logger;
  * @deprecated Functionality migrated to {@link CronTabServlet}.
  */
 public class CronServiceServlet extends javax.servlet.http.HttpServlet {
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private static final long serialVersionUID = -7748737382583885643L;
+
+    private final transient Logger logger = Logger.getLogger(getClass().getName());
 
     private transient Context context;
     private transient String submitID;

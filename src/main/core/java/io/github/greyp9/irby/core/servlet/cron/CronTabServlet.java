@@ -54,7 +54,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class CronTabServlet extends javax.servlet.http.HttpServlet {
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private static final long serialVersionUID = 7431737000728624091L;
+
+    private final transient Logger logger = Logger.getLogger(getClass().getName());
 
     private transient Collection<CronService> cronServices;
     private transient String submitID;

@@ -94,7 +94,7 @@ public class CompressFileRunnable extends CronRunnable {
                 final byte[] bytesCompressed = new GZipCodec().encode(bytes);
                 final String filenameCompressed = String.format("%s.gz", fileTarget.getName());
                 final File fileTargetCompressed = new File(fileTarget.getParentFile(), filenameCompressed);
-                StreamU.write(fileTarget, bytesCompressed);
+                StreamU.write(fileTargetCompressed, bytesCompressed);
                 logger.finest(String.format("%d [%s]", bytes.length, fileTarget.getAbsolutePath()));
                 final boolean delete = FileU.delete(fileSource);
                 logger.finest(String.format("%s [%s]", delete, fileSource.getAbsolutePath()));
