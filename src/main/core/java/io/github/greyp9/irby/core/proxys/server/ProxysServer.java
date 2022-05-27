@@ -7,6 +7,7 @@ import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.http.header.Host;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.tls.context.TLSContext;
+import io.github.greyp9.arwo.core.tls.context.TLSContextFactory;
 import io.github.greyp9.arwo.core.tls.manage.TLSKeyManager;
 import io.github.greyp9.arwo.core.tls.manage.TLSTrustManager;
 import io.github.greyp9.arwo.core.value.Value;
@@ -17,14 +18,12 @@ import io.github.greyp9.irby.core.proxys.socket.ProxysSocketRunnable;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
@@ -105,22 +104,15 @@ public class ProxysServer {
     private static TLSKeyManager getKeyManager(final ProxysConfig config)
             throws GeneralSecurityException, IOException {
         // the TLS key used by the proxy server to authenticate itself to incoming connections [@ApplicationConfig]
-        final KeyStore keyStore = KeyStore.getInstance(config.getKeyStoreType());
-        final File keyStoreFile = new File(config.getKeyStoreFile());
-        final char[] password = config.getKeyStorePass().toCharArray();
-        keyStore.load(new FileInputStream(keyStoreFile), password);
-        return new TLSKeyManager(keyStore, password);
+        return new TLSContextFactory().getKeyManager(config.getKeyStoreType(),
+                config.getKeyStoreFile(), config.getKeyStorePass().toCharArray());
     }
 
     private static TLSTrustManager getTrustManagerClient(final ProxysConfig config)
             throws GeneralSecurityException, IOException {
         // the TLS certificate used by the proxy server to authenticate incoming connections [@ApplicationConfig]
-        final String clientTrustType = config.getClientTrustType();
-        final KeyStore keyStore = KeyStore.getInstance(clientTrustType);
-        final File keyStoreFile = new File(config.getClientTrustFile());
-        final char[] password = config.getClientTrustPass().toCharArray();
-        keyStore.load(new FileInputStream(keyStoreFile), password);
-        return new TLSTrustManager(keyStore);
+        return new TLSContextFactory().getTrustManager(config.getClientTrustType(),
+                config.getClientTrustFile(), config.getClientTrustPass().toCharArray());
     }
 
     private static SocketFactory getSocketFactory(final ProxysConfig config) throws IOException {

@@ -2,6 +2,7 @@ package io.github.greyp9.irby.core.https11.server;
 
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.tls.context.TLSContext;
+import io.github.greyp9.arwo.core.tls.context.TLSContextFactory;
 import io.github.greyp9.arwo.core.tls.manage.TLSKeyManager;
 import io.github.greyp9.arwo.core.tls.manage.TLSTrustManager;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
@@ -11,14 +12,11 @@ import io.github.greyp9.irby.core.https11.socket.Https11SocketRunnable;
 import io.github.greyp9.irby.core.realm.Realms;
 
 import javax.net.ssl.SSLServerSocketFactory;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.util.concurrent.ExecutorService;
 
 public class Https11Server {
@@ -85,20 +83,13 @@ public class Https11Server {
 
     private static TLSKeyManager getKeyManager(final Https11Config config)
             throws GeneralSecurityException, IOException {
-        final KeyStore keyStore = KeyStore.getInstance(config.getKeyStoreType());
-        final File keyStoreFile = new File(config.getKeyStoreFile());
-        final char[] password = config.getKeyStorePass().toCharArray();
-        keyStore.load(new FileInputStream(keyStoreFile), password);
-        return new TLSKeyManager(keyStore, password);
+        return new TLSContextFactory().getKeyManager(config.getKeyStoreType(),
+                config.getKeyStoreFile(), config.getKeyStorePass().toCharArray());
     }
 
     private static TLSTrustManager getTrustManager(final Https11Config config)
             throws GeneralSecurityException, IOException {
-        final String clientTrustType = config.getClientTrustType();
-        final KeyStore keyStore = KeyStore.getInstance(clientTrustType);
-        final File keyStoreFile = new File(config.getClientTrustFile());
-        final char[] password = config.getClientTrustPass().toCharArray();
-        keyStore.load(new FileInputStream(keyStoreFile), password);
-        return new TLSTrustManager(keyStore);
+        return new TLSContextFactory().getTrustManager(config.getClientTrustType(),
+                config.getClientTrustFile(), config.getClientTrustPass().toCharArray());
     }
 }
