@@ -72,7 +72,7 @@ public class ProxysSocketRunnable implements Runnable {
     }
 
     private static Socket augmentSSLSocket(final ProxysConfig config, final Socket socket) {
-        if (config.isNeedClientAuth()) {
+        if (config.isNeedClientAuth() && (socket instanceof SSLSocket)) {
             final SSLSocket sslSocket = (SSLSocket) socket;
             sslSocket.setNeedClientAuth(true);
         }

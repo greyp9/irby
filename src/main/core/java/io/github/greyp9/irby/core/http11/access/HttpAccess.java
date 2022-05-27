@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.http11.access;
 
+import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.value.Value;
@@ -23,7 +24,7 @@ public final class HttpAccess {
         this.remoteHost = remoteHost;
         this.rfc1413 = rfc1413;
         this.remoteUser = remoteUser;
-        this.date = date;
+        this.date = DateU.copy(date);
         this.requestLine = requestLine;
         this.status = status;
         this.size = size;

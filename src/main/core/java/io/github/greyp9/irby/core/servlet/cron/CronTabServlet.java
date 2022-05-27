@@ -29,6 +29,7 @@ import io.github.greyp9.arwo.core.xpath.XPather;
 import io.github.greyp9.irby.core.cron.core.CronRequest;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.service.CronService;
+import io.github.greyp9.irby.core.cron.service.CronServices;
 import io.github.greyp9.irby.core.cron.view.CronMonitorView;
 import io.github.greyp9.irby.core.cron.view.CronQueueView;
 import io.github.greyp9.irby.core.cron.view.CronServicesView;
@@ -56,56 +57,70 @@ import java.util.stream.Collectors;
 public class CronTabServlet extends javax.servlet.http.HttpServlet {
     private static final long serialVersionUID = 7431737000728624091L;
 
-    private final transient Logger logger = Logger.getLogger(getClass().getName());
-
-    private transient Collection<CronService> cronServices;
-    private transient String submitID;
+    private CronServices cronServices;
+    private String submitID;
 
     @Override
     public final void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        logger.entering(getClass().getName(), null);
-        this.cronServices = AppNaming.listBindings(
-                        AppNaming.lookupSubcontext(CronService.class.getName()), ".*")
-                .stream().map(Binding::getObject)
-                .filter(CronService.class::isInstance)
-                .map(CronService.class::cast)
-                .collect(Collectors.toList());
-        this.submitID = UUID.randomUUID().toString();
+        Logger.getLogger(getClass().getName()).entering(getClass().getName(), null);
+        synchronized (this) {
+            this.cronServices = new CronServices(AppNaming.listBindings(
+                    AppNaming.lookupSubcontext(CronService.class.getName()), ".*")
+                    .stream().map(Binding::getObject)
+                    .filter(CronService.class::isInstance)
+                    .map(CronService.class::cast)
+                    .collect(Collectors.toList()));
+            this.submitID = UUID.randomUUID().toString();
+        }
     }
 
     @Override
     public final void destroy() {
-        this.submitID = null;
-        this.cronServices.clear();
-        logger.exiting(getClass().getName(), null);
+        synchronized (this) {
+            this.submitID = null;
+            this.cronServices = null;
+        }
+        Logger.getLogger(getClass().getName()).exiting(getClass().getName(), null);
         super.destroy();
     }
 
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        final Collection<CronService> cronServices1;
+        final String submitID1;
+        synchronized (this) {
+            cronServices1 = cronServices;
+            submitID1 = submitID;
+        }
         final ServletHttpRequest servletHttpRequest = ServletU.read(request);
-        final CronRequest cronRequest = new CronRequest(servletHttpRequest, submitID);
+        final CronRequest cronRequest = new CronRequest(servletHttpRequest, submitID1);
         final HttpResponse httpResponse = (servletHttpRequest.getPathInfo() == null)
                 ? HttpResponseU.to302(servletHttpRequest.getHttpRequest().getResource() + Http.Token.SLASH)
-                : getHttpResponse(cronRequest);
+                : getHttpResponse(cronRequest, cronServices1);
         ServletU.write(httpResponse, response);
     }
 
     @Override
     protected final void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        final Collection<CronService> cronServices1;
+        final String submitID1;
+        synchronized (this) {
+            cronServices1 = cronServices;
+            submitID1 = submitID;
+        }
         final ServletHttpRequest servletHttpRequest = ServletU.read(request);
-        final CronRequest cronRequest = new CronRequest(servletHttpRequest, submitID);
+        final CronRequest cronRequest = new CronRequest(servletHttpRequest, submitID1);
         final String cronTab = cronRequest.getCronTab();
-        final CronService cronService = cronServices.stream()
+        final CronService cronService = cronServices1.stream()
                 .filter(s -> s.getConfig().getName().equals(cronTab)).findFirst().orElse(null);
         if (cronService != null) {
             final byte[] entity = StreamU.read(servletHttpRequest.getHttpRequest().getEntity());
             final NameTypeValues httpArguments = HttpArguments.toArguments(entity);
             for (final NameTypeValue httpArgument : httpArguments) {
-                if (submitID.equals(httpArgument.getName())) {
+                if (submitID1.equals(httpArgument.getName())) {
                     final SubmitToken token = SubmitTokenU.fromString(httpArgument.getValueS());
                     if (token != null) {
                         final String subject = token.getSubject();
@@ -122,28 +137,30 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         ServletU.write(HttpResponseU.to302(""), response);
     }
 
-    private HttpResponse getHttpResponse(final CronRequest cronRequest) throws IOException {
+    private HttpResponse getHttpResponse(final CronRequest cronRequest,
+                                         final Collection<CronService> cronServices1) throws IOException {
         final String cronTab = cronRequest.getCronTab();
-        final CronService cronService = cronServices.stream()
+        final CronService cronService = cronServices1.stream()
                 .filter(s -> s.getConfig().getName().equals(cronTab)).findFirst().orElse(null);
         final HttpResponse httpResponse;
         if (Value.isEmpty(cronTab)) {
-            httpResponse = getHttpResponse2(cronRequest, null, null);
+            httpResponse = getHttpResponse2(cronRequest, null, null, cronServices1);
         } else if (cronService == null) {
             httpResponse = HttpResponseU.to302(cronRequest.getHttpRequest().getBaseURI());
         } else {
-            httpResponse = getHttpResponse2(cronRequest, cronTab, cronService);
+            httpResponse = getHttpResponse2(cronRequest, cronTab, cronService, cronServices1);
         }
         return httpResponse;
     }
 
-    private HttpResponse getHttpResponse2(final CronRequest cronRequest, final String label,
-                                          final CronService cronService) throws IOException {
+    private HttpResponse getHttpResponse2(
+            final CronRequest cronRequest, final String label,
+            final CronService cronService, final Collection<CronService> cronServices1) throws IOException {
         final ServletHttpRequest request = cronRequest.getHttpRequest();
         final String name = cronRequest.getCronJob();
         final String date = cronRequest.getJobDate();
         final String stream = cronRequest.getJobStream();
-        logger.finest(String.format("[%s][%s][%s]", name, date, stream));
+        Logger.getLogger(getClass().getName()).finest(String.format("[%s][%s][%s]", name, date, stream));
         if (!Value.isEmpty(name) && !Value.isEmpty(date)) {
             final CommandWork commandWork = cronService.getCommands().stream()
                     .filter(c -> c.getName().equals(name))
@@ -155,7 +172,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
                     ? commandWork.getByteBufferStderr()
                     : commandWork.getByteBufferStdout()));
         } else {
-            return getHttpResponse3(cronRequest, label, cronService);
+            return getHttpResponse3(cronRequest, label, cronService, cronServices1);
         }
     }
 
@@ -167,8 +184,9 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         return new HttpResponse(HttpURLConnection.HTTP_OK, headers, new ByteArrayInputStream(entity));
     }
 
-    private HttpResponse getHttpResponse3(final CronRequest cronRequest, final String label,
-                                          final CronService cronService) throws IOException {
+    private HttpResponse getHttpResponse3(
+            final CronRequest cronRequest, final String label,
+            final CronService cronService, final Collection<CronService> cronServices1) throws IOException {
         // serve cron tab status page
         final Locale locale = Locale.getDefault();
         final Bundle bundle = new Bundle(ResourceBundle.getBundle("io.github.greyp9.irby.core.core", locale));
@@ -179,7 +197,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         final Element body = new XPather(html, null).getElement(Html.XPath.BODY);
 
         if (cronService == null) {
-            new CronServicesView().addContent(body, bundle, locus, cronRequest, cronServices);
+            new CronServicesView().addContent(body, bundle, locus, cronRequest, cronServices1);
         } else {
             new CronStandbyView().addContentTo(body, bundle, locus, cronRequest, cronService);
             new CronTriggerView().addContentTo(body, bundle, locus, cronRequest, cronService);

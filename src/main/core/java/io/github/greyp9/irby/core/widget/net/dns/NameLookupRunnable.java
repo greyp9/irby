@@ -47,8 +47,8 @@ public final class NameLookupRunnable implements Runnable {
             final Stopwatch stopwatch = new Stopwatch(className);
             final InetAddress address = InetAddress.getByName(host);
             final long elapsed = stopwatch.lap();
-            logger.fine(String.format("%s:[%s]:%d:%s:%d", name, XsdDateU.toXSDZMillis(date),
-                    timeout, toObject, elapsed));
+            logger.fine(String.format("%s:[%s]:%d:%s:%d:%s", name, XsdDateU.toXSDZMillis(date),
+                    timeout, toObject, elapsed, address));
             recordMetric(elapsed);
         } catch (IOException e) {
             logger.severe(e.getMessage());

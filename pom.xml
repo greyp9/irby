@@ -80,7 +80,9 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
-                    <excludes/>
+                    <excludes>
+                        <exclude>io/github/greyp9/irby/core/servlet/cron/CronServiceServlet.java</exclude>
+                    </excludes>
                     <testExcludes/>
                 </configuration>
             </plugin>
@@ -323,8 +325,8 @@
                     <!-- https://spotbugs.github.io/spotbugs-maven-plugin/spotbugs-mojo.html -->
                     <!-- https://spotbugs.readthedocs.io/en/latest/analysisprops.html -->
                     <!-- https://spotbugs.readthedocs.io/en/latest/filter.html -->
-                    <effort>Min</effort>
-                    <threshold>High</threshold>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
                     <onlyAnalyze>io.github.greyp9.irby.-</onlyAnalyze>
                     <!-- <includeFilterFile>src/config/spotbugs/spotbugs-include.xml</includeFilterFile> -->
                     <excludeFilterFile>src/config/spotbugs/spotbugs-exclude.xml</excludeFilterFile>

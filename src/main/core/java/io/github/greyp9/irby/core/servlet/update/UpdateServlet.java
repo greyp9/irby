@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 public class UpdateServlet extends javax.servlet.http.HttpServlet {
+    private static final long serialVersionUID = -5859395371067111934L;
 
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)

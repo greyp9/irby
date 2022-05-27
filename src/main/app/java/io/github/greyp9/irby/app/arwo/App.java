@@ -18,6 +18,8 @@ public final class App {
         final String className = getClass().getName();
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
+        logger.finest("mkdir(data):" + new File(".", "data").mkdir());
+        logger.finest("mkdir(log):" + new File(".", "log").mkdir());
         final URL url = URLCodec.toURL(new File(Application.Const.FILE));
         final String signal = applicationRunLoop(url);
         logger.finer(signal);
@@ -35,8 +37,6 @@ public final class App {
     }
 
     public static void main(final String[] args) throws Exception {
-        new File(".", "data").mkdir();
-        new File(".", "log").mkdir();
         System.exit(new App().run());
     }
 }

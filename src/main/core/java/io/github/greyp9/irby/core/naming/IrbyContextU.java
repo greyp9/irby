@@ -21,7 +21,7 @@ public final class IrbyContextU {
                     ? new InitialContext().listBindings(".*") : context.listBindings(".*"));
             while (bindings.hasMore()) {
                 final Binding binding = bindings.next();
-                buffer.append(String.format("\n[%s][%s]=[%s]",
+                buffer.append(String.format("%n[%s][%s]=[%s]",
                         binding.getName(), binding.getClassName(), binding.getObject().toString()));
                 final Object object = binding.getObject();
                 if (object instanceof IrbyContext) {

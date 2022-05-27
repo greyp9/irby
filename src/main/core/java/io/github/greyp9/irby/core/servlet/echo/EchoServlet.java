@@ -17,13 +17,13 @@ public class EchoServlet extends javax.servlet.http.HttpServlet {
         final String requestURI = request.getRequestURI();
         final String queryString = request.getQueryString();
         final String protocol = request.getProtocol();
-        buffer.append(String.format("%s %s%s %s\r\n", method, requestURI,
+        buffer.append(String.format("%s %s%s %s%n", method, requestURI,
                 ((queryString == null) ? "" : queryString), protocol));
         final Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             final String name = (String) headerNames.nextElement();
             final String value = request.getHeader(name);
-            buffer.append(String.format("%s: %s\r\n", name, value));
+            buffer.append(String.format("%s: %s%n", name, value));
         }
         final byte[] bytes = buffer.toString().getBytes("UTF-8");  // i18n http
         response.setContentType("text/plain; charset='UTF-8'");  // i18n http

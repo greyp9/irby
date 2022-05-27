@@ -18,18 +18,19 @@ public final class UpdateFolder {
     }
 
     public void updateFrom(final File file, final String prefix) throws IOException {
-        final ZipFile zipFile = new ZipFile(file);
-        final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            final ZipEntry entry = entries.nextElement();
-            if (!entry.isDirectory()) {
-                final String name = entry.getName();
-                if (name.startsWith(prefix)) {
-                    final String path = name.substring(prefix.length());
-                    final File fileTarget = new File(folderTarget, path);
-                    final byte[] bytes = StreamU.read(zipFile.getInputStream(entry));
-                    StreamU.write(fileTarget, bytes);
-                    logger.info(fileTarget.getAbsolutePath());
+        try (ZipFile zipFile = new ZipFile(file)) {
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                final ZipEntry entry = entries.nextElement();
+                if (!entry.isDirectory()) {
+                    final String name = entry.getName();
+                    if (name.startsWith(prefix)) {
+                        final String path = name.substring(prefix.length());
+                        final File fileTarget = new File(folderTarget, path);
+                        final byte[] bytes = StreamU.read(zipFile.getInputStream(entry));
+                        StreamU.write(fileTarget, bytes);
+                        logger.info(fileTarget.getAbsolutePath());
+                    }
                 }
             }
         }

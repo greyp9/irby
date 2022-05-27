@@ -7,6 +7,7 @@ import io.github.greyp9.arwo.core.file.date.FilenameFactory;
 import io.github.greyp9.arwo.core.http.Http;
 import io.github.greyp9.arwo.core.http.HttpRequest;
 import io.github.greyp9.arwo.core.http.HttpResponse;
+import io.github.greyp9.arwo.core.httpclient.HttpClient;
 import io.github.greyp9.arwo.core.httpclient.HttpClientU;
 import io.github.greyp9.arwo.core.httpclient.HttpsClient;
 import io.github.greyp9.arwo.core.io.StreamU;
@@ -100,13 +101,14 @@ public class HttpRunnable extends CronRunnable {
                     ? null : CertificateU.toX509(UTF8Codec.toBytes(this.certificate));
             final URL urlProxy = Value.isEmpty(proxy) ? null : URLCodec.toURL(proxy);
             final Proxy proxyRunnable = ProxyU.toHttpProxy(urlProxy);
-            final HttpsClient httpsClient = new HttpsClient(x509Certificate, false, proxyRunnable);
+            final HttpClient httpClient = Http.Protocol.HTTP.equals(protocol)
+                    ? new HttpClient() : new HttpsClient(x509Certificate, false, proxyRunnable);
             final URL url = new URL(sourceUrl);
             final NameTypeValues headersRequest = NTV.create(
                     Http.Header.AUTHORIZATION, HttpClientU.toBasicAuth(authorization));
             final HttpRequest httpRequest = new HttpRequest(
                     method, url.getFile(), url.getQuery(), headersRequest, null);
-            final HttpResponse httpResponse = httpsClient.doRequest(url, httpRequest);
+            final HttpResponse httpResponse = httpClient.doRequest(url, httpRequest);
             final byte[] responseEntity = StreamU.read(httpResponse.getEntity());
             final File file = FilenameFactory.getUnused(targetFile, date);
             logger.info(file.getAbsolutePath());

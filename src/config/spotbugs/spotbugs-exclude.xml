@@ -2,8 +2,19 @@
 <FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
     <Match>
-        <!-- code is as intended -->
+        <!-- revisit -->
+        <Bug code="EI"/>
+    </Match>
+    <Match>
+        <!-- revisit -->
+        <Bug code="EI2"/>
+    </Match>
+    <Match>
         <Class name="io.github.greyp9.irby.app.update.App"/>
         <Bug code="LG"/>
+    </Match>
+    <Match>
+        <Class name="io.github.greyp9.irby.core.servlet.res.ResourceServlet"/>
+        <Bug code="DCN"/>
     </Match>
 </FindBugsFilter>
