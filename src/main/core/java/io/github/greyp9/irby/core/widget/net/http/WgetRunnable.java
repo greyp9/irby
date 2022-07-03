@@ -72,7 +72,7 @@ public final class WgetRunnable implements Runnable {
     private void httpsMethod() throws IOException, GeneralSecurityException {
         final URL url = new URL(urlFrom);
         final CertificateClient client = new CertificateClient(protocol);
-        final Collection<X509Certificate> certificates = client.getCertificateChain(url);
+        final Collection<X509Certificate> certificates = client.getCertificateChain(url, null);
         final X509Certificate certificate = certificates.iterator().next();
         final String certificateHashRemote = Base64Codec.encode(HashU.sha256(certificate.getEncoded()));
         if ((certificateHash != null) && (certificateHash.equals(certificateHashRemote))) {
