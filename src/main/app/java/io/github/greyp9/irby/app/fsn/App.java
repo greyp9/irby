@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.app.fsn;
 
+import io.github.greyp9.arwo.core.app.AppFolder;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.vm.thread.ThreadU;
@@ -21,6 +22,8 @@ public final class App {
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
         final URL url = URLCodec.toURL(new File(Application.Const.FILE));
+        logger.finer("userDir=" + new File("").getAbsolutePath());
+        logger.finer("arwoHome=" + AppFolder.getWebappRoot("").getAbsolutePath());
         final String signal = applicationRunLoop(url);
         logger.finer(signal);
         logger.exiting(className, methodName);
