@@ -12,9 +12,15 @@
             <directory>${project.basedir}/src/main/app/resources/app-home</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
+                <include>server.pkcs12</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/app/resources/app-home</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
                 <include>app.xml</include>
                 <include>logging.properties</include>
-                <include>server.pkcs12</include>
             </includes>
         </fileSet>
         <fileSet>

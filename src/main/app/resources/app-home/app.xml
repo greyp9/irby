@@ -81,7 +81,7 @@
             <servlet enabled='true' path='/irby' class='io.github.greyp9.arwo.app.xed.servlet.Xed1Servlet' auth-constraint='*'>
                 <init-param name='title' value='Irby'/>
                 <init-param name='qname' value='irby:application'/>
-                <init-param name='xml' value='app.xml'/>
+                <init-param name='xml' value='conf/app.xml'/>
                 <init-param name='xsd' value='io/github/greyp9/irby/xsd/app/app.xsd'/>
                 <init-param name='trigger' value='io.github.greyp9.irby.app.trigger.AppTrigger'/>
             </servlet>

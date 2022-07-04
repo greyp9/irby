@@ -60,7 +60,7 @@ public class Application {
         // application setup
         final ExecutorService executorService = ExecutorServiceFactory.create(
                 config.getThreads(), getClass().getSimpleName());
-        final AtomicReference<String> reference = new AtomicReference<String>();
+        final AtomicReference<String> reference = new AtomicReference<>();
         // lifecycle management
         executorService.execute(new LifecycleRunnable(name, reference, config.getInterval()));
         executorService.execute(new InputStreamRunnable(System.in, reference, config.getInterval()));
@@ -93,7 +93,7 @@ public class Application {
             executorService.execute(CronRunnable.create(cronConfig, executorService, reference));
         }
         // record executor state (should be no queued tasks)
-        final Collection<String> results = new ArrayList<String>();
+        final Collection<String> results = new ArrayList<>();
         results.add(ThreadPoolU.getTelemetry(executorService));
         // wait until shutdown signaled
         while (reference.get() == null) {
@@ -115,7 +115,7 @@ public class Application {
     }
 
     public static class Const {
-        public static final String FILE = "app.xml";
+        public static final String FILE = "conf/app.xml";
         public static final String URL_BUILTIN = "io/github/greyp9/irby/xml/builtin/app.xml";
 
         public static final String QUIT_TOKEN = "q";  // i18n internal
