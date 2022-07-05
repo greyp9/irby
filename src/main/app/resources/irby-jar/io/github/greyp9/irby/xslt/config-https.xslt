@@ -11,6 +11,9 @@
     <xsl:param name="keyStoreType"/>
     <xsl:param name="keyStoreFile"/>
     <xsl:param name="keyStorePass"/>
+    <xsl:param name="clientTrustType"/>
+    <xsl:param name="clientTrustFile"/>
+    <xsl:param name="clientTrustPass"/>
 
     <xsl:template match='@*|node()'>
         <xsl:copy>
@@ -73,6 +76,45 @@
             <xsl:when test="string-length($keyStorePass) &gt; 0">
                 <xsl:attribute name='keyStorePass'>
                     <xsl:value-of select="$keyStorePass"/>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@clientTrustType'>
+        <xsl:choose>
+            <xsl:when test="string-length($clientTrustType) &gt; 0">
+                <xsl:attribute name='clientTrustType'>
+                    <xsl:value-of select="$clientTrustType"/>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@clientTrustFile'>
+        <xsl:choose>
+            <xsl:when test="string-length($clientTrustFile) &gt; 0">
+                <xsl:attribute name='clientTrustFile'>
+                    <xsl:value-of select="$clientTrustFile"/>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@clientTrustPass'>
+        <xsl:choose>
+            <xsl:when test="string-length($clientTrustPass) &gt; 0">
+                <xsl:attribute name='clientTrustPass'>
+                    <xsl:value-of select="$clientTrustPass"/>
                 </xsl:attribute>
             </xsl:when>
             <xsl:otherwise>

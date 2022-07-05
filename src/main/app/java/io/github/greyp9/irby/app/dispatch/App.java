@@ -7,6 +7,7 @@ import io.github.greyp9.arwo.core.res.ResourceU;
 import io.github.greyp9.arwo.core.text.line.LineU;
 import io.github.greyp9.irby.app.transform.ConfigHttpsKeyStore;
 import io.github.greyp9.irby.app.transform.ConfigHttpsPort;
+import io.github.greyp9.irby.app.transform.ConfigHttpsTrustStore;
 
 import java.io.Console;
 import java.io.IOException;
@@ -29,6 +30,8 @@ public final class App {
             ConfigHttpsPort.main(args);
         } else if ("https-keystore".equals(args[0])) {
             ConfigHttpsKeyStore.main(args);
+        } else if ("https-truststore".equals(args[0])) {
+            ConfigHttpsTrustStore.main(args);
         } else {
             io.github.greyp9.irby.app.arwo.App.main(args);
         }

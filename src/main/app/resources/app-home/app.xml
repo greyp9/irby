@@ -2,8 +2,10 @@
 <irby:application xmlns='urn:irby:app' xmlns:irby='urn:irby:app' threads='6' loop='PT1S'>
     <realm enabled='true' name='Irby-Arwo' method='Basic' type='arwo' context='/arwo'/>
 
-    <https11 enabled='false' name='https-default' port='443' threads='12' keyStoreFile='' keyStoreType='PKCS12' keyStorePass='' protocol='TLS'>
-        <web-app enabled='true' path=''>
+    <https11 enabled='false' name='https-default' port='443' threads='12' protocol='TLS'
+             keyStoreFile='' keyStoreType='PKCS12' keyStorePass=''
+             clientTrustFile='' clientTrustType='JKS' clientTrustPass=''>
+    <web-app enabled='true' path=''>
             <servlet enabled='true' path='' class='io.github.greyp9.irby.core.servlet.status.RedirectServlet'>
                 <init-param name='Location' value='/arwo'/>
             </servlet>

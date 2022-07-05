@@ -9,3 +9,6 @@ java -jar irby.jar https-port <port-number>
 
 java -jar irby.jar https-keystore <keystore-path> <keystore-password>
 - Set the keystore for the default https configuration (PKCS12 only).
+
+java -jar irby.jar https-truststore <truststore-path> <truststore-password>
+- Set the truststore for the default https configuration (JKS only).
