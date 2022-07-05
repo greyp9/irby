@@ -12,11 +12,14 @@ public final class App {
     }
 
     private int run() throws IOException, URISyntaxException {
+        final File fileJarD = PlatformU.getCodeLocation(getClass());
+        final String filenameJar = fileJarD.getName().replace("-d", "");  // filename of primary jar
+        final String classpath = filenameJar + ":lib/*";  // Linux, MacOS safe
         final String[] commandArray = {
                 "java",
-                "-Djava.util.logging.config.file=./logging.properties",
-                "-jar",
-                "irby.jar"
+                "-cp",
+                classpath,
+                "io.github.greyp9.irby.app.arwo.App"
         };
 
         final File dir = PlatformU.getCodeFolder(getClass());

@@ -252,6 +252,27 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>daemon</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>d</classifier>
+                            <includes>
+                                <include>io/github/greyp9/arwo/core/lang/PlatformU.class</include>
+                                <include>io/github/greyp9/irby/app/exec/App.class</include>
+                            </includes>
+                            <archive>
+                                <manifest>
+                                    <mainClass>io.github.greyp9.irby.app.exec.App</mainClass>
+                                </manifest>
+                                <manifestEntries/>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
