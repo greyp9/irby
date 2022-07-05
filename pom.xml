@@ -242,7 +242,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>io.github.greyp9.irby.app.arwo.App</mainClass>
+                            <mainClass>io.github.greyp9.irby.app.dispatch.App</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>lib/arwo-0.2.0-SNAPSHOT.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar

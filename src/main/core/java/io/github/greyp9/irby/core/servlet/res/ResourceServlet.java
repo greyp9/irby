@@ -14,7 +14,6 @@ import io.github.greyp9.arwo.core.value.NTV;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
 import io.github.greyp9.arwo.core.value.Value;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -29,7 +28,7 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
 
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         final String initParamResource = getInitParameter(Const.INIT_PARAM_RESOURCE);
         final String initParamIndex = getInitParameter(Const.INIT_PARAM_INDEX);
         if (initParamResource == null) {

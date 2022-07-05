@@ -117,7 +117,5 @@ public class Application {
     public static class Const {
         public static final String FILE = "conf/app.xml";
         public static final String URL_BUILTIN = "io/github/greyp9/irby/xml/builtin/app.xml";
-
-        public static final String QUIT_TOKEN = "q";  // i18n internal
     }
 }

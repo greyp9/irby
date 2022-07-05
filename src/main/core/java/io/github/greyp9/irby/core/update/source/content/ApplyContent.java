@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.update.source.content;
 
+import io.github.greyp9.arwo.core.app.AppSignal;
 import io.github.greyp9.arwo.core.file.meta.FileMetaData;
 import io.github.greyp9.arwo.core.file.meta.MetaFile;
 import io.github.greyp9.arwo.core.hash.secure.HashU;
@@ -58,7 +59,7 @@ public final class ApplyContent {
             Runtime.getRuntime().addShutdownHook(new ApplyContentThread(cmdarray, new File(userHome)));
             // signal application (to quit)
             System.setProperty(Application.class.getName(), Value.join(
-                    Http.Token.DOT, Application.Const.QUIT_TOKEN, getClass().getName()));
+                    Http.Token.DOT, AppSignal.QUIT, getClass().getName()));
         } catch (IOException | GeneralSecurityException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

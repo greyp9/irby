@@ -8,6 +8,7 @@
         <format>dir</format>
     </formats>
     <fileSets>
+<!--
         <fileSet>
             <directory>${project.basedir}/src/main/app/resources/app-home</directory>
             <outputDirectory>.</outputDirectory>
@@ -15,6 +16,7 @@
                 <include>server.pkcs12</include>
             </includes>
         </fileSet>
+-->
         <fileSet>
             <directory>${project.basedir}/src/main/app/resources/app-home</directory>
             <outputDirectory>conf</outputDirectory>

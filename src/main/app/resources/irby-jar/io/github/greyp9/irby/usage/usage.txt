@@ -1,0 +1,11 @@
+java -jar irby.jar
+- Run application.
+
+java -jar irby.jar help
+- Show this text.
+
+java -jar irby.jar https-port <port-number>
+- Set the port for the default https configuration.
+
+java -jar irby.jar https-keystore <keystore-path> <keystore-password>
+- Set the keystore for the default https configuration (PKCS12 only).
