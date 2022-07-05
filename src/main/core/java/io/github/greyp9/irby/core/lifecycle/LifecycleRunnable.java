@@ -38,7 +38,7 @@ public class LifecycleRunnable implements Runnable {
         if (value == null) {
             ThreadU.sleepMillis(interval);
         } else {
-            reference.compareAndSet(null, value);
+            reference.compareAndSet(null, value.trim());
             properties.remove(propertyKey);
         }
     }

@@ -54,7 +54,7 @@ public class InputStreamRunnable implements Runnable {
                     outputStream.write(inputStream.read());
                 }
                 if (outputStream.size() > 0) {
-                    reference.compareAndSet(null, UTF8Codec.toString(getInput()));
+                    reference.compareAndSet(null, UTF8Codec.toString(getInput()).trim());
                 }
             }
             if (reference.get() == null) {
