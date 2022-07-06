@@ -61,11 +61,12 @@ public final class SimpleRealm implements Realm {
     private Principal authenticateCertificate(final String user, final X509Certificate credential) {
         Principal principal = null;
         final String fingerprint = toFingerprint(credential);
-        logger.log(Level.FINEST, fingerprint);
         final Iterator<PrincipalConfig> it = config.getPrincipals().iterator();
         while ((it.hasNext()) && (principal == null)) {
             principal = authenticate(it.next(), user, fingerprint);
         }
+        final Level level = ((principal == null) ? Level.INFO : Level.FINEST);
+        logger.log(level, () -> String.format("credential=[%s] name=[%s]", fingerprint, user));
         return principal;
     }
 
