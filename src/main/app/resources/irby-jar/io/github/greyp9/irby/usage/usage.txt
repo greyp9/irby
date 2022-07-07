@@ -7,6 +7,9 @@ java -jar irby.jar help
 java -jar irby.jar realm <Basic|Certificate>
 - Enable the specified authn/authz realm.
 
+java -jar irby.jar secret <secret-path>
+- Enable the specified environment secret.
+
 java -jar irby.jar https-port <port-number>
 - Set the port for the default https configuration.
 

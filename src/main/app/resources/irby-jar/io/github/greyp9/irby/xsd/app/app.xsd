@@ -20,6 +20,7 @@
             <xsd:element name='cron' type='irby:cronType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='advanced' type='irby:advancedType' minOccurs='0' maxOccurs='unbounded'/>
         </xsd:sequence>
+        <xsd:attribute name='secret' type='xsd:string' default=''/>
         <xsd:attribute name='threads' type='xsd:unsignedShort' default='6'/>
         <xsd:attribute name='loop' type='xsd:duration' default='PT1S'/>
     </xsd:complexType>

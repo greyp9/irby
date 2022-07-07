@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<irby:application xmlns='urn:irby:app' xmlns:irby='urn:irby:app' threads='6' loop='PT1S'>
+<irby:application xmlns='urn:irby:app' xmlns:irby='urn:irby:app' secret='' threads='6' loop='PT1S'>
     <realm enabled='false' name='Irby-Basic' method='Basic' type='arwo' context='/arwo'/>
     <realm enabled="false" name="Irby-Certificate" method="Certificate"/>
 

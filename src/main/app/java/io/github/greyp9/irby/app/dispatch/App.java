@@ -9,6 +9,7 @@ import io.github.greyp9.irby.app.transform.ConfigHttpsKeyStore;
 import io.github.greyp9.irby.app.transform.ConfigHttpsPort;
 import io.github.greyp9.irby.app.transform.ConfigHttpsTrustStore;
 import io.github.greyp9.irby.app.transform.ConfigRealm;
+import io.github.greyp9.irby.app.transform.ConfigSecret;
 
 import java.io.Console;
 import java.io.IOException;
@@ -29,6 +30,8 @@ public final class App {
             showUsage();
         } else if ("realm".equals(args[0])) {
             ConfigRealm.main(args);
+        } else if ("secret".equals(args[0])) {
+            ConfigSecret.main(args);
         } else if ("https-port".equals(args[0])) {
             ConfigHttpsPort.main(args);
         } else if ("https-keystore".equals(args[0])) {
