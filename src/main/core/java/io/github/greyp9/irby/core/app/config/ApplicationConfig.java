@@ -35,6 +35,7 @@ import java.util.Properties;
 public final class ApplicationConfig {
     private final XPathContext context;
 
+    private final String secret;
     private final int threads;
     private final long interval;
 
@@ -47,6 +48,10 @@ public final class ApplicationConfig {
     private final Collection<UDPConfig> udpConfigs;
     private final Collection<CronConfig> cronConfigs;
     private final Collection<AdvancedConfig> advancedConfigs;
+
+    public String getSecret() {
+        return secret;
+    }
 
     public int getThreads() {
         return threads;
@@ -110,18 +115,19 @@ public final class ApplicationConfig {
         this.context = XPathContextFactory.create(document);
         final XPather xpather = new XPather(document, context);
         // application params
+        this.secret = xpather.getTextAttr(Const.XPATH_A_SECRET);
         this.threads = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 2);
         this.interval = NumberU.toLong(xpather.getTextAttr("@loop"), DurationU.Const.ONE_SECOND_MILLIS);
         // subsystems
-        this.realmConfigs = new ArrayList<RealmConfig>();
-        this.contextConfigs = new ArrayList<ContextConfig>();
-        this.http11Configs = new ArrayList<Http11Config>();
-        this.https11Configs = new ArrayList<Https11Config>();
-        this.proxyConfigs = new ArrayList<ProxyConfig>();
-        this.proxysConfigs = new ArrayList<ProxysConfig>();
-        this.udpConfigs = new ArrayList<UDPConfig>();
-        this.cronConfigs = new ArrayList<CronConfig>();
-        this.advancedConfigs = new ArrayList<AdvancedConfig>();
+        this.realmConfigs = new ArrayList<>();
+        this.contextConfigs = new ArrayList<>();
+        this.http11Configs = new ArrayList<>();
+        this.https11Configs = new ArrayList<>();
+        this.proxyConfigs = new ArrayList<>();
+        this.proxysConfigs = new ArrayList<>();
+        this.udpConfigs = new ArrayList<>();
+        this.cronConfigs = new ArrayList<>();
+        this.advancedConfigs = new ArrayList<>();
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsContext(xpather.getElements("/irby:application/irby:context[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
@@ -392,9 +398,10 @@ public final class ApplicationConfig {
     private static class Const {
         private static final String XPATH_A_NAME = "@name";
         private static final String XPATH_A_PORT = "@port";
+        private static final String XPATH_A_SECRET = "@secret";
+        private static final String XPATH_A_STREAMS = "@streams";
         private static final String XPATH_A_TARGET = "@target";
         private static final String XPATH_A_THREADS = "@threads";
-        private static final String XPATH_A_STREAMS = "@streams";
         private static final String XPATH_A_TYPE = "@type";
         private static final String XPATH_A_VALUE = "@value";
     }

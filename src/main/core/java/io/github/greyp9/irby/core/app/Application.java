@@ -1,9 +1,12 @@
 package io.github.greyp9.irby.core.app;
 
 import io.github.greyp9.arwo.core.app.App;
+import io.github.greyp9.arwo.core.codec.hex.HexCodec;
 import io.github.greyp9.arwo.core.data.persist.DataPersist;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.envsec.EnvironmentSecret;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
@@ -39,6 +42,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class Application {
     private final String name;
@@ -51,6 +55,13 @@ public class Application {
     public final String run(final URL url) throws IOException {
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
+        // recover environment secret
+        final String secret = config.getSecret();
+        if (!Value.isEmpty(secret)) {
+            final byte[] bytes = new EnvironmentSecret(secret, null).recover();
+            Logger.getLogger(getClass().getName()).info(String.format(
+                    "Secret recovered successfully [%s].%n", HexCodec.encode(bytes)));  // TODO
+        }
         // capture process environment
         final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
