@@ -9,4 +9,8 @@ public final class Irby {
         public static final String URI = "urn:irby:app";
         public static final QName QNAME = new QName(URI, "application");
     }
+
+    public static class FS {
+        public static final String CONF = "conf";
+    }
 }

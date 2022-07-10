@@ -39,33 +39,34 @@ public final class ConfigHttpsKeyStore {
         int i = 0;
         final String ksFile = (args.length >= ++i) ? args[i] : console.readLine(PROMPT_KS_PATH);
         final char[] ksPass = (args.length >= ++i) ? args[i].toCharArray() : console.readPassword(PROMPT_KS_PASSWORD);
+        // validate keystore (user feedback)
+        new TLSContextFactory().getKeyManager(KS_TYPE_PKCS12, ksFile, ksPass);
+        console.printf("Keystore opened successfully.%n");
+        // protect password
         final File fileXml = new File(Application.Const.FILE);
         final ApplicationConfig config = new ApplicationConfig(URLCodec.toURL(fileXml));
         final String secretPath = config.getSecret();
         final byte[] secret = (secretPath == null) ? null : new EnvironmentSecret(secretPath, null).recover();
         final SecretKey keyApp = new SecretKeySpec(secret, AES.Const.ALGORITHM);
         final XsdTypes xsdTypes = new XsdTypes(ResourceU.resolve(Irby.App.XSD));
-        final TypeInstance typeHttps11 = xsdTypes.getElementType(Irby.App.QNAME.toString()).getInstance("https11");
-        final NameTypeValues ntvIn = NameTypeValuesU.create("keyStorePass", new String(ksPass));
+        final TypeInstance typeHttps11 = xsdTypes.getElementType(Irby.App.QNAME.toString()).getInstance(TYPE_HTTPS11);
+        final NameTypeValues ntvIn = NameTypeValuesU.create(KS_PASS, new String(ksPass));
         final ValueInstance valueInstance = ValueInstance.create(typeHttps11, ntvIn);
         final TransformContext context = new TransformContext(keyApp, null);
         final ValueInstance valueInstanceX = new ValueInstanceTransform(context).transform(valueInstance);
         final char[] ksPassProtect = valueInstanceX.getNameTypeValue(
-                typeHttps11.getInstance("keyStorePass")).getValueS().toCharArray();
-        // validate keystore (user feedback)
-        new TLSContextFactory().getKeyManager(KS_TYPE_PKCS12, ksFile, ksPass);
-        console.printf("Keystore opened successfully.%n");
+                typeHttps11.getInstance(KS_PASS)).getValueS().toCharArray();
         // copy keystore to application conf folder
         final File ksFileIn = new File(ksFile);
-        final File ksFileApp = new File("conf", ksFileIn.getName());
+        final File ksFileApp = new File(Irby.FS.CONF, ksFileIn.getName());
         StreamU.write(ksFileApp, StreamU.read(ksFileIn));
         console.printf("Keystore copied successfully.%n");
         // transform "app.xml"
         final URL urlTransform = ResourceU.resolve(XSLT_HTTPS);
         final XsltX xsltX = new XsltX(StreamU.read(urlTransform));
-        xsltX.setParameter("keyStoreFile", ksFileApp.getPath())
-                .setParameter("keyStoreType", KS_TYPE_PKCS12)
-                .setParameter("keyStorePass", new String(ksPassProtect));
+        xsltX.setParameter(KS_FILE, ksFileApp.getPath())
+                .setParameter(KS_TYPE, KS_TYPE_PKCS12)
+                .setParameter(KS_PASS, new String(ksPassProtect));
         final byte[] documentSource = StreamU.read(fileXml);
         final byte[] documentTarget = xsltX.transform(documentSource);
         StreamU.write(fileXml, documentTarget);
@@ -77,4 +78,9 @@ public final class ConfigHttpsKeyStore {
     private static final String PROMPT_KS_PASSWORD = "Enter password to PKCS12 keystore: ";
     private static final String XSLT_HTTPS = "io/github/greyp9/irby/xslt/config-https.xslt";
     private static final String KS_TYPE_PKCS12 = "PKCS12";
+
+    private static final String TYPE_HTTPS11 = "https11";
+    private static final String KS_TYPE = "keyStoreType";
+    private static final String KS_FILE = "keyStoreFile";
+    private static final String KS_PASS = "keyStorePass";
 }
