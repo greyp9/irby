@@ -6,12 +6,15 @@ import io.github.greyp9.arwo.core.data.persist.DataPersist;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.envsec.EnvironmentSecret;
-import io.github.greyp9.arwo.core.value.Value;
+import io.github.greyp9.arwo.core.jce.AES;
+import io.github.greyp9.arwo.core.lang.SystemU;
+import io.github.greyp9.arwo.core.naming.AppNaming;
 import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.arwo.core.vm.props.SysPropsU;
+import io.github.greyp9.irby.core.Irby;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.factory.ContextFactory;
@@ -33,10 +36,14 @@ import io.github.greyp9.irby.core.realm.Realms;
 import io.github.greyp9.irby.core.udp.config.UDPConfig;
 import io.github.greyp9.irby.core.udp.server.UDPRunnable;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.naming.Context;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -53,15 +60,11 @@ public class Application {
 
     @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException {
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
         // recover environment secret
-        final String secret = config.getSecret();
-        if (!Value.isEmpty(secret)) {
-            final byte[] bytes = new EnvironmentSecret(secret, null).recover();
-            Logger.getLogger(getClass().getName()).info(String.format(
-                    "Secret recovered successfully [%s].%n", HexCodec.encode(bytes)));  // TODO
-        }
+        registerSecret(config.getSecret());
         // capture process environment
         final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
@@ -76,7 +79,6 @@ public class Application {
         executorService.execute(new LifecycleRunnable(name, reference, config.getInterval()));
         executorService.execute(new InputStreamRunnable(System.in, reference, config.getInterval()));
         // application credentials
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         final Realms realms = new Realms(config.getRealmConfigs());
         // lookup contexts
         for (final ContextConfig contextConfig : config.getContextConfigs()) {
@@ -114,7 +116,8 @@ public class Application {
         // clean application shutdown
         executorService.shutdownNow();
         try {
-            executorService.awaitTermination(1, TimeUnit.SECONDS);
+            final boolean terminated = executorService.awaitTermination(1, TimeUnit.SECONDS);
+            results.add("Executor terminated: " + terminated);
         } catch (InterruptedException e) {
             results.add(e.getMessage());
         }
@@ -123,6 +126,27 @@ public class Application {
         }
         //logger.info("AFTER ContextFactory.teardown()" + IrbyContextU.enumerate(null));
         return results.toString();
+    }
+
+    private void registerSecret(final String secretPath) throws IOException {
+        final byte[] secret = (secretPath == null) ? null : new EnvironmentSecret(secretPath, null).recover();
+        if (secret != null) {
+            Logger.getLogger(getClass().getName()).info(String.format(
+                    "Secret recovered successfully [%s].%n", HexCodec.encode(secret)));  // TODO
+            // register application keystore to be used for irby application document (XedWrite)
+            try {
+                final KeyStore keyStore = KeyStore.getInstance("PKCS12");
+                keyStore.load(null, null);
+                final SecretKey keyApplication = new SecretKeySpec(secret, AES.Const.ALGORITHM);
+                final KeyStore.ProtectionParameter parameter =
+                        new KeyStore.PasswordProtection(SystemU.userDir().toCharArray());
+                keyStore.setEntry(Irby.App.URI, new KeyStore.SecretKeyEntry(keyApplication), parameter);
+                final Context context = AppNaming.createSubcontext(EnvironmentSecret.class.getName());
+                AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
+            } catch (GeneralSecurityException e) {
+                throw new IOException(e);
+            }
+        }
     }
 
     public static class Const {

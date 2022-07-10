@@ -1,11 +1,20 @@
 package io.github.greyp9.irby.core.https11.server;
 
+import io.github.greyp9.arwo.core.app.App;
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.jce.KeyX;
+import io.github.greyp9.arwo.core.lang.SystemU;
+import io.github.greyp9.arwo.core.naming.AppNaming;
+import io.github.greyp9.arwo.core.res.ResourceU;
 import io.github.greyp9.arwo.core.tls.context.TLSContext;
 import io.github.greyp9.arwo.core.tls.context.TLSContextFactory;
 import io.github.greyp9.arwo.core.tls.manage.TLSKeyManager;
 import io.github.greyp9.arwo.core.tls.manage.TLSTrustManager;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
+import io.github.greyp9.arwo.core.xed.extension.XedKey;
+import io.github.greyp9.arwo.core.xsd.instance.TypeInstance;
+import io.github.greyp9.arwo.core.xsd.model.XsdTypes;
+import io.github.greyp9.irby.core.Irby;
 import io.github.greyp9.irby.core.http11.dispatch.Http11Dispatcher;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.https11.socket.Https11SocketRunnable;
@@ -17,6 +26,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.KeyStore;
 import java.util.concurrent.ExecutorService;
 
 public class Https11Server {
@@ -60,16 +71,17 @@ public class Https11Server {
             final Socket socket = serverSocket.accept();
             executorService.execute(new Https11SocketRunnable(dispatcher, socket));
         } catch (SocketTimeoutException e) {
+            //noinspection ResultOfMethodCallIgnored
             e.getClass();  // ignore; serverSocket.setSoTimeout()
         }
     }
 
     private static ServerSocket startServerSocket(final Https11Config config) throws IOException {
         try {
-            // server SSL params
-            final TLSKeyManager keyManager = getKeyManager(config);
-            // trusted client SSL params
-            final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManager(config) : null);
+            // server SSL params, trusted client SSL params
+            final KeyX keyX = getKey();
+            final TLSKeyManager keyManager = getKeyManager(config, getKey());
+            final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManager(config, keyX) : null);
             // context implements TLS server with optional client X.509 authentication
             final TLSContext context = new TLSContext(keyManager, trustManager, config.getProtocol());
             final SSLServerSocketFactory ssf = context.getServerSocketFactory();
@@ -81,15 +93,26 @@ public class Https11Server {
         }
     }
 
-    private static TLSKeyManager getKeyManager(final Https11Config config)
+    private static TLSKeyManager getKeyManager(final Https11Config config, final KeyX keyX)
             throws GeneralSecurityException, IOException {
-        return new TLSContextFactory().getKeyManager(config.getKeyStoreType(),
-                config.getKeyStoreFile(), config.getKeyStorePass().toCharArray());
+        final char[] keyStorePass = keyX.unprotect(config.getKeyStorePass()).toCharArray();
+        return new TLSContextFactory().getKeyManager(
+                config.getKeyStoreType(), config.getKeyStoreFile(), keyStorePass);
     }
 
-    private static TLSTrustManager getTrustManager(final Https11Config config)
+    private static TLSTrustManager getTrustManager(final Https11Config config, final KeyX keyX)
             throws GeneralSecurityException, IOException {
-        return new TLSContextFactory().getTrustManager(config.getClientTrustType(),
-                config.getClientTrustFile(), config.getClientTrustPass().toCharArray());
+        final char[] clientTrustPass = keyX.unprotect(config.getClientTrustPass()).toCharArray();
+        return new TLSContextFactory().getTrustManager(
+                config.getClientTrustType(), config.getClientTrustFile(), clientTrustPass);
+    }
+
+    private static KeyX getKey() throws GeneralSecurityException, IOException {
+        final KeyStore keyStore = (KeyStore) AppNaming.lookup(App.Secret.CONTEXT, App.Secret.NAME);
+        final Key keyApp = keyStore.getKey(Irby.App.URI, SystemU.userDir().toCharArray());
+        final XsdTypes xsdTypes = new XsdTypes(ResourceU.resolve(Irby.App.XSD));
+        final TypeInstance typeInstance = xsdTypes.getElementType(Irby.App.QNAME.toString())
+                .getInstance("https11").getInstance("keyStorePass");
+        return XedKey.getKeyAES(keyApp, typeInstance);
     }
 }

@@ -31,6 +31,8 @@
     <xsl:template match='/xsd:schema/xsd:complexType[@name="https11Type" or @name="proxysType"]/xsd:attribute[
     @name="keyStorePass" or @name="clientTrustPass"]'>
         <xsl:copy>
+            <xsl:attribute name='xed:transform'>AES/GCM/NoPadding</xsl:attribute>
+            <xsl:attribute name='xed:parameterSpec'>GCMParameterSpec</xsl:attribute>
             <xsl:attribute name='xed:hideInTable'>true</xsl:attribute>
             <xsl:apply-templates select='@*|node()'/>
         </xsl:copy>

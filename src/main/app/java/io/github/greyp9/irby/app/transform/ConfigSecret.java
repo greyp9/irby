@@ -12,7 +12,6 @@ import java.io.Console;
 import java.io.File;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.Random;
 
 /**
  * Update application configuration file "conf/app.xml".  Built in XSLT is used to update configuration XML.
