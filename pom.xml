@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.greyp9</groupId>
     <artifactId>irby</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0-BETA</version>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -12,12 +12,13 @@
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <checkstyle.version>8.45.1</checkstyle.version>
         <pmd.version>6.38.0</pmd.version>
+        <arwo.version>${project.version}</arwo.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>io.github.greyp9</groupId>
             <artifactId>arwo</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -245,7 +246,7 @@
                             <mainClass>io.github.greyp9.irby.app.dispatch.App</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/arwo-0.2.0-SNAPSHOT.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar
+                            <Class-Path>lib/arwo-${project.version}.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar
                                 lib/jcifs.jar lib/j-interop.jar lib/sardine.jar lib/httpclient.jar lib/httpcore.jar
                                 lib/commons-logging.jar lib/javax.mail.jar
                             </Class-Path>
