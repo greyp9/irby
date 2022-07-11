@@ -14,6 +14,7 @@ import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.arwo.core.vm.props.SysPropsU;
+import io.github.greyp9.arwo.core.xed.core.XedU;
 import io.github.greyp9.irby.core.Irby;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
@@ -140,6 +141,7 @@ public class Application {
                 final SecretKey keyApplication = new SecretKeySpec(secret, AES.Const.ALGORITHM);
                 final KeyStore.ProtectionParameter parameter =
                         new KeyStore.PasswordProtection(SystemU.userDir().toCharArray());
+                keyStore.setEntry(XedU.NS_URI_XED, new KeyStore.SecretKeyEntry(keyApplication), parameter);
                 keyStore.setEntry(Irby.App.URI, new KeyStore.SecretKeyEntry(keyApplication), parameter);
                 final Context context = AppNaming.createSubcontext(EnvironmentSecret.class.getName());
                 AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
