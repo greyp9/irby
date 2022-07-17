@@ -5,6 +5,7 @@ import io.github.greyp9.irby.core.app.Application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.logging.Logger;
 
 public final class App {
@@ -13,7 +14,7 @@ public final class App {
     private App() {
     }
 
-    private int run() throws IOException {
+    private int run() throws IOException, GeneralSecurityException {
         final String className = getClass().getName();
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);

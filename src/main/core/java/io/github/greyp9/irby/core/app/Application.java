@@ -1,7 +1,6 @@
 package io.github.greyp9.irby.core.app;
 
 import io.github.greyp9.arwo.core.app.App;
-import io.github.greyp9.arwo.core.codec.hex.HexCodec;
 import io.github.greyp9.arwo.core.data.persist.DataPersist;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
@@ -50,7 +49,6 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 public class Application {
     private final String name;
@@ -60,7 +58,7 @@ public class Application {
     }
 
     @SuppressWarnings("PMD.NPathComplexity")
-    public final String run(final URL url) throws IOException {
+    public final String run(final URL url) throws IOException, GeneralSecurityException {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
@@ -129,26 +127,20 @@ public class Application {
         return results.toString();
     }
 
-    private void registerSecret(final String secretPath) throws IOException {
+    private void registerSecret(final String secretPath) throws IOException, GeneralSecurityException {
         final byte[] secret = (secretPath == null) ? null : new EnvironmentSecret(secretPath, null).recover();
+        // register application keystore to be used for irby application document (XedWrite)
+        final KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        keyStore.load(null, null);
         if (secret != null) {
-            Logger.getLogger(getClass().getName()).info(String.format(
-                    "Secret recovered successfully [%s].%n", HexCodec.encode(secret)));  // TODO
-            // register application keystore to be used for irby application document (XedWrite)
-            try {
-                final KeyStore keyStore = KeyStore.getInstance("PKCS12");
-                keyStore.load(null, null);
-                final SecretKey keyApplication = new SecretKeySpec(secret, AES.Const.ALGORITHM);
-                final KeyStore.ProtectionParameter parameter =
-                        new KeyStore.PasswordProtection(SystemU.userDir().toCharArray());
-                keyStore.setEntry(XedU.NS_URI_XED, new KeyStore.SecretKeyEntry(keyApplication), parameter);
-                keyStore.setEntry(Irby.App.URI, new KeyStore.SecretKeyEntry(keyApplication), parameter);
-                final Context context = AppNaming.createSubcontext(EnvironmentSecret.class.getName());
-                AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
-            } catch (GeneralSecurityException e) {
-                throw new IOException(e);
-            }
+            final SecretKey keyApplication = new SecretKeySpec(secret, AES.Const.ALGORITHM);
+            final KeyStore.ProtectionParameter parameter =
+                    new KeyStore.PasswordProtection(SystemU.userDir().toCharArray());
+            keyStore.setEntry(XedU.NS_URI_XED, new KeyStore.SecretKeyEntry(keyApplication), parameter);
+            keyStore.setEntry(Irby.App.URI, new KeyStore.SecretKeyEntry(keyApplication), parameter);
         }
+        final Context context = AppNaming.createSubcontext(EnvironmentSecret.class.getName());
+        AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
     }
 
     public static class Const {
