@@ -7,6 +7,7 @@
 
     <xsl:preserve-space elements='*'/>
 
+    <xsl:param name="name"/>
     <xsl:param name="port"/>
     <xsl:param name="keyStoreType"/>
     <xsl:param name="keyStoreFile"/>
@@ -21,7 +22,7 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@enabled'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@enabled'>
         <xsl:choose>
             <xsl:when test="string-length($port) &gt; 0">
                 <xsl:attribute name='enabled'>true</xsl:attribute>
@@ -32,7 +33,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@port'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@port'>
         <xsl:choose>
             <xsl:when test="string-length($port) &gt; 0">
                 <xsl:attribute name='port'>
@@ -45,7 +46,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@keyStoreType'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@keyStoreType'>
         <xsl:choose>
             <xsl:when test="string-length($keyStoreType) &gt; 0">
                 <xsl:attribute name='keyStoreType'>
@@ -58,7 +59,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@keyStoreFile'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@keyStoreFile'>
         <xsl:choose>
             <xsl:when test="string-length($keyStoreFile) &gt; 0">
                 <xsl:attribute name='keyStoreFile'>
@@ -71,7 +72,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@keyStorePass'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@keyStorePass'>
         <xsl:choose>
             <xsl:when test="string-length($keyStorePass) &gt; 0">
                 <xsl:attribute name='keyStorePass'>
@@ -84,7 +85,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@clientTrustType'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@clientTrustType'>
         <xsl:choose>
             <xsl:when test="string-length($clientTrustType) &gt; 0">
                 <xsl:attribute name='clientTrustType'>
@@ -97,7 +98,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@clientTrustFile'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@clientTrustFile'>
         <xsl:choose>
             <xsl:when test="string-length($clientTrustFile) &gt; 0">
                 <xsl:attribute name='clientTrustFile'>
@@ -110,7 +111,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match='/irby:application/irby:https11[@name="https-default"]/@clientTrustPass'>
+    <xsl:template match='/irby:application/irby:https11[@name=$name]/@clientTrustPass'>
         <xsl:choose>
             <xsl:when test="string-length($clientTrustPass) &gt; 0">
                 <xsl:attribute name='clientTrustPass'>

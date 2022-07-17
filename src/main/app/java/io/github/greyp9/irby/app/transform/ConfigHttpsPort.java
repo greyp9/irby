@@ -2,6 +2,7 @@ package io.github.greyp9.irby.app.transform;
 
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.res.ResourceU;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.xslt.XsltX;
 import io.github.greyp9.irby.core.app.Application;
 
@@ -22,12 +23,17 @@ public final class ConfigHttpsPort {
         // query for configuration parameters to be updated
         final Console console = System.console();
         int i = 0;
+        final String name = (args.length > ++i) ? args[i] : console.readLine(PROMPT_NAME);
         final String port = (args.length > ++i) ? args[i] : console.readLine(PROMPT_PORT);
+        final boolean useDefault = (Value.isEmpty(name) || "-".equals(name));
+        final String nameParameter = useDefault ? "https-default" : name;
         // user feedback
+        console.printf("name = %s.%n", nameParameter);
         console.printf("port = %s.%n", port);
         // transform "app.xml"
         final URL urlTransform = ResourceU.resolve(XSLT_HTTPS);
         final XsltX xsltX = new XsltX(StreamU.read(urlTransform));
+        xsltX.setParameter("name", nameParameter);
         xsltX.setParameter("port", port);
         final File fileXml = new File(Application.Const.FILE);
         final byte[] documentSource = StreamU.read(fileXml);
@@ -37,6 +43,7 @@ public final class ConfigHttpsPort {
         System.exit(0);
     }
 
+    private static final String PROMPT_NAME = "Enter https11 name ('-' or '' for default): ";
     private static final String PROMPT_PORT = "Enter port number: ";
     private static final String XSLT_HTTPS = "io/github/greyp9/irby/xslt/config-https.xslt";
 }

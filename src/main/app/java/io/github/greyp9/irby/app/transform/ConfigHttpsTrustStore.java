@@ -8,6 +8,7 @@ import io.github.greyp9.arwo.core.tls.context.TLSContextFactory;
 import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
 import io.github.greyp9.arwo.core.value.NameTypeValuesU;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.xed.transform.TransformContext;
 import io.github.greyp9.arwo.core.xed.transform.ValueInstanceTransform;
 import io.github.greyp9.arwo.core.xsd.instance.TypeInstance;
@@ -37,11 +38,16 @@ public final class ConfigHttpsTrustStore {
         // query for configuration parameters to be updated
         final Console console = System.console();
         int i = 0;
+        final String name = (args.length > ++i) ? args[i] : console.readLine(PROMPT_NAME);
         final String tsFile = (args.length > ++i) ? args[i] : console.readLine(PROMPT_TS_PATH);
         final char[] tsPass = (args.length > ++i) ? args[i].toCharArray() : console.readPassword(PROMPT_TS_PASSWORD);
+        final boolean useDefault = (Value.isEmpty(name) || "-".equals(name));
+        final String nameParameter = useDefault ? "https-default" : name;
         // validate truststore (user feedback)
         new TLSContextFactory().getTrustManager(TS_TYPE_JKS, tsFile, tsPass);
         console.printf("Truststore opened successfully.%n");
+        // user feedback
+        console.printf("name = %s.%n", nameParameter);
         // protect password
         final File fileXml = new File(Application.Const.FILE);
         final ApplicationConfig config = new ApplicationConfig(URLCodec.toURL(fileXml));
@@ -65,6 +71,7 @@ public final class ConfigHttpsTrustStore {
         final URL urlTransform = ResourceU.resolve(XSLT_HTTPS);
         final XsltX xsltX = new XsltX(StreamU.read(urlTransform));
         xsltX.setParameter(TS_FILE, tsFileApp.getPath())
+                .setParameter("name", nameParameter)
                 .setParameter(TS_TYPE, TS_TYPE_JKS)
                 .setParameter(TS_PASS, new String(tsPassProtect));
         final byte[] documentSource = StreamU.read(fileXml);
@@ -74,6 +81,7 @@ public final class ConfigHttpsTrustStore {
         System.exit(0);
     }
 
+    private static final String PROMPT_NAME = "Enter https11 name ('-' or '' for default): ";
     private static final String PROMPT_TS_PATH = "Enter path to JKS truststore file: ";
     private static final String PROMPT_TS_PASSWORD = "Enter password to JKS truststore: ";
     private static final String XSLT_HTTPS = "io/github/greyp9/irby/xslt/config-https.xslt";
