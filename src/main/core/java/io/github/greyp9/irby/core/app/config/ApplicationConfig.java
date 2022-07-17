@@ -277,7 +277,7 @@ public final class ApplicationConfig {
         final String clientTrustType = xpather.getTextAttr("@clientTrustType");
         final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
         final String protocol = xpather.getTextAttr("@protocol");
-        final Https11Config https11Config = new Https11Config(name, port, threadsPort,
+        final Https11Config https11Config = new Https11Config(element.getTagName(), name, port, threadsPort,
                 keyStoreFile, keyStoreType, keyStorePass, clientTrustFile, clientTrustType, clientTrustPass, protocol);
         final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {

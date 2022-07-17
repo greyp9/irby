@@ -29,6 +29,7 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.util.concurrent.ExecutorService;
+import java.util.logging.Logger;
 
 public class Https11Server {
     private final Https11Config config;
@@ -54,6 +55,8 @@ public class Https11Server {
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
         serverSocket = startServerSocket(config);
+        Logger.getLogger(getClass().getName()).info(String.format("Service [%s/%s] bound to port [%d]",
+                config.getType(), config.getName(), config.getPort()));
     }
 
     public final void stop() throws IOException {
