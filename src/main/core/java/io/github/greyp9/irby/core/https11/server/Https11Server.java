@@ -2,6 +2,7 @@ package io.github.greyp9.irby.core.https11.server;
 
 import io.github.greyp9.arwo.core.app.App;
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.jce.KeyX;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
@@ -28,10 +29,14 @@ import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
 public class Https11Server {
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
     private final Https11Config config;
     private final Http11Dispatcher dispatcher;
     private final ExecutorService executorService;
@@ -55,7 +60,7 @@ public class Https11Server {
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
         serverSocket = startServerSocket(config);
-        Logger.getLogger(getClass().getName()).info(String.format("Service [%s/%s] bound to port [%d]",
+        logger.info(String.format("Service [%s/%s] bound to port [%d]",
                 config.getType(), config.getName(), config.getPort()));
     }
 
@@ -79,11 +84,14 @@ public class Https11Server {
         }
     }
 
-    private static ServerSocket startServerSocket(final Https11Config config) throws IOException {
+    private ServerSocket startServerSocket(final Https11Config config) throws IOException {
         try {
             // server SSL params, trusted client SSL params
             final KeyX keyX = getKey();
             final TLSKeyManager keyManager = getKeyManager(config, getKey());
+            final X509Certificate x509Certificate = Objects.requireNonNull(keyManager.getCertificate());
+            logger.info(String.format("Service certificate expires: %s",
+                    XsdDateU.toXSDZMillis(x509Certificate.getNotAfter())));
             final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManager(config, keyX) : null);
             // context implements TLS server with optional client X.509 authentication
             final TLSContext context = new TLSContext(keyManager, trustManager, config.getProtocol());
