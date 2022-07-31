@@ -13,7 +13,7 @@ public class Https11Config extends Http11Config {
     private final String clientTrustPass;
     private final String protocol;
 
-    public String getType() {
+    public final String getType() {
         return type;
     }
 

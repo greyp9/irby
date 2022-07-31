@@ -59,7 +59,7 @@ public class Https11Server {
 
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
-        serverSocket = startServerSocket(config);
+        serverSocket = startServerSocket(config, logger);
         logger.info(String.format("Service [%s/%s] bound to port [%d]",
                 config.getType(), config.getName(), config.getPort()));
     }
@@ -84,7 +84,7 @@ public class Https11Server {
         }
     }
 
-    private ServerSocket startServerSocket(final Https11Config config) throws IOException {
+    private static ServerSocket startServerSocket(final Https11Config config, final Logger logger) throws IOException {
         try {
             // server SSL params, trusted client SSL params
             final KeyX keyX = getKey();
@@ -106,9 +106,10 @@ public class Https11Server {
 
     private static TLSKeyManager getKeyManager(final Https11Config config, final KeyX keyX)
             throws GeneralSecurityException, IOException {
-        final char[] keyStorePass = keyX.unprotect(config.getKeyStorePass()).toCharArray();
+        final String keyStorePass = config.getKeyStorePass();
+        final String keyStorePassClear = keyX.hasKey() ? keyX.unprotect(keyStorePass) : keyStorePass;
         return new TLSContextFactory().getKeyManager(
-                config.getKeyStoreType(), config.getKeyStoreFile(), keyStorePass);
+                config.getKeyStoreType(), config.getKeyStoreFile(), keyStorePassClear.toCharArray());
     }
 
     private static TLSTrustManager getTrustManager(final Https11Config config, final KeyX keyX)

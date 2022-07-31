@@ -247,7 +247,7 @@
                         </manifest>
                         <manifestEntries>
                             <Class-Path>lib/arwo-${project.version}.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar lib/jcifs.jar lib/j-interop.jar lib/sardine.jar lib/httpclient.jar lib/httpcore.jar lib/commons-logging.jar lib/javax.mail.jar</Class-Path>
-                            <Specification-Version>${version}</Specification-Version>
+                            <Specification-Version>${project.version}</Specification-Version>
                             <Implementation-Version>${maven.build.timestamp}</Implementation-Version>
                         </manifestEntries>
                     </archive>
