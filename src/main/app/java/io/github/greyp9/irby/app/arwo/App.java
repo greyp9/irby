@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class App {
@@ -20,7 +21,7 @@ public final class App {
     private App() {
     }
 
-    private int run() throws IOException, GeneralSecurityException {
+    private int run() {
         final String className = getClass().getName();
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
@@ -28,9 +29,13 @@ public final class App {
         logger.finest("arwoHome:" + AppFolder.getWebappRoot("").getAbsolutePath());
         logger.finest("mkdir(data):" + new File(".", "data").mkdir());
         logger.finest("mkdir(log):" + new File(".", "log").mkdir());
-        final URL url = URLCodec.toURL(new File(Application.Const.FILE));
-        final String signal = applicationRunLoop(url);
-        logger.finer(signal);
+        try {
+            final URL url = URLCodec.toURL(new File(Application.Const.FILE));
+            final String signal = applicationRunLoop(url);
+            logger.finer(signal);
+        } catch (final Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        }
         logger.exiting(className, methodName);
         return 0;
     }
