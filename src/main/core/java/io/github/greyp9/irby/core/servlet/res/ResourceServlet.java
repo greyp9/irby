@@ -52,11 +52,19 @@ public class ResourceServlet extends javax.servlet.http.HttpServlet {
                        final HttpServletRequest request, final HttpServletResponse response,
                        final String initParamResource, final String initParamIndex) throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
-        String resource = Value.join("", initParamResource, pathInfo);
-        InputStream is = classLoader.getResourceAsStream(resource);
-        if (isFolder(is)) {
-            resource = Value.join("", resource, initParamIndex);
+        String resource = null;
+        InputStream is = null;
+        final String[] resourcesBase = initParamResource.split(Http.Token.COMMA);
+        for (String resourceBase : resourcesBase) {
+            resource = Value.join("", resourceBase, pathInfo);
             is = classLoader.getResourceAsStream(resource);
+            if (isFolder(is)) {
+                resource = Value.join("", resource, initParamIndex);
+                is = classLoader.getResourceAsStream(resource);
+            }
+            if (is != null) {
+                break;
+            }
         }
         if (is == null) {
             response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
