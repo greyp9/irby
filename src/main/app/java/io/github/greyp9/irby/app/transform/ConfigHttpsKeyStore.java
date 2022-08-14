@@ -39,8 +39,8 @@ public final class ConfigHttpsKeyStore {
         final Console console = System.console();
         int i = 0;
         final String name = (args.length > ++i) ? args[i] : console.readLine(PROMPT_NAME);
-        final String ksFile = (args.length >= ++i) ? args[i] : console.readLine(PROMPT_KS_PATH);
-        final char[] ksPass = (args.length >= ++i) ? args[i].toCharArray() : console.readPassword(PROMPT_KS_PASSWORD);
+        final String ksFile = (args.length > ++i) ? args[i] : console.readLine(PROMPT_KS_PATH);
+        final char[] ksPass = (args.length > ++i) ? args[i].toCharArray() : console.readPassword(PROMPT_KS_PASSWORD);
         final boolean useDefault = (Value.isEmpty(name) || "-".equals(name));
         final String nameParameter = useDefault ? "https-default" : name;
         // validate keystore (user feedback)
