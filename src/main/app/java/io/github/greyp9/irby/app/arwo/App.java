@@ -22,13 +22,15 @@ public final class App {
     }
 
     private int run() {
+        final boolean mkdirData = new File(".", "data").mkdir();
+        final boolean mkdirLog = new File(".", "log").mkdir();
         final String className = getClass().getName();
         final String methodName = "run()";  // i18n trace
         logger.entering(className, methodName);
         logger.finest("userDir:" + new File("").getAbsolutePath());
         logger.finest("arwoHome:" + AppFolder.getWebappRoot("").getAbsolutePath());
-        logger.finest("mkdir(data):" + new File(".", "data").mkdir());
-        logger.finest("mkdir(log):" + new File(".", "log").mkdir());
+        logger.finest("mkdir(data):" + mkdirData);
+        logger.finest("mkdir(log):" + mkdirLog);
         try {
             final URL url = URLCodec.toURL(new File(Application.Const.FILE));
             final String signal = applicationRunLoop(url);
