@@ -34,6 +34,8 @@ server.key
 <div class='tile'><pre>
 (3) Create an X509 certificate using the public portion of the RSA key.
 irby@localhost:~/irby/server/key$ openssl req -new -x509 -days 365 -key server.key -out server.cer -subj "/CN=localhost/OU=irby/"
+(if SAN needed)
+irby@localhost:~/irby/server/key$ openssl req -new -x509 -days 365 -key server.key -out server.cer -subj "/CN=localhost/OU=irby/" -addext "subjectAltName = DNS:localhost"
 ...
 </pre></div>
 <div class='tile'><pre>
