@@ -4,6 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.Enumeration;
 
 public class EchoServlet extends javax.servlet.http.HttpServlet {
@@ -26,6 +27,7 @@ public class EchoServlet extends javax.servlet.http.HttpServlet {
             buffer.append(String.format("%s: %s%n", name, value));
         }
         final byte[] bytes = buffer.toString().getBytes("UTF-8");  // i18n http
+        response.setStatus(HttpURLConnection.HTTP_OK);
         response.setContentType("text/plain; charset='UTF-8'");  // i18n http
         response.setContentLength(bytes.length);
         response.getOutputStream().write(bytes);
