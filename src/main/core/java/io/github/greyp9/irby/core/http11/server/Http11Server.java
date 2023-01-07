@@ -13,8 +13,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
+import java.util.logging.Logger;
 
 public class Http11Server {
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
     private final Http11Config config;
     private final Http11Dispatcher dispatcher;
     private final ExecutorService executorService;
@@ -38,6 +41,7 @@ public class Http11Server {
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
         serverSocket = startSocket(config);
+        logger.info(String.format("Service [%s] bound to port [%d]", config.getName(), config.getPort()));
     }
 
     public final void stop() throws IOException {
