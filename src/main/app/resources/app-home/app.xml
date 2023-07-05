@@ -83,10 +83,10 @@
     </https11>
     <cron enabled='true' name='CronTab-default' tz='GMT'>
         <job enabled='true' name='backup-app-log' schedule='0 * * * *'>
-            <copy-file source='./log/app.[1|2|3|4].log' target='./log/app.$DATE.log' move="true"/>
+            <copy-file source='./log/app.[1-9].log' target='./log/app.$DATE.log' move="true"/>
         </job>
         <job enabled='true' name='backup-access-log' schedule='0 * * * *'>
-            <copy-file source='./log/access.[1|2|3|4].log' target='./log/access.$DATE.log' move="true"/>
+            <copy-file source='./log/access.[1-9].log' target='./log/access.$DATE.log' move="true"/>
         </job>
     </cron>
     <cron enabled='true' name='CronTab' tz='GMT' threads='1' streams='3'/>  <!-- bound to servlet with matching CronService init-param -->
