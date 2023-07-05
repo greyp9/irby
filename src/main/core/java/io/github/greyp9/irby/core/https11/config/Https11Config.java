@@ -50,11 +50,11 @@ public class Https11Config extends Http11Config {
     }
 
     @SuppressWarnings({ "PMD.ExcessiveParameterList", "checkstyle:parameternumber" })
-    public Https11Config(final String type, final String name, final int port, final int threads,
+    public Https11Config(final String type, final String name, final String host, final int port, final int threads,
                          final String keyStoreFile, final String keyStoreType, final String keyStorePass,
                          final String clientTrustFile, final String clientTrustType, final String clientTrustPass,
                          final String protocol) {
-        super(name, port, threads);
+        super(name, host, port, threads);
         this.type = type;
         this.keyStoreFile = keyStoreFile;
         this.keyStoreType = keyStoreType;

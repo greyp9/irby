@@ -11,6 +11,7 @@ import io.github.greyp9.arwo.core.tls.context.TLSContext;
 import io.github.greyp9.arwo.core.tls.context.TLSContextFactory;
 import io.github.greyp9.arwo.core.tls.manage.TLSKeyManager;
 import io.github.greyp9.arwo.core.tls.manage.TLSTrustManager;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.xed.extension.XedKey;
 import io.github.greyp9.arwo.core.xsd.instance.TypeInstance;
@@ -23,6 +24,7 @@ import io.github.greyp9.irby.core.realm.Realms;
 
 import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -60,8 +62,8 @@ public class Https11Server {
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
         serverSocket = startServerSocket(config, logger);
-        logger.info(String.format("Service [%s/%s] bound to port [%d]",
-                config.getType(), config.getName(), config.getPort()));
+        logger.info(String.format("Service [%s/%s] bound to host [%s], TCP port [%d]",
+                config.getType(), config.getName(), config.getHost(), config.getPort()));
     }
 
     public final void stop() throws IOException {
@@ -95,8 +97,10 @@ public class Https11Server {
             final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManager(config, keyX) : null);
             // context implements TLS server with optional client X.509 authentication
             final TLSContext context = new TLSContext(keyManager, trustManager, config.getProtocol());
+            final String host = config.getHost();
+            final InetAddress inetAddress = Value.isEmpty(host) ? null : InetAddress.getByName(host);
             final SSLServerSocketFactory ssf = context.getServerSocketFactory();
-            final ServerSocket serverSocket = ssf.createServerSocket(config.getPort());
+            final ServerSocket serverSocket = ssf.createServerSocket(config.getPort(), 0, inetAddress);
             serverSocket.setSoTimeout((int) DurationU.Const.ONE_SECOND_MILLIS);
             return serverSocket;
         } catch (GeneralSecurityException e) {

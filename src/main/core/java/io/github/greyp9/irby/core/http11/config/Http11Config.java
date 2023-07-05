@@ -5,12 +5,17 @@ import java.util.Collection;
 
 public class Http11Config {
     private final String name;
+    private final String host;
     private final int port;
     private final int threads;
     private final Collection<Http11ConfigContext> contexts;
 
     public final String getName() {
         return name;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public final int getPort() {
@@ -25,8 +30,9 @@ public class Http11Config {
         return contexts;
     }
 
-    public Http11Config(final String name, final int port, final int threads) {
+    public Http11Config(final String name, final String host, final int port, final int threads) {
         this.name = name;
+        this.host = host;
         this.port = port;
         this.threads = threads;
         this.contexts = new ArrayList<Http11ConfigContext>();

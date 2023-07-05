@@ -9,6 +9,7 @@ import io.github.greyp9.irby.core.realm.Realms;
 
 import javax.net.ServerSocketFactory;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -41,7 +42,8 @@ public class Http11Server {
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
         serverSocket = startSocket(config);
-        logger.info(String.format("Service [%s] bound to port [%d]", config.getName(), config.getPort()));
+        logger.info(String.format("Service [%s] bound to host [%s], TCP port [%d]",
+                config.getName(), config.getHost(), config.getPort()));
     }
 
     public final void stop() throws IOException {
@@ -64,8 +66,10 @@ public class Http11Server {
     }
 
     private static ServerSocket startSocket(final Http11Config config) throws IOException {
+        final String host = config.getHost();
+        final InetAddress inetAddress = host == null ? null : InetAddress.getByName(host);
         final ServerSocketFactory ssf = ServerSocketFactory.getDefault();
-        final ServerSocket serverSocket = ssf.createServerSocket(config.getPort());
+        final ServerSocket serverSocket = ssf.createServerSocket(config.getPort(), 0, inetAddress);
         serverSocket.setSoTimeout((int) DurationU.Const.ONE_SECOND_MILLIS);
         return serverSocket;
     }

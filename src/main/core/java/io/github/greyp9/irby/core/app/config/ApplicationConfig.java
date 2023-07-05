@@ -210,9 +210,10 @@ public final class ApplicationConfig {
     private Http11Config doElementHttp11(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String host = xpather.getTextAttr(Const.XPATH_A_HOST);
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
-        final Http11Config http11Config = new Http11Config(name, port, threadsPort);
+        final Http11Config http11Config = new Http11Config(name, host, port, threadsPort);
         final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {
             http11Config.addContext(doElementWebapp(elementIt));
@@ -266,6 +267,7 @@ public final class ApplicationConfig {
     private Https11Config doElementHttps11(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String host = xpather.getTextAttr(Const.XPATH_A_HOST);
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         // the TLS key used by the server to authenticate itself to incoming connections
@@ -277,7 +279,7 @@ public final class ApplicationConfig {
         final String clientTrustType = xpather.getTextAttr("@clientTrustType");
         final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
         final String protocol = xpather.getTextAttr("@protocol");
-        final Https11Config https11Config = new Https11Config(element.getTagName(), name, port, threadsPort,
+        final Https11Config https11Config = new Https11Config(element.getTagName(), name, host, port, threadsPort,
                 keyStoreFile, keyStoreType, keyStorePass, clientTrustFile, clientTrustType, clientTrustPass, protocol);
         final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {
@@ -339,10 +341,11 @@ public final class ApplicationConfig {
     private UDPConfig doElementUDP(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String host = xpather.getTextAttr(Const.XPATH_A_HOST);
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final String target = xpather.getTextAttr(Const.XPATH_A_TARGET);
         final int buffer = NumberU.toInt(xpather.getTextAttr("@buffer"), 0);
-        return new UDPConfig(name, port, target, buffer);
+        return new UDPConfig(name, host, port, target, buffer);
     }
 
     private void doElementsCronTab(final List<Element> elements) throws IOException {
@@ -397,6 +400,7 @@ public final class ApplicationConfig {
 
     private static class Const {
         private static final String XPATH_A_NAME = "@name";
+        private static final String XPATH_A_HOST = "@host";
         private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_SECRET = "@secret";
         private static final String XPATH_A_STREAMS = "@streams";

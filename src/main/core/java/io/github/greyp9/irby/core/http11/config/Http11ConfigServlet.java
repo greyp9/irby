@@ -43,6 +43,10 @@ public class Http11ConfigServlet {
     }
 
     public final void addInitParam(final String initParamName, final String initParamValue) {
-        initParams.setProperty(initParamName, initParamValue);
+        if (initParamValue == null) {
+            initParams.remove(initParamName);
+        } else {
+            initParams.setProperty(initParamName, initParamValue);
+        }
     }
 }

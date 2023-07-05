@@ -9,12 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class UDPServer {
-    //private final Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final UDPConfig config;
     private final AtomicReference<String> reference;
@@ -35,6 +38,8 @@ public class UDPServer {
 
     public final void start() throws IOException {
         datagramSocket = startDatagramSocket(config);
+        logger.info(String.format("Service [%s] bound to host [%s], UDP port [%d]",
+                config.getName(), config.getHost(), config.getPort()));
         reference.getClass();
     }
 
@@ -63,7 +68,9 @@ public class UDPServer {
     }
 
     private static DatagramSocket startDatagramSocket(final UDPConfig config) throws IOException {
-        final DatagramSocket datagramSocket = new DatagramSocket(config.getPort());
+        // wildcard address: IPv4=0.0.0.0, IPv6=::1
+        final SocketAddress socketAddress = new InetSocketAddress(config.getHost(), config.getPort());
+        final DatagramSocket datagramSocket = new DatagramSocket(socketAddress);
         datagramSocket.setSoTimeout((int) DurationU.Const.ONE_SECOND_MILLIS);
         return datagramSocket;
     }

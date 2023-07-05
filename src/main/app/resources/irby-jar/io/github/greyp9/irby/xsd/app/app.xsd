@@ -75,6 +75,7 @@
         </xsd:sequence>
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='host' type='xsd:string'/>
         <xsd:attribute name='port' type='xsd:unsignedShort'/>
         <xsd:attribute name='threads' type='xsd:unsignedShort'/>
     </xsd:complexType>
@@ -119,6 +120,7 @@
         </xsd:sequence>
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='host' type='xsd:string'/>
         <xsd:attribute name='port' type='xsd:unsignedShort'/>
         <xsd:attribute name='threads' type='xsd:unsignedShort'/>
         <xsd:attribute name='keyStoreFile' type='xsd:string'/>
@@ -165,6 +167,7 @@
     <xsd:complexType name='udpType'>
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='host' type='xsd:string'/>
         <xsd:attribute name='port' type='xsd:unsignedShort'/>
         <xsd:attribute name='target' type='xsd:string'/>
         <xsd:attribute name='buffer' type='xsd:unsignedShort'/>
