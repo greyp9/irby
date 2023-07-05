@@ -62,36 +62,36 @@ public class CopyFileRunnable extends CronRunnable {
         }
 
         public void execute() {
-            execute(new File(source));
+            execute(new File(source), new File(target));
         }
 
-        private void execute(final File filePatternSource) {
+        private void execute(final File filePatternSource, final File filePatternTarget) {
             final File folderSource = filePatternSource.getParentFile();
+            final File folderTarget = filePatternTarget.getParentFile();
+            FileU.ensureFolders(folderTarget);
             final Pattern pattern = Pattern.compile(filePatternSource.getName());
             final FindInFolderQuery query = new FindInFolderQuery(folderSource, pattern, false);
             final Collection<File> files = query.getFound();
             logger.finest("FOUND=%d" + files.size());
             for (File file : files) {
-                executeOne(file);
+                execute(file, folderTarget, filePatternTarget.getName());
             }
         }
 
-        private void executeOne(final File fileSource) {
-            final File filePatternTarget = new File(target);
-            final File folderTarget = filePatternTarget.getParentFile();
+        private void execute(final File fileSource, final File folderTarget, final String filenamePatternTarget) {
             // target filename derived from source filename
-            final String filenameTarget = filePatternTarget.getName().replace("*", fileSource.getName());
+            final String filenameTarget = filenamePatternTarget.replace("*", fileSource.getName());
             // target filename timestamp
             final String date = DateX.toFilename(new Date(fileSource.lastModified()));
             final String dateNN = Value.defaultOnEmpty(date, "");
             final String filenameTarget2 = filenameTarget.replace("$DATE", dateNN);
             final File fileTarget = new File(folderTarget, filenameTarget2);
             if (!fileTarget.exists()) {
-                executeOne(fileSource, fileTarget);
+                executeToFile(fileSource, fileTarget);
             }
         }
 
-        private void executeOne(final File fileSource, final File fileTarget) {
+        private void executeToFile(final File fileSource, final File fileTarget) {
             try {
                 final byte[] bytes = StreamU.read(fileSource);
                 logger.finest(String.format("%d [%s]", bytes.length, fileSource.getAbsolutePath()));
