@@ -11,7 +11,7 @@ public class UDPConfig {
         return name;
     }
 
-    public String getHost() {
+    public final String getHost() {
         return host;
     }
 

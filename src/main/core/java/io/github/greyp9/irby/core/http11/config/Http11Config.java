@@ -14,7 +14,7 @@ public class Http11Config {
         return name;
     }
 
-    public String getHost() {
+    public final String getHost() {
         return host;
     }
 
