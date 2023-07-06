@@ -49,8 +49,11 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class Application {
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
     private final String name;
 
     public Application(final String name) {
@@ -107,11 +110,16 @@ public class Application {
         // record executor state (should be no queued tasks)
         final Collection<String> results = new ArrayList<>();
         results.add(ThreadPoolU.getTelemetry(executorService));
+        if (!ThreadPoolU.isAvailablePool(executorService, 1)) {
+            reference.set("quit: insufficient threads available in application thread pool");
+        }
+        logger.info(results.toString());
         // wait until shutdown signaled
         while (reference.get() == null) {
             MutexU.waitUntil(reference, DurationU.add(DateU.now(), DateU.Const.TZ_GMT, DurationU.Const.ONE_HOUR));
         }
         results.add(reference.get());
+        logger.info(results.toString());
         // clean application shutdown
         executorService.shutdownNow();
         try {

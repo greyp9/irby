@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.naming.Binding;
+import javax.naming.Context;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,9 +66,10 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         super.init(config);
         Logger.getLogger(getClass().getName()).entering(getClass().getName(), null);
         synchronized (this) {
-            this.cronServices = new CronServices(AppNaming.listBindings(
-                    AppNaming.lookupSubcontext(CronService.class.getName()), ".*")
-                    .stream().map(Binding::getObject)
+            final Context context = AppNaming.lookupSubcontext(CronService.class.getName());
+            final Collection<Binding> bindings = AppNaming.listBindings(context, ".*");
+            this.cronServices = new CronServices(bindings.stream()
+                    .map(Binding::getObject)
                     .filter(CronService.class::isInstance)
                     .map(CronService.class::cast)
                     .collect(Collectors.toList()));

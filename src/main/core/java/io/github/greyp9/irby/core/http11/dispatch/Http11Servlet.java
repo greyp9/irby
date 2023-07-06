@@ -61,7 +61,8 @@ public class Http11Servlet {
     private void service(final Http11Response response, final LoginException e) {
         logger.log(Level.FINEST, e.getMessage(), e);
         final Realm realm = authenticator.getRealm();
-        if (Http.Realm.BASIC.equals(realm.getMethod())) {
+        final String realmMethod = (realm == null) ? null : realm.getMethod();
+        if (Http.Realm.BASIC.equals(realmMethod)) {
             final String challenge = String.format(Http.Realm.BASIC_REALM, realm.getName());
             response.addHeader(Http.Header.WWW_AUTHENTICATE, challenge);
         }
