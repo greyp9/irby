@@ -66,7 +66,7 @@ public class CompressFileRunnable extends CronRunnable {
             final Pattern pattern = Pattern.compile(filePatternSource.getName());
             final FindInFolderQuery query = new FindInFolderQuery(folderSource, pattern, false);
             final Collection<File> files = query.getFound();
-            logger.finest("FOUND=%d" + files.size());
+            logger.finest(String.format("FOUND=%d", files.size()));
             for (File file : files) {
                 executeOne(file);
             }
@@ -81,21 +81,20 @@ public class CompressFileRunnable extends CronRunnable {
             final String date = DateX.toFilename(new Date(fileSource.lastModified()));
             final String dateNN = Value.defaultOnEmpty(date, "");
             final String filenameTarget2 = filenameTarget.replace("$DATE", dateNN);
-            final File fileTarget = new File(folderTarget, filenameTarget2);
+            final String filenameTarget3 = String.format("%s.gz", filenameTarget2);
+            final File fileTarget = new File(folderTarget, filenameTarget3);
             if (!fileTarget.exists()) {
                 executeOne(fileSource, fileTarget);
             }
         }
 
-        private void executeOne(final File fileSource, final File fileTarget) {
+        private void executeOne(final File fileSource, final File fileTargetCompressed) {
             try {
                 final byte[] bytes = StreamU.read(fileSource);
                 logger.finest(String.format("%d [%s]", bytes.length, fileSource.getAbsolutePath()));
                 final byte[] bytesCompressed = new GZipCodec().encode(bytes);
-                final String filenameCompressed = String.format("%s.gz", fileTarget.getName());
-                final File fileTargetCompressed = new File(fileTarget.getParentFile(), filenameCompressed);
                 StreamU.write(fileTargetCompressed, bytesCompressed);
-                logger.finest(String.format("%d [%s]", bytes.length, fileTarget.getAbsolutePath()));
+                logger.finest(String.format("%d [%s]", bytesCompressed.length, fileTargetCompressed.getAbsolutePath()));
                 final boolean delete = FileU.delete(fileSource);
                 logger.finest(String.format("%s [%s]", delete, fileSource.getAbsolutePath()));
             } catch (IOException e) {
