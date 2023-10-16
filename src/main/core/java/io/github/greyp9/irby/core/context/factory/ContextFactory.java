@@ -7,7 +7,6 @@ import io.github.greyp9.irby.core.context.config.ContextObject;
 
 import javax.naming.Context;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,30 +23,29 @@ public final class ContextFactory {
     public static Context create(final ContextConfig contextConfig) {
         final Context context = AppNaming.createSubcontext(contextConfig.getName());
         for (ContextObject object : contextConfig.getObjects()) {
-            AppNaming.bind(context, object.getName(), create(object));
+            AppNaming.bind(context, object.getName(), create(contextConfig, object));
         }
         return context;
     }
 
-    private static Object create(final ContextObject objectConfig) {
+    private static Object create(final ContextConfig contextConfig, final ContextObject objectConfig) {
         Logger logger = Logger.getLogger(ContextFactory.class.getName());
-        final ArrayList<String> parameters = new ArrayList<String>(objectConfig.getParameters());
+        final ArrayList<String> parameters;
+        final String parameterRef = objectConfig.getParameterRef();
+        if (parameterRef == null) {
+            parameters = new ArrayList<>(objectConfig.getParameters());
+        } else {
+            final ContextObject objectByName = contextConfig.getObjectByName(parameterRef);
+            parameters = new ArrayList<>(objectByName.getParameters());
+        }
         parameters.add(0, objectConfig.getName());
-        final String[] parametersArray = parameters.toArray(new String[parameters.size()]);
+        final String[] parametersArray = parameters.toArray(new String[0]);
         Object object = null;
         try {
             final Class<?> c = Class.forName(objectConfig.getType());
             final Constructor<?> constructor = c.getConstructor(String[].class);
             object = constructor.newInstance((Object) parametersArray);
-        } catch (ClassNotFoundException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        } catch (NoSuchMethodException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        } catch (InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
         return object;

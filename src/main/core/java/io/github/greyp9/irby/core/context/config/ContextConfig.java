@@ -15,6 +15,10 @@ public final class ContextConfig {
         return objects;
     }
 
+    public ContextObject getObjectByName(final String name) {
+        return objects.stream().filter(o -> o.getName().equals(name)).findFirst().orElse(null);
+    }
+
     public ContextConfig(final String name) {
         this.name = name;
         this.objects = new ArrayList<ContextObject>();
