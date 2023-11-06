@@ -90,7 +90,7 @@ public class Https11Server {
         try {
             // server SSL params, trusted client SSL params
             final KeyX keyX = getKey();
-            final TLSKeyManager keyManager = getKeyManager(config, getKey());
+            final TLSKeyManager keyManager = getKeyManager(config, keyX);
             final X509Certificate x509Certificate = Objects.requireNonNull(keyManager.getCertificate());
             logger.info(String.format("Service certificate expires: %s",
                     XsdDateU.toXSDZMillis(x509Certificate.getNotAfter())));
@@ -118,9 +118,10 @@ public class Https11Server {
 
     private static TLSTrustManager getTrustManager(final Https11Config config, final KeyX keyX)
             throws GeneralSecurityException, IOException {
-        final char[] clientTrustPass = keyX.unprotect(config.getClientTrustPass()).toCharArray();
+        final String trustStorePass = config.getClientTrustPass();
+        final String trustStorePassClear = keyX.hasKey() ? keyX.unprotect(trustStorePass) : trustStorePass;
         return new TLSContextFactory().getTrustManager(
-                config.getClientTrustType(), config.getClientTrustFile(), clientTrustPass);
+                config.getClientTrustType(), config.getClientTrustFile(), trustStorePassClear.toCharArray());
     }
 
     private static KeyX getKey() throws GeneralSecurityException, IOException {
