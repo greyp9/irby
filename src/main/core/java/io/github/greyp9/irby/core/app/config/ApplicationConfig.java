@@ -19,6 +19,7 @@ import io.github.greyp9.irby.core.proxy.config.ProxyConfig;
 import io.github.greyp9.irby.core.proxys.config.ProxysConfig;
 import io.github.greyp9.irby.core.realm.config.PrincipalConfig;
 import io.github.greyp9.irby.core.realm.config.RealmConfig;
+import io.github.greyp9.irby.core.tcp.config.TCPConfig;
 import io.github.greyp9.irby.core.udp.config.UDPConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,6 +46,7 @@ public final class ApplicationConfig {
     private final Collection<Https11Config> https11Configs;
     private final Collection<ProxyConfig> proxyConfigs;
     private final Collection<ProxysConfig> proxysConfigs;
+    private final Collection<TCPConfig> tcpConfigs;
     private final Collection<UDPConfig> udpConfigs;
     private final Collection<CronConfig> cronConfigs;
     private final Collection<AdvancedConfig> advancedConfigs;
@@ -83,6 +85,10 @@ public final class ApplicationConfig {
 
     public Collection<ProxysConfig> getProxysConfigs() {
         return proxysConfigs;
+    }
+
+    public Collection<TCPConfig> getTCPConfigs() {
+        return tcpConfigs;
     }
 
     public Collection<UDPConfig> getUDPConfigs() {
@@ -125,6 +131,7 @@ public final class ApplicationConfig {
         this.https11Configs = new ArrayList<>();
         this.proxyConfigs = new ArrayList<>();
         this.proxysConfigs = new ArrayList<>();
+        this.tcpConfigs = new ArrayList<>();
         this.udpConfigs = new ArrayList<>();
         this.cronConfigs = new ArrayList<>();
         this.advancedConfigs = new ArrayList<>();
@@ -134,6 +141,7 @@ public final class ApplicationConfig {
         doElementsHttps11(xpather.getElements("/irby:application/irby:https11[@enabled='true']"));
         doElementsProxy(xpather.getElements("/irby:application/irby:proxy[@enabled='true']"));
         doElementsProxys(xpather.getElements("/irby:application/irby:proxys[@enabled='true']"));
+        doElementsTCP(xpather.getElements("/irby:application/irby:tcp[@enabled='true']"));
         doElementsUDP(xpather.getElements("/irby:application/irby:udp[@enabled='true']"));
         doElementsCronTab(xpather.getElements("/irby:application/irby:cron[@enabled='true']"));
         doElementsAdvanced(xpather.getElements("/irby:application/irby:advanced[@enabled='true']"));
@@ -331,6 +339,23 @@ public final class ApplicationConfig {
         final String folder = xpather.getTextAttr("@folder");
         return new ProxysConfig(name, port, threadsPort, host, keyStoreFile, keyStoreType, keyStorePass,
                 clientTrustFile, clientTrustType, clientTrustPass, serverTrustFile, protocol, folder);
+    }
+
+    private void doElementsTCP(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            tcpConfigs.add(doElementTCP(element));
+        }
+    }
+
+    private TCPConfig doElementTCP(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final String host = xpather.getTextAttr(Const.XPATH_A_HOST);
+        final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
+        final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final String target = xpather.getTextAttr(Const.XPATH_A_TARGET);
+        final int buffer = NumberU.toInt(xpather.getTextAttr("@buffer"), 0);
+        return new TCPConfig(name, host, port, threadsPort, target, buffer);
     }
 
     private void doElementsUDP(final List<Element> elements) throws IOException {

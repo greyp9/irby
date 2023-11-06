@@ -16,6 +16,7 @@
             <xsd:element name='https11' type='irby:https11Type' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='proxy' type='irby:proxyType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='proxys' type='irby:proxysType' minOccurs='0' maxOccurs='unbounded'/>
+            <xsd:element name='tcp' type='irby:tcpType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='udp' type='irby:udpType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='cron' type='irby:cronType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='advanced' type='irby:advancedType' minOccurs='0' maxOccurs='unbounded'/>
@@ -161,6 +162,18 @@
         <xsd:attribute name='serverTrustFile' type='xsd:string'/>
         <xsd:attribute name='protocol' type='xsd:string'/>
         <xsd:attribute name='folder' type='xsd:string'/>
+    </xsd:complexType>
+
+    <!--tcp-->
+
+    <xsd:complexType name='tcpType'>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='host' type='xsd:string'/>
+        <xsd:attribute name='port' type='xsd:unsignedShort'/>
+        <xsd:attribute name='threads' type='xsd:unsignedShort'/>
+        <xsd:attribute name='target' type='xsd:string'/>
+        <xsd:attribute name='buffer' type='xsd:unsignedShort'/>
     </xsd:complexType>
 
     <!--udp-->
