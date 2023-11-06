@@ -188,8 +188,8 @@ public final class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String type = xpather.getTextAttr(Const.XPATH_A_TYPE);
-        final String ref = xpather.getTextAttr(Const.XPATH_A_REF);
-        final ContextObject contextObject = new ContextObject(name, type, ref);
+        final String parameterRef = xpather.getTextAttr(Const.XPATH_A_PARAMETER_REF);
+        final ContextObject contextObject = new ContextObject(name, type, parameterRef);
         final List<Element> elements = xpather.getElements("irby:param");
         for (final Element elementIt : elements) {
             contextObject.addParameter(doElementParameter(elementIt));
@@ -403,7 +403,7 @@ public final class ApplicationConfig {
         private static final String XPATH_A_NAME = "@name";
         private static final String XPATH_A_HOST = "@host";
         private static final String XPATH_A_PORT = "@port";
-        private static final String XPATH_A_REF = "@parameter-ref";
+        private static final String XPATH_A_PARAMETER_REF = "@parameter-ref";
         private static final String XPATH_A_SECRET = "@secret";
         private static final String XPATH_A_STREAMS = "@streams";
         private static final String XPATH_A_TARGET = "@target";

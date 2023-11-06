@@ -37,6 +37,7 @@ public final class ContextFactory {
         } else {
             final ContextObject objectByName = contextConfig.getObjectByName(parameterRef);
             parameters = new ArrayList<>(objectByName.getParameters());
+            parameters.addAll(objectConfig.getParameters());
         }
         parameters.add(0, objectConfig.getName());
         final String[] parametersArray = parameters.toArray(new String[0]);
