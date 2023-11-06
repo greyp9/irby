@@ -20,6 +20,7 @@ import java.net.Socket;
 import java.security.Principal;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +45,7 @@ public final class Http11Authenticator {
     public Principal authenticate(final Http11Request request) throws LoginException, IOException {
         Principal principal;
         if (realm == null) {
-            principal = null;
+            principal = new AppPrincipal(AppPrincipal.ANONYMOUS, false, Collections.emptyList());
         } else if (authConstraint == null) {
             principal = null;
         } else if (Http.Realm.BASIC.equals(realm.getMethod())) {
