@@ -56,7 +56,9 @@ public class TCPSocketRunnable implements Runnable {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final Stopwatch stopwatchIdle = new Stopwatch(null);
             final Stopwatch stopwatchMax = new Stopwatch(null);
-            while (!socket.isClosed() && (stopwatchIdle.elapsed() < IDLE_TIMEOUT_MILLIS) && (stopwatchMax.elapsed() < MAX_AGE_MILLIS)) {
+            while (!socket.isClosed()
+                    && (stopwatchIdle.elapsed() < IDLE_TIMEOUT_MILLIS)
+                    && (stopwatchMax.elapsed() < MAX_AGE_MILLIS)) {
                 while ((bis.available() > 0) && (stopwatchMax.elapsed() < MAX_AGE_MILLIS)) {
                     final byte[] bytes = StreamU.read(bis);
                     bos.write(bytes);

@@ -15,8 +15,8 @@ public final class ContextConfig {
         return objects;
     }
 
-    public ContextObject getObjectByName(final String name) {
-        return objects.stream().filter(o -> o.getName().equals(name)).findFirst().orElse(null);
+    public ContextObject getObjectByName(final String objectName) {
+        return objects.stream().filter(o -> o.getName().equals(objectName)).findFirst().orElse(null);
     }
 
     public ContextConfig(final String name) {
