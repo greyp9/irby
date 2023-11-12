@@ -1,8 +1,8 @@
 package io.github.greyp9.irby.net.datagram;
 
 import io.github.greyp9.arwo.core.hash.CRCU;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class DatagramTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         //io.github.greyp9.arwo.core.logging.LoggerU.adjust(Logger.getLogger(""));
     }

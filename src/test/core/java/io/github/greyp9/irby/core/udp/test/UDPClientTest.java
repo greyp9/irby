@@ -4,8 +4,8 @@ import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.hash.CRCU;
 import io.github.greyp9.arwo.core.lang.NumberU;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,7 +22,7 @@ public class UDPClientTest {
         final String methodName = "testSendOnePacket()";  // i18n trace
         logger.entering(className, methodName);
         final byte[] bytes = UTF8Codec.toBytes(XsdDateU.toXSDZMillis(new Date()));
-        Assert.assertNotNull(bytes);
+        Assertions.assertNotNull(bytes);
         final int crc = (int) CRCU.crc32(bytes);
         final InetAddress inetAddress = InetAddress.getLocalHost();  // InetAddress.getByName("127.0.0.1");
         logger.finest(String.format("[%s][%s][%d]", inetAddress.toString(), NumberU.toHex(crc), bytes.length));

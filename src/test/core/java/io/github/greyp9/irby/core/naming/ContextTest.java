@@ -1,9 +1,9 @@
 package io.github.greyp9.irby.core.naming;
 
 import io.github.greyp9.arwo.core.naming.AppNaming;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.naming.Context;
 import java.util.logging.Logger;
@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 public class ContextTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public final void setUp() throws Exception {
         io.github.greyp9.arwo.core.logging.LoggerU.adjust(Logger.getLogger(""));
     }
 
@@ -42,19 +42,19 @@ public class ContextTest {
         logger.info(context1Read.toString());
         final Context context2Read = AppNaming.lookupSubcontext("/test2");
         logger.info(context2Read.toString());
-        Assert.assertSame("expect identity equals", context1, context1Read);
-        Assert.assertSame("expect identity equals", context2, context2Read);
+        Assertions.assertSame(context1, context1Read, "expect identity equals");
+        Assertions.assertSame(context2, context2Read, "expect identity equals");
 
-        Assert.assertEquals("expect custom type", context1.getClass(), IrbyContext.class);
-        Assert.assertEquals("expect custom type", context2.getClass(), IrbyContext.class);
+        Assertions.assertEquals(context1.getClass(), IrbyContext.class, "expect custom type");
+        Assertions.assertEquals(context2.getClass(), IrbyContext.class, "expect custom type");
 
         final IrbyContext irbyContext1 = (IrbyContext) context1Read;
         final IrbyContext irbyContext2 = (IrbyContext) context2Read;
-        Assert.assertSame("root context parent of both",
-                irbyContext1.getParentContext(), irbyContext2.getParentContext());
+        Assertions.assertSame(
+                irbyContext1.getParentContext(), irbyContext2.getParentContext(), "root context parent of both");
 
         final IrbyContext rootContext = irbyContext1.getParentContext();
-        Assert.assertNull("root context has no parent", rootContext.getParentContext());
+        Assertions.assertNull(rootContext.getParentContext(), "root context has no parent");
     }
 
     @Test
@@ -66,6 +66,6 @@ public class ContextTest {
         String s1Value = "bindingValue1";
         AppNaming.bind(context1, s1Name, s1Value);
         String s1ValueRead = (String) AppNaming.lookup("/test1", s1Name);
-        Assert.assertSame("CRUD identity", s1Value, s1ValueRead);
+        Assertions.assertSame(s1Value, s1ValueRead, "CRUD identity");
     }
 }

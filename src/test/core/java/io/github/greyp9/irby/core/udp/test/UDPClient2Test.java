@@ -7,8 +7,8 @@ import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.hash.CRCU;
 import io.github.greyp9.arwo.core.lang.NumberU;
 import io.github.greyp9.arwo.core.vm.thread.ThreadU;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -37,7 +37,7 @@ public class UDPClient2Test {
 
     private void sendOnePacket() throws IOException {
         final byte[] bytes = UTF8Codec.toBytes(XsdDateU.toXSDZMillis(new Date()));  // i18n payload
-        Assert.assertNotNull(bytes);
+        Assertions.assertNotNull(bytes);
         final int crc = (int) CRCU.crc32(bytes);
         final InetAddress inetAddress = InetAddress.getLocalHost();  // InetAddress.getByName("127.0.0.1");
         logger.finest(String.format("[%s][%s][%d]", inetAddress.toString(), NumberU.toHex(crc), bytes.length));

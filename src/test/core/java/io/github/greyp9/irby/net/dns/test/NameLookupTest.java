@@ -1,7 +1,7 @@
 package io.github.greyp9.irby.net.dns.test;
 
 import io.github.greyp9.arwo.core.time.Stopwatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
 import java.util.logging.Logger;

@@ -6,8 +6,8 @@ import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.irby.core.cron.impl.file.GroupFileRunnable;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 
 import java.io.File;
@@ -22,10 +22,10 @@ public class GroupFileRunnableTest {
         // setup (filesystem folder for test files)
         final File tempDir = new File(SystemU.tempDir());
         logger.info(tempDir.getAbsolutePath());
-        Assert.assertTrue(tempDir.exists());
+        Assertions.assertTrue(tempDir.exists());
         final File testDir = new File(tempDir, getClass().getSimpleName());
         FileU.ensureFolder(testDir);
-        Assert.assertTrue(testDir.exists());
+        Assertions.assertTrue(testDir.exists());
         // setup (test files)
         if (!SystemU.isTrue()) {
             int ordinal = 0;

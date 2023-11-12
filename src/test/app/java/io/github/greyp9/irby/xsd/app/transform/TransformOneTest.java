@@ -4,9 +4,9 @@ import io.github.greyp9.arwo.core.envsec.EnvironmentSecret;
 import io.github.greyp9.arwo.core.jce.AES;
 import io.github.greyp9.arwo.core.jce.KeyX;
 import io.github.greyp9.arwo.core.lang.SystemU;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -19,10 +19,10 @@ public class TransformOneTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Test
-    @Ignore
+    @Disabled
     public void testTransformOne() throws GeneralSecurityException, IOException {
         final File folderApp = new File(SystemU.userHome(), ".irby");
-        Assert.assertTrue(folderApp.exists());
+        Assertions.assertTrue(folderApp.exists());
         logger.finest(folderApp.getPath());
         final File fileExpression = new File(folderApp, "environment.txt");
         final EnvironmentSecret environmentSecret = new EnvironmentSecret(fileExpression.getPath(), null);
@@ -35,6 +35,6 @@ public class TransformOneTest {
         final String ciphertext = key.protect(plaintext);
         logger.info(ciphertext);
         final String plaintextRecover = key.unprotect(ciphertext);
-        Assert.assertEquals(plaintext, plaintextRecover);
+        Assertions.assertEquals(plaintext, plaintextRecover);
     }
 }

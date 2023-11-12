@@ -1,8 +1,8 @@
 package io.github.greyp9.irby.net.icmp.test;
 
 import io.github.greyp9.arwo.core.time.Stopwatch;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
 import java.util.logging.Logger;
@@ -22,7 +22,7 @@ public class PingTest {
             final long elapsed = stopwatch.lap();
             logger.info(String.format("[address=%s, isReachable=%s, elapsed=%d]",
                     address.getHostAddress(), Boolean.toString(isReachable), elapsed));
-            Assert.assertTrue(isReachable);
+            Assertions.assertTrue(isReachable);
         }
     }
 }

@@ -7,16 +7,16 @@ import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.xsd.data.DataType;
 import io.github.greyp9.arwo.core.xsd.instance.TypeInstance;
 import io.github.greyp9.arwo.core.xsd.model.XsdTypes;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 
 @SuppressWarnings("checkstyle:magicnumber")
 public class AppConfigTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         //io.github.greyp9.arwo.core.logging.LoggerU.adjust(java.util.logging.Logger.getLogger(""));
     }
@@ -26,45 +26,45 @@ public class AppConfigTest {
         final URL urlInitial = ResourceU.resolve(Const.XSD);
         final String initialURL = URLCodec.toExternalForm(urlInitial);
         final byte[] xsd = StreamU.read(urlInitial);
-        Assert.assertNotNull(xsd);
-        Assert.assertEquals(12_954, xsd.length);
-        Assert.assertEquals("200ba589", CRCU.crc32String(xsd));
+        Assertions.assertNotNull(xsd);
+        Assertions.assertEquals(12_954, xsd.length);
+        Assertions.assertEquals("200ba589", CRCU.crc32String(xsd));
         final URL urlAugmentXSLT = new URL(initialURL.replace(".xsd", ".xslt"));
         final byte[] xslt = StreamU.readSafe(urlAugmentXSLT);
-        Assert.assertNotNull(xslt);
-        Assert.assertEquals(2_031, xslt.length);
-        Assert.assertEquals("cc7ee8ec", CRCU.crc32String(xslt));
+        Assertions.assertNotNull(xslt);
+        Assertions.assertEquals(2_031, xslt.length);
+        Assertions.assertEquals("cc7ee8ec", CRCU.crc32String(xslt));
     }
 
     @Test
     public void testHideInTable() throws Exception {
         final URL urlInitial = ResourceU.resolve(Const.XSD);
         final XsdTypes xsdTypes = new XsdTypes(urlInitial);
-        Assert.assertNotNull(xsdTypes);
+        Assertions.assertNotNull(xsdTypes);
 
         final TypeInstance typeInstanceApp = xsdTypes.getElementType("{urn:irby:app}application");
-        Assert.assertNotNull(typeInstanceApp);
+        Assertions.assertNotNull(typeInstanceApp);
         final DataType dataTypeApp = typeInstanceApp.getDataType();
-        Assert.assertNotNull(dataTypeApp);
+        Assertions.assertNotNull(dataTypeApp);
 
         final TypeInstance typeInstanceRealm = dataTypeApp.getInstance("realm");
-        Assert.assertNotNull(typeInstanceRealm);
+        Assertions.assertNotNull(typeInstanceRealm);
         final DataType dataTypeRealm = typeInstanceRealm.getDataType();
-        Assert.assertNotNull(dataTypeRealm);
+        Assertions.assertNotNull(dataTypeRealm);
 
         final TypeInstance typeInstancePrincipal = dataTypeRealm.getInstance("principal");
-        Assert.assertNotNull(typeInstancePrincipal);
+        Assertions.assertNotNull(typeInstancePrincipal);
         final DataType dataTypePrincipal = typeInstancePrincipal.getDataType();
-        Assert.assertNotNull(dataTypePrincipal);
+        Assertions.assertNotNull(dataTypePrincipal);
 
         final TypeInstance typeInstanceCredential = dataTypePrincipal.getInstance("credential");
-        Assert.assertNotNull(typeInstanceCredential);
+        Assertions.assertNotNull(typeInstanceCredential);
         final DataType dataTypeCredential = typeInstanceCredential.getDataType();
-        Assert.assertNotNull(dataTypeCredential);
+        Assertions.assertNotNull(dataTypeCredential);
 
         final String directiveHideInTable = typeInstanceCredential.getDirective("hideInTable");
-        Assert.assertNotNull(directiveHideInTable);
-        Assert.assertTrue(Boolean.parseBoolean(directiveHideInTable));
+        Assertions.assertNotNull(directiveHideInTable);
+        Assertions.assertTrue(Boolean.parseBoolean(directiveHideInTable));
     }
 
     private static class Const {
