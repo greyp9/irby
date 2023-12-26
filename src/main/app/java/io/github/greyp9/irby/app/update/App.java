@@ -34,9 +34,7 @@ public final class App {
             logger.info(codeLocation.getAbsolutePath());
             final UpdateFolder updateFolder = new UpdateFolder(new File(SystemU.userDir()));
             updateFolder.updateFrom(codeLocation, "irby/");
-        } catch (IOException e) {
-            logger.throwing(className, methodName, e);
-        } catch (URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             logger.throwing(className, methodName, e);
         }
         logger.exiting(className, methodName);

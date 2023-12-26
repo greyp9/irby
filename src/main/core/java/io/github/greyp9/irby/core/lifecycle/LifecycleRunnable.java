@@ -25,10 +25,12 @@ public class LifecycleRunnable implements Runnable {
     public final void run() {
         final String methodName = "run()";  // i18n trace
         logger.entering(getClass().getSimpleName(), methodName);
+        logger.fine(String.format("listening for [%s]", propertyKey));
         final Properties properties = System.getProperties();
         while (reference.get() == null) {
             monitor(properties);
         }
+        logger.fine(String.format("notified [%s]", propertyKey));
         MutexU.notifyAll(reference);
         logger.exiting(getClass().getSimpleName(), methodName);
     }

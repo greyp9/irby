@@ -118,13 +118,12 @@ public class Application {
         if (!ThreadPoolU.isAvailablePool(executorService, 1)) {
             reference.set("quit: insufficient threads available in application thread pool");
         }
-        logger.info(results.toString());
         // wait until shutdown signaled
         while (reference.get() == null) {
             MutexU.waitUntil(reference, DurationU.add(DateU.now(), DateU.Const.TZ_GMT, DurationU.Const.ONE_HOUR));
         }
         results.add(reference.get());
-        logger.info(results.toString());
+        logger.info(String.format("SIGNALED:%s", results));
         // clean application shutdown
         executorService.shutdownNow();
         try {

@@ -10,7 +10,6 @@ import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.jar.JarVerifier;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.value.Value;
-import io.github.greyp9.irby.core.app.Application;
 import io.github.greyp9.irby.core.update.source.thread.ApplyContentThread;
 
 import java.io.File;
@@ -58,8 +57,8 @@ public final class ApplyContent {
             final String userHome = SystemU.userHome();
             Runtime.getRuntime().addShutdownHook(new ApplyContentThread(cmdarray, new File(userHome)));
             // signal application (to quit)
-            System.setProperty(Application.class.getName(), Value.join(
-                    Http.Token.DOT, AppSignal.QUIT, getClass().getName()));
+            System.setProperty(AppSignal.NAME, Value.join(Http.Token.DOT, AppSignal.QUIT, getClass().getName()));
+            logger.info(String.format("%s=%s", AppSignal.NAME, System.getProperty(AppSignal.NAME)));
         } catch (IOException | GeneralSecurityException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
