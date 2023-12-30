@@ -4,6 +4,7 @@ import io.github.greyp9.arwo.core.io.StreamU;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -27,12 +28,21 @@ public final class UpdateFolder {
                     if (name.startsWith(prefix)) {
                         final String path = name.substring(prefix.length());
                         final File fileTarget = new File(folderTarget, path);
+                        logger.info(fileTarget.getAbsolutePath());
+                        logger.info(String.format("BEFORE:%s", getMetadata(fileTarget)));
                         final byte[] bytes = StreamU.read(zipFile.getInputStream(entry));
                         StreamU.write(fileTarget, bytes);
-                        logger.info(fileTarget.getAbsolutePath());
+                        logger.info(String.format("AFTER:%s", getMetadata(fileTarget)));
                     }
                 }
             }
         }
+    }
+
+    private String getMetadata(final File file) {
+        return (file.exists())
+                ? String.format("NAME:[%s] LENGTH:[%d] MODIFIED:[%s]",
+                file.getName(), file.length(), new Date(file.lastModified()))
+                : "FileNotFound";
     }
 }
