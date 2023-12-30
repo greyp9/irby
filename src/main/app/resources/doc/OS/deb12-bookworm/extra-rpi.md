@@ -13,6 +13,10 @@
 - `sudo shutdown -r now`
 - `sudo daemon --list`
 
+### Application Context
+- `ps -f -u irby`
+
+
 ### Reference
 - [Problem with my iptables configuration on reboot](https://askubuntu.com/questions/1452706/problem-with-my-iptables-configuration-on-reboot)
 - [nftables](https://wiki.debian.org/nftables)
