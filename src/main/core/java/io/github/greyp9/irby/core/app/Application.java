@@ -8,6 +8,7 @@ import io.github.greyp9.arwo.core.envsec.EnvironmentSecret;
 import io.github.greyp9.arwo.core.jce.AES;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.exec.ThreadPoolU;
@@ -140,7 +141,7 @@ public class Application {
     }
 
     private void registerSecret(final String secretPath) throws IOException, GeneralSecurityException {
-        final byte[] secret = (secretPath == null) ? null : new EnvironmentSecret(secretPath, null).recover();
+        final byte[] secret = Value.isEmpty(secretPath) ? null : new EnvironmentSecret(secretPath, null).recover();
         // register application keystore to be used for irby application document (XedWrite)
         final KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null, null);
