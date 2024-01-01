@@ -3,6 +3,7 @@ package io.github.greyp9.irby.core.servlet.update;
 import io.github.greyp9.arwo.app.core.servlet.ServletU;
 import io.github.greyp9.arwo.core.app.App;
 import io.github.greyp9.arwo.core.app.AppFolder;
+import io.github.greyp9.arwo.core.charset.UTF8Codec;
 import io.github.greyp9.arwo.core.file.meta.FileMetaData;
 import io.github.greyp9.arwo.core.file.meta.MetaFile;
 import io.github.greyp9.arwo.core.http.Http;
@@ -52,6 +53,7 @@ public class UpdateServlet extends javax.servlet.http.HttpServlet {
 
     private HttpResponse doPostFormMultipart(final ServletHttpRequest httpRequest) throws IOException {
         MetaFile metaFile = null;
+        String dateScheduled = null;
         final ByteArrayInputStream is = httpRequest.getHttpRequest().getEntity();
         final MultipartForm form = new MultipartForm(is);
         for (final Iterator<MimePart> mimePartIt = form.iterator(); mimePartIt.hasNext(); mimePartIt.getClass()) {
@@ -64,10 +66,12 @@ public class UpdateServlet extends javax.servlet.http.HttpServlet {
             final String name = propertiesPart.getProperty(App.Post.CD_NAME);
             if (App.Post.UPLOAD_FILE.equals(name)) {
                 metaFile = toMetaFile(mimePart, propertiesPart);
+            } else if (App.Settings.DATE_SCHEDULED.equals(name)) {
+                dateScheduled = UTF8Codec.toString(mimePart.getBody().toByteArray());
             }
         }
         final HttpResponse httpResponseDefault = HttpResponseU.to302("");
-        return (metaFile == null) ? httpResponseDefault : doMetaFile(httpRequest, metaFile);
+        return (metaFile == null) ? httpResponseDefault : doMetaFile(httpRequest, metaFile, dateScheduled);
     }
 
     private MetaFile toMetaFile(final MimePart mimePart, final Properties propertiesPart) {
@@ -78,14 +82,15 @@ public class UpdateServlet extends javax.servlet.http.HttpServlet {
         return new MetaFile(metaData, contentType, new ByteArrayInputStream(bytes));
     }
 
-    private HttpResponse doMetaFile(final ServletHttpRequest httpRequest, final MetaFile metaFile)
+    private HttpResponse doMetaFile(final ServletHttpRequest httpRequest,
+                                    final MetaFile metaFile, final String dateScheduled)
             throws IOException {
         // persist incoming file to filesystem
         final File folderWebappRoot = AppFolder.getWebappRoot(httpRequest.getContextPath());
         final File folderUser = AppFolder.getUserHome(folderWebappRoot, httpRequest.getPrincipal());
         final File folderUpdate = new File(folderUser, "update");
         // content incoming file
-        new ApplyContent(folderUpdate).apply(metaFile);
+        new ApplyContent(folderUpdate).apply(metaFile, dateScheduled);
         return HttpResponseU.to302("");
     }
 

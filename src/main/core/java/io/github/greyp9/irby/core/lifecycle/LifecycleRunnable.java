@@ -1,8 +1,14 @@
 package io.github.greyp9.irby.core.lifecycle;
 
+import io.github.greyp9.arwo.core.app.App;
+import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.http.HttpArguments;
+import io.github.greyp9.arwo.core.value.NameTypeValues;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
 import io.github.greyp9.arwo.core.vm.thread.ThreadU;
 
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
@@ -14,6 +20,9 @@ public class LifecycleRunnable implements Runnable {
     private final String propertyKey;
     private final AtomicReference<String> reference;
     private final long interval;
+
+    private Date dateScheduled;
+    private String referenceScheduled;
 
     public LifecycleRunnable(final String propertyKey, final AtomicReference<String> reference, final long interval) {
         this.propertyKey = propertyKey;
@@ -40,8 +49,19 @@ public class LifecycleRunnable implements Runnable {
         if (value == null) {
             ThreadU.sleepMillis(interval);
         } else {
-            reference.compareAndSet(null, value.trim());
+            logger.info(value);
+            process(value);
             properties.remove(propertyKey);
         }
+        if (this.dateScheduled != null && this.dateScheduled.compareTo(new Date()) <= 0) {
+            reference.compareAndSet(null, referenceScheduled.trim());
+        }
+    }
+
+    private void process(final String value) {
+        final NameTypeValues arguments = HttpArguments.toArguments(value);
+        this.dateScheduled = Value.defaultOnNull(
+                XsdDateU.fromXSDZ(arguments.getValue(App.Settings.DATE_SCHEDULED)), new Date());
+        this.referenceScheduled = value;
     }
 }
