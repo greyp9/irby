@@ -21,6 +21,7 @@
 - Preferences / Raspberry Pi Configuration
   - Hostname
   - Auto login
+  - Screen Blanking
   - SSH
   - Timezone
 - restart
