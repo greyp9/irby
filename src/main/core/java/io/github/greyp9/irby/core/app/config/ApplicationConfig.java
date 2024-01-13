@@ -123,7 +123,7 @@ public final class ApplicationConfig {
         // application params
         this.secret = xpather.getTextAttr(Const.XPATH_A_SECRET);
         this.threads = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 2);
-        this.interval = NumberU.toLong(xpather.getTextAttr("@loop"), DurationU.Const.ONE_SECOND_MILLIS);
+        this.interval = DurationU.toMillisP(xpather.getTextAttr("@loop"), DurationU.Const.ONE_SECOND_MILLIS);
         // subsystems
         this.realmConfigs = new ArrayList<>();
         this.contextConfigs = new ArrayList<>();
@@ -222,7 +222,7 @@ public final class ApplicationConfig {
         final String host = xpather.getTextAttr(Const.XPATH_A_HOST);
         final int port = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_PORT), 0);
         final int threadsPort = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
-        final Http11Config http11Config = new Http11Config(name, host, port, threadsPort);
+        final Http11Config http11Config = new Http11Config(name, host, port, threadsPort, interval);
         final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {
             http11Config.addContext(doElementWebapp(elementIt));
@@ -288,7 +288,8 @@ public final class ApplicationConfig {
         final String clientTrustType = xpather.getTextAttr("@clientTrustType");
         final String clientTrustPass = xpather.getTextAttr("@clientTrustPass");
         final String protocol = xpather.getTextAttr("@protocol");
-        final Https11Config https11Config = new Https11Config(element.getTagName(), name, host, port, threadsPort,
+        final Https11Config https11Config = new Https11Config(element.getTagName(), name, host, port,
+                threadsPort, interval,
                 keyStoreFile, keyStoreType, keyStorePass, clientTrustFile, clientTrustType, clientTrustPass, protocol);
         final List<Element> elements = xpather.getElements("irby:web-app[@enabled='true']");
         for (final Element elementIt : elements) {

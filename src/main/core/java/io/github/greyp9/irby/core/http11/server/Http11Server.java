@@ -1,6 +1,5 @@
 package io.github.greyp9.irby.core.http11.server;
 
-import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.dispatch.Http11Dispatcher;
@@ -61,7 +60,7 @@ public class Http11Server {
             final Socket socket = serverSocket.accept();
             executorService.execute(new Http11SocketRunnable(dispatcher, socket));
         } catch (SocketTimeoutException e) {
-            e.getClass();  // ignore; serverSocket.setSoTimeout()
+            logger.finest(e::getMessage);  // ignore; serverSocket.setSoTimeout()
         }
     }
 
@@ -70,7 +69,7 @@ public class Http11Server {
         final InetAddress inetAddress = host == null ? null : InetAddress.getByName(host);
         final ServerSocketFactory ssf = ServerSocketFactory.getDefault();
         final ServerSocket serverSocket = ssf.createServerSocket(config.getPort(), 0, inetAddress);
-        serverSocket.setSoTimeout((int) DurationU.Const.ONE_SECOND_MILLIS);
+        serverSocket.setSoTimeout((int) config.getTimeout());
         return serverSocket;
     }
 }

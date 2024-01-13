@@ -33,9 +33,9 @@ public final class App {
     private String applicationRunLoop(final URL url) throws IOException, GeneralSecurityException {
         String signal = "";
         while (!signal.contains(AppSignal.QUIT)) {
+            ThreadU.sleepMillis(DurationU.Const.ONE_SECOND_MILLIS);  // no 100% CPU on error
             signal = new Application(AppSignal.NAME).run(url);
             logger.finer(signal);
-            ThreadU.sleepMillis(DurationU.Const.ONE_SECOND_MILLIS);  // no 100% CPU on error
         }
         return signal;
     }

@@ -1,7 +1,6 @@
 package io.github.greyp9.irby.core.https11.server;
 
 import io.github.greyp9.arwo.core.app.App;
-import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.jce.KeyX;
 import io.github.greyp9.arwo.core.lang.SystemU;
@@ -81,8 +80,7 @@ public class Https11Server {
             final Socket socket = serverSocket.accept();
             executorService.execute(new Https11SocketRunnable(dispatcher, socket));
         } catch (SocketTimeoutException e) {
-            //noinspection ResultOfMethodCallIgnored
-            e.getClass();  // ignore; serverSocket.setSoTimeout()
+            logger.finest(e::getMessage);  // ignore; serverSocket.setSoTimeout()
         }
     }
 
@@ -101,7 +99,7 @@ public class Https11Server {
             final InetAddress inetAddress = Value.isEmpty(host) ? null : InetAddress.getByName(host);
             final SSLServerSocketFactory ssf = context.getServerSocketFactory();
             final ServerSocket serverSocket = ssf.createServerSocket(config.getPort(), 0, inetAddress);
-            serverSocket.setSoTimeout((int) DurationU.Const.ONE_SECOND_MILLIS);
+            serverSocket.setSoTimeout((int) config.getTimeout());
             return serverSocket;
         } catch (GeneralSecurityException e) {
             throw new IOException(e);

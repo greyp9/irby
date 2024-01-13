@@ -8,6 +8,7 @@ public class Http11Config {
     private final String host;
     private final int port;
     private final int threads;
+    private final long timeout;
     private final Collection<Http11ConfigContext> contexts;
 
     public final String getName() {
@@ -26,15 +27,20 @@ public class Http11Config {
         return threads;
     }
 
+    public final long getTimeout() {
+        return timeout;
+    }
+
     public final Collection<Http11ConfigContext> getContexts() {
         return contexts;
     }
 
-    public Http11Config(final String name, final String host, final int port, final int threads) {
+    public Http11Config(final String name, final String host, final int port, final int threads, final long timeout) {
         this.name = name;
         this.host = host;
         this.port = port;
         this.threads = threads;
+        this.timeout = timeout;
         this.contexts = new ArrayList<Http11ConfigContext>();
     }
 

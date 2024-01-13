@@ -49,6 +49,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -65,6 +66,7 @@ public class Application {
 
     @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException, GeneralSecurityException {
+        logger.entering(getClass().getName(), "run()");
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         // load config
         final ApplicationConfig config = new ApplicationConfig(url);
@@ -124,19 +126,22 @@ public class Application {
             MutexU.waitUntil(reference, DurationU.add(DateU.now(), DateU.Const.TZ_GMT, DurationU.Const.ONE_HOUR));
         }
         results.add(reference.get());
-        logger.info(String.format("SIGNALED:%s", results));
+        logger.finer(String.format("signaled:%s", results));
         // clean application shutdown
-        executorService.shutdownNow();
+        final List<Runnable> runnables = executorService.shutdownNow();
+        logger.finer(String.format("shutdownNow():%d", runnables.size()));
         try {
-            final boolean terminated = executorService.awaitTermination(1, TimeUnit.SECONDS);
+            final boolean terminated = executorService.awaitTermination(5, TimeUnit.SECONDS);
             results.add("Executor terminated: " + terminated);
         } catch (InterruptedException e) {
             results.add(e.getMessage());
         }
+        logger.finer(String.format("awaitTermination():%s", results));
         for (final ContextConfig contextConfig : config.getContextConfigs()) {
             ContextFactory.teardown(contextConfig);
         }
         //logger.info("AFTER ContextFactory.teardown()" + IrbyContextU.enumerate(null));
+        logger.exiting(getClass().getName(), "run()");
         return results.toString();
     }
 
