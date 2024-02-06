@@ -81,7 +81,7 @@ public class CronMonitorView {
         insertRow.setNextColumn(command.getName());
         insertRow.setNextColumn(command.getScheduled());
         insertRow.setNextColumn(command.getStart());
-        insertRow.setNextColumn(Integer.toString(command.getPID()));
+        insertRow.setNextColumn(Long.toString(command.getPID()));
         insertRow.setNextColumn(new TableViewLink(NumberScale.toString(lengthStdout), null, PathU.toDir(hrefStdout)));
         insertRow.setNextColumn(new TableViewLink(NumberScale.toString(lengthStderr), null, PathU.toDir(hrefStderr)));
         rowSet.add(insertRow.getRow());
