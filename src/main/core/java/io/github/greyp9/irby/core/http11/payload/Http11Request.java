@@ -11,7 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Http11Request {
+public final class Http11Request {
     private final long millis;
     private final Socket socket;
     private final boolean isValid;
@@ -20,35 +20,35 @@ public class Http11Request {
 
     private String user;
 
-    public final long getMillis() {
+    public long getMillis() {
         return millis;
     }
 
-    public final Socket getSocket() {
+    public Socket getSocket() {
         return socket;
     }
 
-    public final boolean isValid() {
+    public boolean isValid() {
         return isValid;
     }
 
-    public final Http11Header getHeader() {
+    public Http11Header getHeader() {
         return header;
     }
 
-    public final ByteArrayInputStream getEntity() {
+    public ByteArrayInputStream getEntity() {
         return new ByteArrayInputStream((entity == null) ? new byte[0] : entity);
     }
 
-    public final String getUser() {
+    public String getUser() {
         return user;
     }
 
-    public final void setUser(final String user) {
+    public void setUser(final String user) {
         this.user = user;
     }
 
-    public final ServletInputStream getInputStream() throws IOException {
+    public ServletInputStream getInputStream() {
         return new Http11ServletInputStream(getEntity());
     }
 

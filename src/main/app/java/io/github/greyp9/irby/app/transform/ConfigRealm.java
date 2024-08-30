@@ -117,5 +117,5 @@ public final class ConfigRealm {
     private static final String PROMPT_REALM = "Enter realm type (Basic, Certificate): ";
     private static final String PROMPT_NAME = "Enter realm user name: ";
     private static final String PROMPT_CREDENTIAL = "Enter realm user credential: ";
-    private static final String XSLT_REALM  = "io/github/greyp9/irby/xslt/config-realm.xslt";
+    private static final String XSLT_REALM = "io/github/greyp9/irby/xslt/config-realm.xslt";
 }

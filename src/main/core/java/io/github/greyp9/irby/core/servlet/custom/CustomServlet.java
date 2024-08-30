@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 
 public class CustomServlet extends javax.servlet.http.HttpServlet {
 
+    private static final long serialVersionUID = -5076871391336808549L;
+
     @Override
     protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {

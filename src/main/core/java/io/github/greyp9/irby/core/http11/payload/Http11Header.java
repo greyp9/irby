@@ -11,19 +11,19 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Http11Header {
+public final class Http11Header {
     private final String requestLine;
     private final Matcher matcher;
     private final Collection<String> headerLines;
     private final NameTypeValues headers;
 
     @SuppressWarnings("unused")
-    public final String getRequestLine() {
+    public String getRequestLine() {
         return requestLine;
     }
 
     @SuppressWarnings("unused")
-    public final Collection<String> getHeaderLines() {
+    public Collection<String> getHeaderLines() {
         return headerLines;
     }
 
@@ -50,31 +50,31 @@ public class Http11Header {
         }
     }
 
-    public final String getMethod() {
+    public String getMethod() {
         return ((matcher == null) ? null : matcher.group(Const.GROUP_METHOD));
     }
 
-    public final String getRequestURI() {
+    public String getRequestURI() {
         return ((matcher == null) ? null : matcher.group(Const.GROUP_URI));
     }
 
-    public final String getQueryString() {
+    public String getQueryString() {
         return ((matcher == null) ? null : matcher.group(Const.GROUP_QUERY));
     }
 
-    public final String getProtocol() {
+    public String getProtocol() {
         return ((matcher == null) ? null : matcher.group(Const.GROUP_PROTOCOL));
     }
 
-    public final Collection<String> getHeaderNames() {
+    public Collection<String> getHeaderNames() {
         return headers.getNames();
     }
 
-    public final Collection<String> getHeaders(final String name) {
+    public Collection<String> getHeaders(final String name) {
         return headers.getValues(name);
     }
 
-    public final String getHeader(final String name) {
+    public String getHeader(final String name) {
         return headers.getValue(name);
     }
 

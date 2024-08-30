@@ -55,7 +55,7 @@ public class CommandRunnable extends CronRunnable {
         final String command = ElementU.getAttribute(getElement(), Const.COMMAND);
         try {
             final Script script = new Script(null, getDate(), getName(), command);
-            final File folder = new File(System.getProperty("user.dir"), "data");
+            final File folder = new File(SystemU.userDir(), "data");
             final String filename = String.format("command.%s.%s.txt", getName(), DateX.toFilename(getDate()));
             final MetaLink metaLink = new MetaLink(new File(folder, filename), null);
             final Locus locus = new LocusFactory().create("EN", DateX.Factory.createXsdUtcMilli());
@@ -74,6 +74,5 @@ public class CommandRunnable extends CronRunnable {
 
     private static class Const {
         private static final String COMMAND = "command";  // i18n internal
-        private static final String USER_DIR = System.getProperty("user.dir");
     }
 }

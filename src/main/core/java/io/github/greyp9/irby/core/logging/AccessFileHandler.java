@@ -7,7 +7,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
 
-public class AccessFileHandler extends FileHandler {
+public final class AccessFileHandler extends FileHandler {
 
     public AccessFileHandler() throws IOException, SecurityException {
         super();

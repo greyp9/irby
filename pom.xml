@@ -10,8 +10,26 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
-        <checkstyle.version>9.3</checkstyle.version>
-        <pmd.version>6.55.0</pmd.version>
+        <junit.version>5.11.0</junit.version>  <!-- 2024-08-14 -->
+
+        <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>  <!-- 2022-04-18 -->
+        <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>  <!-- 2024-03-15 -->
+        <maven.build-helper.plugin.version>3.6.0</maven.build-helper.plugin.version>  <!-- 2024-05-19 -->
+        <maven.checkstyle.plugin.version>3.5.0</maven.checkstyle.plugin.version>  <!-- 2024-08-19 -->
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>  <!-- 2024-03-15 -->
+        <maven.dependency.plugin.version>3.8.0</maven.dependency.plugin.version>  <!-- 2024-08-18 -->
+        <maven.git-commit.plugin.version>4.9.9</maven.git-commit.plugin.version>  <!-- 2021-07-15, latest Java 8 support-->
+        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>  <!-- 2024-06-16 -->
+        <maven.jarsigner.plugin.version>3.0.0</maven.jarsigner.plugin.version>  <!-- 2018-11-03 -->
+        <maven.pmd.plugin.version>3.24.0</maven.pmd.plugin.version>  <!-- 2024-07-10, default for plugin-3.25.0 is 7.3.0 -->
+        <maven.project-info-reports.plugin.version>3.7.0</maven.project-info-reports.plugin.version>  <!-- 2024-08-18 -->
+        <maven.site.plugin.version>3.9.1</maven.site.plugin.version>  <!-- 2020-06-21 -->
+        <maven.spotbugs.plugin.version>4.8.6.2</maven.spotbugs.plugin.version>  <!-- 2024-07-05 -->
+        <maven.surefire.plugin.version>3.5.0</maven.surefire.plugin.version>  <!-- 2024-08-22 -->
+
+        <checkstyle.version>9.3</checkstyle.version>  <!-- 2022-01-30 -->
+        <pmd.version>7.5.0</pmd.version>  <!-- 2024-08-30 -->
+        <linkXRef>false</linkXRef>
         <arwo.version>${project.version}</arwo.version>
     </properties>
     <dependencies>
@@ -28,13 +46,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.10.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -43,8 +61,18 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven.assembly.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>${maven.project-info-reports.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.3.1</version>  <!-- 2023-10-21 -->
+                    <version>${maven.checkstyle.plugin.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
@@ -56,7 +84,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.21.2</version>  <!-- 2023-10-30 -->
+                    <version>${maven.pmd.plugin.version}</version>
                     <dependencies>
                         <!-- https://repo.maven.apache.org/maven2/net/sourceforge/pmd/pmd-core/ -->
                         <dependency>
@@ -78,7 +106,7 @@
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>4.9.9</version>
+                <version>${maven.git-commit.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>git-commit-id-execution</id>
@@ -103,7 +131,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -116,7 +144,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven.build-helper.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -147,8 +175,9 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>${maven.antrun.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>prepare-package</phase>
@@ -156,14 +185,14 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <replace token="SPECIFICATION_VERSION" value="${project.version}" dir="target/classes">
                                     <include name="irby-war/index.html"/>
                                 </replace>
                                 <replace token="IMPLEMENTATION_VERSION" value="${maven.build.timestamp}-${git.commit.id.abbrev}" dir="target/classes">
                                     <include name="irby-war/index.html"/>
                                 </replace>
-                            </tasks>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -171,7 +200,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.config.file>src/test/core/resources/logging.properties</java.util.logging.config.file>
@@ -205,7 +234,7 @@
                 <configuration>
                     <includeTests>false</includeTests>
                     <rulesets>
-                        <ruleset>src/config/pmd/pmd-6.55.0.xml</ruleset>
+                        <ruleset>src/config/pmd/pmd-7.3.0.xml</ruleset>
                     </rulesets>
                     <printFailingErrors>true</printFailingErrors>
                     <linkXRef>false</linkXRef>
@@ -223,7 +252,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven.dependency.plugin.version}</version>
                 <executions>
 <!--
                     <execution>
@@ -256,7 +285,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>  <!-- 2019-10-29 -->
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -297,7 +326,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven.jarsigner.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>sign</id>
@@ -336,7 +365,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>  <!-- 2020-06-21 -->
+                <version>${maven.site.plugin.version}</version>
             </plugin>
         </plugins>
         <resources>
@@ -374,7 +403,7 @@
                 <configuration>
                     <includeTests>false</includeTests>
                     <rulesets>
-                        <ruleset>src/config/pmd/pmd.xml</ruleset>
+                        <ruleset>src/config/pmd/pmd-7.3.0.xml</ruleset>
                     </rulesets>
                     <linkXRef>false</linkXRef>
                 </configuration>
@@ -382,7 +411,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.6.0.0</version>  <!-- 2022-03-24 -->
+                <version>${maven.spotbugs.plugin.version}</version>
                 <configuration>
                     <!-- https://spotbugs.github.io/spotbugs-maven-plugin/spotbugs-mojo.html -->
                     <!-- https://spotbugs.readthedocs.io/en/latest/analysisprops.html -->

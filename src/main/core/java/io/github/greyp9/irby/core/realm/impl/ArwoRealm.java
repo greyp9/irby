@@ -21,7 +21,7 @@ public final class ArwoRealm implements Realm, AppRealmContainer {
         //this.appRealm = AppRealmFactory.toAppRealm(config.getContext());
         final javax.naming.Context context = AppNaming.createSubcontext(config.getContext());
         //final Object o = AppNaming.lookup(context, AppRealmContainer.NAMING_CONTAINER);
-        AppNaming.bind(context, AppRealmContainer.NAMING_CONTAINER, this);
+        AppNaming.bind(context, NAMING_CONTAINER, this);
     }
 
     @Override
