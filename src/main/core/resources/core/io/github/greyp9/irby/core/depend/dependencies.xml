@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <irby:dependencies xmlns="urn:irby:depend" xmlns:irby="urn:irby:depend">
     <binding>
+        <!--kube-->
+        <entry className="io.github.greyp9.arwo.kube.servlet.KubeServlet" remoteId="kube"/>
         <!--ssh-->
         <entry className="io.github.greyp9.arwo.app.ssh.servlet.SFTPServlet" remoteId="ganymed"/>
         <entry className="io.github.greyp9.arwo.app.ssh.servlet.SHServlet" remoteId="ganymed"/>
@@ -20,6 +22,23 @@
         <entry className="io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet" remoteId="javax.mail"/>
     </binding>
     <resource>
+        <!--kube-->
+        <entry remoteId="kube" md5="8d6c666663e219c1c448dcb6ad353a71" sha1="382aada9786f10872b5181b4f0ff2c0550f5ed83"
+               src="https://repo.maven.apache.org/maven2/io/kubernetes/client-java/19.0.1/client-java-19.0.1.jar" dest="lib/kube-client-java-19.0.1.jar"/>
+        <entry remoteId="kube" md5="d78aacf5f2de5b52f1a327470efd1ad7" sha1="3af797a25458550a16bf89acc8e4ab2b7f2bfce0"
+               src="https://repo.maven.apache.org/maven2/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar" dest="lib/snakeyaml-2.2.jar"/>
+        <entry remoteId="kube" md5="df6097815738cb31fc56391553210843" sha1="b3add478d4382b78ea20b1671390a858002feb6c"
+               src="https://repo.maven.apache.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar" dest="lib/gson-2.10.1.jar"/>
+        <entry remoteId="kube" md5="619ab5f8e4a331b90530238faed7737f" sha1="d8d657e5b08dfbad70758fc8c47c58372272e08c"
+               src="https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/2.0.16/slf4j-nop-2.0.16.jar" dest="lib/slf4j-nop-2.0.16.jar"/>
+        <entry remoteId="kube" md5="c8de8f5d740584cb24b5652cfba8b3c4" sha1="0172931663a09a1fa515567af5fbef00897d3c04"
+               src="https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar" dest="lib/slf4j-api-2.0.16.jar"/>
+        <entry remoteId="kube" md5="f57cb91efc5beaa940029f5515a888c2" sha1="357a3836bb5da16f314f3a1e954518e5468cd915"
+               src="https://repo.maven.apache.org/maven2/org/bitbucket/b_c/jose4j/0.9.6/jose4j-0.9.6.jar" dest="lib/jose4j-0.9.6.jar"/>
+        <entry remoteId="kube" md5="8f53e26319679de3ea22261b1899a99c" sha1="436932d695b2c43f2c86b8111c596179cd133d56"
+               src="https://repo.maven.apache.org/maven2/com/squareup/okhttp3/okhttp/4.11.0/okhttp-4.11.0.jar" dest="lib/okhttp-4.11.0.jar"/>
+        <entry remoteId="kube" md5="6e26920fa7228891980890cce06b718c" sha1="4e3eb3d79888d76b54e28b350915b5dc3919c9de"
+               src="https://repo.maven.apache.org/maven2/commons-codec/commons-codec/1.16.0/commons-codec-1.16.0.jar" dest="lib/commons-codec-1.16.0.jar"/>
         <!--ssh-->
         <entry remoteId="ganymed" md5="69d9067fc89719ad4d19af60a7b3c980" sha1="7761dc665d0f6993dc846d914214fb93291e2bdf"
                src="https://repo1.maven.org/maven2/ch/ethz/ganymed/ganymed-ssh2/262/ganymed-ssh2-262.jar" dest="lib/ganymed-ssh2.jar"/>

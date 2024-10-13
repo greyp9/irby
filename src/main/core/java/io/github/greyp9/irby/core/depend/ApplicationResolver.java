@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.depend;
 
+import io.github.greyp9.arwo.core.app.AppSignal;
 import io.github.greyp9.arwo.core.codec.hex.HexCodec;
 import io.github.greyp9.arwo.core.depend.Dependency;
 import io.github.greyp9.arwo.core.depend.DependencyResolver;
@@ -11,6 +12,7 @@ import io.github.greyp9.arwo.core.httpclient.HttpClient;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.value.NTV;
 import io.github.greyp9.arwo.core.value.NameTypeValues;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
@@ -80,6 +82,7 @@ public final class ApplicationResolver {
             logger.info(String.format("DOWNLOAD MD5=[%s], SHA1=[%s]", md5, sha1));
             if ((dependency.getMd5().equals(md5)) && (dependency.getSha1().equals(sha1))) {
                 StreamU.write(file, responseEntity);
+                System.setProperty(AppSignal.NAME, Value.join(Http.Token.DOT, AppSignal.QUIT, getClass().getName()));
             } else {
                 logger.warning(String.format("EXPECT MD5=[%s], SHA1=[%s]", dependency.getMd5(), dependency.getSha1()));
             }

@@ -282,7 +282,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <stripVersion>false</stripVersion>
-                            <includeArtifactIds>arwo,servlet-api</includeArtifactIds>
+                            <includeArtifactIds>arwo-core,arwo-app,servlet-api</includeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
