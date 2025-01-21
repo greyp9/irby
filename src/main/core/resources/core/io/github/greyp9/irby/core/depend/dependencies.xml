@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <irby:dependencies xmlns="urn:irby:depend" xmlns:irby="urn:irby:depend">
     <binding>
+        <!--kafka-->
+        <entry className="io.github.greyp9.arwo.kafka.servlet.KafkaServlet" remoteId="kafka"/>
         <!--kube-->
         <entry className="io.github.greyp9.arwo.kube.servlet.KubeServlet" remoteId="kube"/>
         <!--ssh-->
@@ -22,6 +24,9 @@
         <entry className="io.github.greyp9.arwo.app.mail.smtp.servlet.SMTPServlet" remoteId="javax.mail"/>
     </binding>
     <resource>
+        <!--kafka-->
+        <entry remoteId="kafka" md5="93f12e5cdb09092dc4dc1ee86287861f" sha1="e87443101adb03975297788cf7f2b5387c3cfe2d"
+               src="https://repo.maven.apache.org/maven2/org/apache/kafka/kafka-clients/3.9.0/kafka-clients-3.9.0.jar" dest="lib/kafka-clients-3.9.0.jar"/>
         <!--kube-->
         <entry remoteId="kube" md5="8d6c666663e219c1c448dcb6ad353a71" sha1="382aada9786f10872b5181b4f0ff2c0550f5ed83"
                src="https://repo.maven.apache.org/maven2/io/kubernetes/client-java/19.0.1/client-java-19.0.1.jar" dest="lib/kube-client-java-19.0.1.jar"/>
