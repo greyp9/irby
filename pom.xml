@@ -10,7 +10,12 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
+
+        <com.squareup.okio.version>3.9.0</com.squareup.okio.version>  <!-- 2024-03-13 -->
         <junit.version>5.11.0</junit.version>  <!-- 2024-08-14 -->
+        <org.bitbucket.jose4j.version>0.9.6</org.bitbucket.jose4j.version>  <!-- 2024-03-06 -->
+        <org.bouncycastle.version>1.78.1</org.bouncycastle.version>
+        <protobuf-java.version>3.25.5</protobuf-java.version>
 
         <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>  <!-- 2022-04-18 -->
         <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>  <!-- 2024-03-15 -->
@@ -28,10 +33,36 @@
         <maven.surefire.plugin.version>3.5.0</maven.surefire.plugin.version>  <!-- 2024-08-22 -->
 
         <checkstyle.version>9.3</checkstyle.version>  <!-- 2022-01-30 -->
-        <pmd.version>7.5.0</pmd.version>  <!-- 2024-08-30 -->
+        <pmd.version>7.12.0</pmd.version>  <!-- 2025-03-28 -->
         <linkXRef>false</linkXRef>
         <arwo.version>${project.version}</arwo.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${com.squareup.okio.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bitbucket.b_c</groupId>
+                <artifactId>jose4j</artifactId>
+                <version>${org.bitbucket.jose4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${org.bouncycastle.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.github.greyp9</groupId>
@@ -43,6 +74,20 @@
             <artifactId>arwo-app</artifactId>
             <version>${project.version}</version>
         </dependency>
+<!--
+        <dependency>
+            <groupId>io.github.greyp9</groupId>
+            <artifactId>arwo-kafka</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.greyp9</groupId>
+            <artifactId>arwo-kube</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+-->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
