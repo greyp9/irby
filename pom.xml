@@ -79,7 +79,6 @@
             <artifactId>arwo-app</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--
         <dependency>
             <groupId>io.github.greyp9</groupId>
             <artifactId>arwo-kafka</artifactId>
@@ -92,7 +91,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
--->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
