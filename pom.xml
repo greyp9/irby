@@ -98,6 +98,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
@@ -351,7 +357,7 @@
                             <mainClass>io.github.greyp9.irby.app.dispatch.App</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/arwo-${project.version}.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar lib/jcifs.jar lib/j-interop.jar lib/sardine.jar lib/httpclient.jar lib/httpcore.jar lib/commons-logging.jar lib/javax.mail.jar</Class-Path>
+                            <Class-Path>lib/arwo-core-${project.version}.jar lib/arwo-app-${project.version}.jar lib/servlet-api-2.5.jar lib/ganymed-ssh2.jar lib/jcifs.jar lib/j-interop.jar lib/sardine.jar lib/httpclient.jar lib/httpcore.jar lib/commons-logging.jar lib/javax.mail.jar</Class-Path>
                             <Specification-Version>${project.version}</Specification-Version>
                             <Implementation-Version>${maven.build.timestamp}-${git.commit.id.abbrev}</Implementation-Version>
                             <git-commit-id>${git.commit.id.abbrev}</git-commit-id>
