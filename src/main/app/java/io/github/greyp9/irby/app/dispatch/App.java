@@ -8,6 +8,7 @@ import io.github.greyp9.arwo.core.text.line.LineU;
 import io.github.greyp9.irby.app.transform.ConfigHttpsKeyStore;
 import io.github.greyp9.irby.app.transform.ConfigHttpsPort;
 import io.github.greyp9.irby.app.transform.ConfigHttpsTrustStore;
+import io.github.greyp9.irby.app.transform.ConfigProtect;
 import io.github.greyp9.irby.app.transform.ConfigRealm;
 import io.github.greyp9.irby.app.transform.ConfigSecret;
 
@@ -32,6 +33,8 @@ public final class App {
             ConfigRealm.main(args);
         } else if ("secret".equals(args[0])) {
             ConfigSecret.main(args);
+        } else if ("protect".equals(args[0])) {
+            ConfigProtect.main(args);
         } else if ("https-port".equals(args[0])) {
             ConfigHttpsPort.main(args);
         } else if ("https-keystore".equals(args[0])) {
