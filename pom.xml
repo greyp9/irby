@@ -14,7 +14,7 @@
         <com.squareup.okio.version>3.9.0</com.squareup.okio.version>  <!-- 2024-03-13 -->
         <junit.version>5.11.0</junit.version>  <!-- 2024-08-14 -->
         <org.bitbucket.jose4j.version>0.9.6</org.bitbucket.jose4j.version>  <!-- 2024-03-06 -->
-        <org.bouncycastle.version>1.78.1</org.bouncycastle.version>
+        <org.bouncycastle.version>1.83</org.bouncycastle.version>
         <protobuf-java.version>3.25.5</protobuf-java.version>
 
         <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>  <!-- 2022-04-18 -->
@@ -25,7 +25,7 @@
         <maven.dependency.plugin.version>3.8.0</maven.dependency.plugin.version>  <!-- 2024-08-18 -->
         <maven.git-commit.plugin.version>4.9.9</maven.git-commit.plugin.version>  <!-- 2021-07-15, latest Java 8 support-->
         <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>  <!-- 2024-06-16 -->
-        <maven.jarsigner.plugin.version>3.0.0</maven.jarsigner.plugin.version>  <!-- 2018-11-03 -->
+        <maven.jarsigner.plugin.version>3.1.0</maven.jarsigner.plugin.version>  <!-- 2024-09-03 -->
         <maven.pmd.plugin.version>3.24.0</maven.pmd.plugin.version>  <!-- 2024-07-10, default for plugin-3.25.0 is 7.3.0 -->
         <maven.project-info-reports.plugin.version>3.7.0</maven.project-info-reports.plugin.version>  <!-- 2024-08-18 -->
         <maven.site.plugin.version>3.9.1</maven.site.plugin.version>  <!-- 2020-06-21 -->
@@ -124,6 +124,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven.dependency.plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
