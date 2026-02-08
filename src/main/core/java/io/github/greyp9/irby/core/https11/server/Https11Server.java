@@ -21,6 +21,7 @@ import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.https11.socket.Https11SocketRunnable;
 import io.github.greyp9.irby.core.realm.Realms;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -60,7 +61,7 @@ public class Https11Server {
 
     public final void start() throws IOException {
         dispatcher.register(config.getContexts());
-        serverSocket = startServerSocket(config, logger);
+        serverSocket = startServerSocket(config, getSSLContext(config, logger));
         logger.info(String.format("Service [%s/%s] bound to host [%s], TCP port [%d]",
                 config.getType(), config.getName(), config.getHost(), config.getPort()));
     }
@@ -78,13 +79,25 @@ public class Https11Server {
     public final void accept() throws IOException {
         try {
             final Socket socket = serverSocket.accept();
+            socket.setKeepAlive(true);
             executorService.execute(new Https11SocketRunnable(dispatcher, socket));
         } catch (SocketTimeoutException e) {
             logger.finest(e::getMessage);  // ignore; serverSocket.setSoTimeout()
         }
     }
 
-    private static ServerSocket startServerSocket(final Https11Config config, final Logger logger) throws IOException {
+    private static ServerSocket startServerSocket(final Https11Config config,
+                                                  final SSLContext sslContext) throws IOException {
+        final String host = config.getHost();
+        final InetAddress inetAddress = Value.isEmpty(host) ? null : InetAddress.getByName(host);
+        final SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+        final ServerSocket serverSocket = ssf.createServerSocket(config.getPort(), 0, inetAddress);
+        serverSocket.setPerformancePreferences(2, 1, 0);
+        serverSocket.setSoTimeout((int) config.getTimeout());
+        return serverSocket;
+    }
+
+    private static SSLContext getSSLContext(final Https11Config config, final Logger logger) throws IOException {
         try {
             // server SSL params, trusted client SSL params
             final KeyX keyX = getKey();
@@ -94,13 +107,8 @@ public class Https11Server {
                     XsdDateU.toXSDZMillis(x509Certificate.getNotAfter())));
             final TLSTrustManager trustManager = (config.isNeedClientAuth() ? getTrustManager(config, keyX) : null);
             // context implements TLS server with optional client X.509 authentication
-            final TLSContext context = new TLSContext(keyManager, trustManager, config.getProtocol());
-            final String host = config.getHost();
-            final InetAddress inetAddress = Value.isEmpty(host) ? null : InetAddress.getByName(host);
-            final SSLServerSocketFactory ssf = context.getServerSocketFactory();
-            final ServerSocket serverSocket = ssf.createServerSocket(config.getPort(), 0, inetAddress);
-            serverSocket.setSoTimeout((int) config.getTimeout());
-            return serverSocket;
+            final TLSContext tlsContext = new TLSContext(keyManager, trustManager, config.getProtocol());
+            return tlsContext.getContext();
         } catch (GeneralSecurityException e) {
             throw new IOException(e);
         }
