@@ -2,6 +2,7 @@ package io.github.greyp9.irby.net.icmp.test;
 
 import io.github.greyp9.arwo.core.time.Stopwatch;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
@@ -11,6 +12,7 @@ public class PingTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Test
+    @Disabled("not dependable")
     public void testPing() throws Exception {
         String[] hostnames = {
                 "amazon.com",
