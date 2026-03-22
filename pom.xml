@@ -36,6 +36,8 @@
         <pmd.version>7.12.0</pmd.version>  <!-- 2025-03-28 -->
         <linkXRef>false</linkXRef>
         <arwo.version>${project.version}</arwo.version>
+
+        <skipSign>false</skipSign>
     </properties>
 
     <dependencyManagement>
@@ -406,6 +408,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${skipSign}</skip>
                     <keystore>${irby-sign.keystore}</keystore>
                     <storetype>${irby-sign.storetype}</storetype>
                     <alias>${irby-sign.alias}</alias>
