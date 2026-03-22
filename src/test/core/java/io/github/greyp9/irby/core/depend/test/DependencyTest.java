@@ -24,7 +24,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class DependencyTest {
+class DependencyTest {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     static Stream<Arguments> arguments() {
@@ -105,11 +105,11 @@ public class DependencyTest {
         }
     }
 
-    public URI toURI(final URI uriBase,
-                     final String groupId,
-                     final String artifactId,
-                     final String version,
-                     final String type) {
+    private URI toURI(final URI uriBase,
+                      final String groupId,
+                      final String artifactId,
+                      final String version,
+                      final String type) {
         final String filename = String.format("%s-%s.%s", artifactId, version, type);
         return URI.create(String.format("%s/%s/%s/%s/%s", uriBase,
                 groupId.replaceAll("\\.", "/"), artifactId, version, filename));
