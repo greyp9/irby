@@ -7,6 +7,8 @@ import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.arwo.core.xpath.XPathContext;
 import io.github.greyp9.arwo.core.xpath.XPathContextFactory;
 import io.github.greyp9.arwo.core.xpath.XPather;
+import io.github.greyp9.irby.core.cl.config.ClassLoaderConfig;
+import io.github.greyp9.irby.core.cl.config.ResourceConfig;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.config.ContextObject;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
@@ -40,6 +42,7 @@ public final class ApplicationConfig {
     private final int threads;
     private final long interval;
 
+    private final Collection<ClassLoaderConfig> classLoaderConfigs;
     private final Collection<RealmConfig> realmConfigs;
     private final Collection<ContextConfig> contextConfigs;
     private final Collection<Http11Config> http11Configs;
@@ -61,6 +64,10 @@ public final class ApplicationConfig {
 
     public long getInterval() {
         return interval;
+    }
+
+    public Collection<ClassLoaderConfig> getClassLoaderConfigs() {
+        return classLoaderConfigs;
     }
 
     public Collection<RealmConfig> getRealmConfigs() {
@@ -125,6 +132,7 @@ public final class ApplicationConfig {
         this.threads = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 2);
         this.interval = DurationU.toMillisP(xpather.getTextAttr("@loop"), DurationU.Const.ONE_SECOND_MILLIS);
         // subsystems
+        this.classLoaderConfigs = new ArrayList<>();
         this.realmConfigs = new ArrayList<>();
         this.contextConfigs = new ArrayList<>();
         this.http11Configs = new ArrayList<>();
@@ -135,6 +143,7 @@ public final class ApplicationConfig {
         this.udpConfigs = new ArrayList<>();
         this.cronConfigs = new ArrayList<>();
         this.advancedConfigs = new ArrayList<>();
+        doElementsClassLoader(xpather.getElements("/irby:application/irby:classloader[@enabled='true']"));
         doElementsRealm(xpather.getElements("/irby:application/irby:realm[@enabled='true']"));
         doElementsContext(xpather.getElements("/irby:application/irby:context[@enabled='true']"));
         doElementsHttp11(xpather.getElements("/irby:application/irby:http11[@enabled='true']"));
@@ -145,6 +154,30 @@ public final class ApplicationConfig {
         doElementsUDP(xpather.getElements("/irby:application/irby:udp[@enabled='true']"));
         doElementsCronTab(xpather.getElements("/irby:application/irby:cron[@enabled='true']"));
         doElementsAdvanced(xpather.getElements("/irby:application/irby:advanced[@enabled='true']"));
+    }
+
+    private void doElementsClassLoader(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            classLoaderConfigs.add(doElementClassLoader(element));
+        }
+    }
+
+    private ClassLoaderConfig doElementClassLoader(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final ClassLoaderConfig classLoaderConfig = new ClassLoaderConfig(name);
+        final Collection<ResourceConfig> resources = classLoaderConfig.getResources();
+        final List<Element> elements = xpather.getElements("irby:resource");
+        for (final Element elementIt : elements) {
+            resources.add(doElementResource(elementIt));
+        }
+        return classLoaderConfig;
+    }
+
+    private ResourceConfig doElementResource(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String path = xpather.getTextAttr(Const.XPATH_A_PATH);
+        return new ResourceConfig(path);
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -255,8 +288,10 @@ public final class ApplicationConfig {
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String path = xpather.getTextAttr("@path");
         final String className = xpather.getTextAttr("@class");
+        final String classloader = xpather.getTextAttr("@classloader");
         final String authConstraint = xpather.getTextAttr("@auth-constraint");
-        final Http11ConfigServlet servletConfig = new Http11ConfigServlet(name, path, className, authConstraint);
+        final Http11ConfigServlet servletConfig = new Http11ConfigServlet(
+                name, path, className, classloader, authConstraint);
         final List<Element> elements = xpather.getElements("irby:init-param");
         for (final Element elementIt : elements) {
             final XPather xpatherIt = XPather.create(elementIt, context);
@@ -426,6 +461,7 @@ public final class ApplicationConfig {
     }
 
     private static class Const {
+        private static final String XPATH_A_PATH = "@path";
         private static final String XPATH_A_NAME = "@name";
         private static final String XPATH_A_HOST = "@host";
         private static final String XPATH_A_PORT = "@port";

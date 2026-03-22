@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.http11.dispatch;
 
+import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigServlet;
 import io.github.greyp9.irby.core.http11.servlet25.Http11ServletContext;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
 public class Http11Context {
     private final Http11ConfigContext config;
     private final Realm realm;
+    private final ClassLoaders classLoaders;
     private final Map<String, Http11Servlet> servlets;
 
     public final Http11ConfigContext getConfig() {
@@ -22,9 +24,10 @@ public class Http11Context {
         return realm;
     }
 
-    public Http11Context(final Http11ConfigContext config, final Realm realm) {
+    public Http11Context(final Http11ConfigContext config, final Realm realm, final ClassLoaders classLoaders) {
         this.config = config;
         this.realm = realm;
+        this.classLoaders = classLoaders;
         this.servlets = new TreeMap<String, Http11Servlet>();  // servlet select algorithm needs sorted servlet map
     }
 
@@ -39,7 +42,7 @@ public class Http11Context {
 
     public final void register(
             final Collection<Http11ConfigServlet> servletConfigs, final Http11ServletContext servletContext) {
-        final Http11ServletFactory factory = new Http11ServletFactory();
+        final Http11ServletFactory factory = new Http11ServletFactory(classLoaders);
         synchronized (servlets) {
             for (final Http11ConfigServlet servletConfig : servletConfigs) {
                 final Http11Servlet servlet = factory.create(servletConfig, servletContext, realm);

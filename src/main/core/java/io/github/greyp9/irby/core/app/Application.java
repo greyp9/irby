@@ -18,11 +18,11 @@ import io.github.greyp9.arwo.core.vm.props.SysPropsU;
 import io.github.greyp9.arwo.core.xed.core.XedU;
 import io.github.greyp9.irby.core.Irby;
 import io.github.greyp9.irby.core.app.config.ApplicationConfig;
+import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.factory.ContextFactory;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.service.CronRunnable;
-import io.github.greyp9.irby.core.depend.ApplicationResolver;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.server.Http11Runnable;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
@@ -77,7 +77,7 @@ public class Application {
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
         dataPersist.run("props", SysPropsU.getProps(config.getAdvancedConfig("props").getPropertyNames()));
         // load missing dependencies
-        new ApplicationResolver(config).resolveDependencies();
+        // new ApplicationResolver(config).resolveDependencies();  // deprecate
         // application setup
         final ExecutorService executorService = ExecutorServiceFactory.create(
                 config.getThreads(), getClass().getSimpleName());
@@ -85,6 +85,8 @@ public class Application {
         // lifecycle management
         executorService.execute(new LifecycleRunnable(name, reference, config.getInterval()));
         executorService.execute(new InputStreamRunnable(System.in, reference, config.getInterval()));
+        // application subsystems
+        final ClassLoaders classLoaders = new ClassLoaders(config.getClassLoaderConfigs(), getClass().getClassLoader());
         // application credentials
         final Realms realms = new Realms(config.getRealmConfigs());
         // lookup contexts
@@ -95,10 +97,12 @@ public class Application {
         //logger.info("AFTER ContextFactory.create()" + IrbyContextU.enumerate(null));
         // web servers
         for (final Http11Config http11Config : config.getHttp11Configs()) {
-            executorService.execute(Http11Runnable.create(http11Config, realms, executorService, reference));
+            executorService.execute(Http11Runnable.create(
+                    http11Config, realms, classLoaders, executorService, reference));
         }
         for (final Https11Config https11Config : config.getHttps11Configs()) {
-            executorService.execute(Https11Runnable.create(https11Config, realms, executorService, reference));
+            executorService.execute(Https11Runnable.create(
+                    https11Config, realms, classLoaders, executorService, reference));
         }
         for (final ProxyConfig proxyConfig : config.getProxyConfigs()) {
             executorService.execute(ProxyRunnable.create(proxyConfig, executorService, reference));

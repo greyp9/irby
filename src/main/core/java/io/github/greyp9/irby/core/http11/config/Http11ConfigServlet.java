@@ -6,6 +6,7 @@ public class Http11ConfigServlet {
     private final String name;
     private final String path;
     private final String className;
+    private final String classLoader;
     private final String authConstraint;
     private final Properties initParams;
 
@@ -21,6 +22,10 @@ public class Http11ConfigServlet {
         return className;
     }
 
+    public final String getClassLoader() {
+        return classLoader;
+    }
+
     public final String getAuthConstraint() {
         return authConstraint;
     }
@@ -33,11 +38,12 @@ public class Http11ConfigServlet {
         return initParams;
     }
 
-    public Http11ConfigServlet(
-            final String name, final String path, final String className, final String authConstraint) {
+    public Http11ConfigServlet(final String name, final String path,
+                               final String className, final String classLoader, final String authConstraint) {
         this.name = name;
         this.path = path;
         this.className = className;
+        this.classLoader = classLoader;
         this.authConstraint = authConstraint;
         this.initParams = new Properties();
     }

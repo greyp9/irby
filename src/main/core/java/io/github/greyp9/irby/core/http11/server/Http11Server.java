@@ -1,6 +1,7 @@
 package io.github.greyp9.irby.core.http11.server;
 
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
+import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.dispatch.Http11Dispatcher;
 import io.github.greyp9.irby.core.http11.socket.Http11SocketRunnable;
@@ -29,9 +30,10 @@ public class Http11Server {
         return config;
     }
 
-    public Http11Server(final Http11Config config, final Realms realms, final ExecutorService executorService) {
+    public Http11Server(final Http11Config config, final Realms realms,
+                        final ClassLoaders classLoaders, final ExecutorService executorService) {
         this.config = config;
-        this.dispatcher = new Http11Dispatcher(config, realms);
+        this.dispatcher = new Http11Dispatcher(config, realms, classLoaders);
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
         this.executorService = (config.isLocalExecutor()
                 ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);

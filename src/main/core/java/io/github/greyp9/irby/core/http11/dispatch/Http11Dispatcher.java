@@ -1,6 +1,7 @@
 package io.github.greyp9.irby.core.http11.dispatch;
 
 import io.github.greyp9.arwo.core.value.Value;
+import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.http11.access.AccessLogger;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigContext;
@@ -24,6 +25,7 @@ public class Http11Dispatcher {
 
     private final Http11Config config;
     private final Realms realms;
+    private final ClassLoaders classLoaders;
     private final Map<String, Http11Context> contexts;
     private final AccessLogger accessLogger;
 
@@ -31,9 +33,10 @@ public class Http11Dispatcher {
         return config;
     }
 
-    public Http11Dispatcher(final Http11Config config, final Realms realms) {
+    public Http11Dispatcher(final Http11Config config, final Realms realms, final ClassLoaders classLoaders) {
         this.config = config;
         this.realms = realms;
+        this.classLoaders = classLoaders;
         this.contexts = new TreeMap<>();
         this.accessLogger = new AccessLogger();
     }
@@ -59,7 +62,7 @@ public class Http11Dispatcher {
         final String realmName = contextConfig.getRealm();
         final Realm realm = (realmName == null) ? null : realms.getRealm(realmName);
         if ((realm != null) || (Value.isEmpty(realmName))) {
-            final Http11Context context = new Http11Context(contextConfig, realm);
+            final Http11Context context = new Http11Context(contextConfig, realm, classLoaders);
             final Http11ServletContext servletContext = new Http11ServletContext(context);
             context.register(contextConfig.getServlets(), servletContext);
             contexts.put(contextConfig.getPath(), context);

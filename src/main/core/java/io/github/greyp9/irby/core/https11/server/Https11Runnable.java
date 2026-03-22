@@ -1,6 +1,7 @@
 package io.github.greyp9.irby.core.https11.server;
 
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
+import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.realm.Realms;
 
@@ -17,15 +18,17 @@ public class Https11Runnable implements Runnable {
     private final AtomicReference<String> reference;
 
     public static Https11Runnable create(final Https11Config config, final Realms realms,
+                                         final ClassLoaders classLoaders,
                                          final ExecutorService executorService,
                                          final AtomicReference<String> reference) {
-        return new Https11Runnable(config, realms, executorService, reference);
+        return new Https11Runnable(config, realms, classLoaders, executorService, reference);
     }
 
     public Https11Runnable(final Https11Config config, final Realms realms,
+                           final ClassLoaders classLoaders,
                            final ExecutorService executorService,
                            final AtomicReference<String> reference) {
-        this.server = new Https11Server(config, realms, executorService);
+        this.server = new Https11Server(config, realms, classLoaders, executorService);
         this.reference = reference;
     }
 

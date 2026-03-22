@@ -16,6 +16,7 @@ import io.github.greyp9.arwo.core.xed.extension.XedKey;
 import io.github.greyp9.arwo.core.xsd.instance.TypeInstance;
 import io.github.greyp9.arwo.core.xsd.model.XsdTypes;
 import io.github.greyp9.irby.core.Irby;
+import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.http11.dispatch.Http11Dispatcher;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
 import io.github.greyp9.irby.core.https11.socket.Https11SocketRunnable;
@@ -50,9 +51,11 @@ public class Https11Server {
         return config;
     }
 
-    public Https11Server(final Https11Config config, final Realms realms, final ExecutorService executorService) {
+    public Https11Server(final Https11Config config, final Realms realms,
+                         final ClassLoaders classLoaders,
+                         final ExecutorService executorService) {
         this.config = config;
-        this.dispatcher = new Http11Dispatcher(config, realms);
+        this.dispatcher = new Http11Dispatcher(config, realms, classLoaders);
         final String prefix = String.format("%s-%d", getClass().getSimpleName(), config.getPort());
         this.executorService = (config.isLocalExecutor()
                 ? ExecutorServiceFactory.create(config.getThreads(), prefix) : executorService);

@@ -10,6 +10,7 @@
 
     <xsd:complexType name='applicationType'>
         <xsd:sequence>
+            <xsd:element name='classloader' type='irby:classloaderType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='realm' type='irby:realmType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='context' type='irby:contextType' minOccurs='0' maxOccurs='unbounded'/>
             <xsd:element name='http11' type='irby:http11Type' minOccurs='0' maxOccurs='unbounded'/>
@@ -24,6 +25,20 @@
         <xsd:attribute name='secret' type='xsd:string' default=''/>
         <xsd:attribute name='threads' type='xsd:unsignedShort' default='6'/>
         <xsd:attribute name='loop' type='xsd:duration' default='PT1S'/>
+    </xsd:complexType>
+
+    <!--classloader-->
+
+    <xsd:complexType name='classloaderType'>
+        <xsd:sequence>
+            <xsd:element name='resource' type='irby:resourceType' minOccurs='0' maxOccurs='unbounded'/>
+        </xsd:sequence>
+        <xsd:attribute name='enabled' type='xsd:boolean'/>
+        <xsd:attribute name='name' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name='resourceType'>
+        <xsd:attribute name='path' type='xsd:string'/>
     </xsd:complexType>
 
     <!--realm-->
@@ -106,6 +121,7 @@
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='path' type='xsd:string'/>
         <xsd:attribute name='class' type='xsd:string'/>
+        <xsd:attribute name='classloader' type='xsd:string'/>
         <xsd:attribute name='auth-constraint' type='xsd:string'/>
     </xsd:complexType>
 
