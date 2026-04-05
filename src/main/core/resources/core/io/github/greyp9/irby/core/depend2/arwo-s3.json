@@ -18,16 +18,7 @@
     },
     {
       "groupId": "org.slf4j",
-      "artifactId": "slf4j-simple",
-      "version": "2.0.17",
-      "type": "jar",
-      "scope": "compile",
-      "classifier": "",
-      "optional": "false"
-    },
-    {
-      "groupId": "org.slf4j",
-      "artifactId": "jul-to-slf4j",
+      "artifactId": "slf4j-jdk14",
       "version": "2.0.17",
       "type": "jar",
       "scope": "compile",

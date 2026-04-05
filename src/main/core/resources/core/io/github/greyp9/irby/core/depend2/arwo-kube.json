@@ -47,7 +47,7 @@
     },
     {
       "groupId": "org.slf4j",
-      "artifactId": "slf4j-simple",
+      "artifactId": "slf4j-jdk14",
       "version": "2.0.17",
       "type": "jar",
       "scope": "compile",
