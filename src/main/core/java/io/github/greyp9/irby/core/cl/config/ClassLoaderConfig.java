@@ -1,22 +1,19 @@
 package io.github.greyp9.irby.core.cl.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 public final class ClassLoaderConfig {
     private final String name;
-    private final Collection<ResourceConfig> resources;
+    private final String resources;
 
     public String getName() {
         return name;
     }
 
-    public Collection<ResourceConfig> getResources() {
+    public String getResources() {
         return resources;
     }
 
-    public ClassLoaderConfig(final String name) {
+    public ClassLoaderConfig(final String name, final String resources) {
         this.name = name;
-        this.resources = new ArrayList<>();
+        this.resources = resources;
     }
 }

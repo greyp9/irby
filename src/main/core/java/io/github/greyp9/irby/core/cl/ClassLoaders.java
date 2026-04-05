@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,7 +35,9 @@ public final class ClassLoaders {
 
     private URLClassLoader createClassLoader(final ClassLoaderConfig classLoaderConfig, final ClassLoader parent) {
         final List<URL> urls = new ArrayList<>();
-        for (final ResourceConfig resource : classLoaderConfig.getResources()) {
+        final List<ResourceConfig> resources = Collections.singletonList(
+                new ResourceConfig(classLoaderConfig.getResources()));
+        for (final ResourceConfig resource : resources) {
             final File file = new File(SystemU.userDir(), resource.getPath());
             final Collection<File> files = new FindInFolderQuery(
                     file.getParentFile(), file.getName(), false).getFound();

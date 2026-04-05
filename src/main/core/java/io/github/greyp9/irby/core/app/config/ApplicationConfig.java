@@ -8,7 +8,6 @@ import io.github.greyp9.arwo.core.xpath.XPathContext;
 import io.github.greyp9.arwo.core.xpath.XPathContextFactory;
 import io.github.greyp9.arwo.core.xpath.XPather;
 import io.github.greyp9.irby.core.cl.config.ClassLoaderConfig;
-import io.github.greyp9.irby.core.cl.config.ResourceConfig;
 import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.config.ContextObject;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
@@ -165,19 +164,8 @@ public final class ApplicationConfig {
     private ClassLoaderConfig doElementClassLoader(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
-        final ClassLoaderConfig classLoaderConfig = new ClassLoaderConfig(name);
-        final Collection<ResourceConfig> resources = classLoaderConfig.getResources();
-        final List<Element> elements = xpather.getElements("irby:resource");
-        for (final Element elementIt : elements) {
-            resources.add(doElementResource(elementIt));
-        }
-        return classLoaderConfig;
-    }
-
-    private ResourceConfig doElementResource(final Element element) throws IOException {
-        final XPather xpather = new XPather(element, context);
-        final String path = xpather.getTextAttr(Const.XPATH_A_PATH);
-        return new ResourceConfig(path);
+        final String resources = xpather.getTextAttr(Const.XPATH_A_RESOURCES);
+        return new ClassLoaderConfig(name, resources);
     }
 
     private void doElementsRealm(final List<Element> elements) throws IOException {
@@ -461,11 +449,11 @@ public final class ApplicationConfig {
     }
 
     private static class Const {
-        private static final String XPATH_A_PATH = "@path";
         private static final String XPATH_A_NAME = "@name";
         private static final String XPATH_A_HOST = "@host";
         private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_PARAMETER_REF = "@parameter-ref";
+        private static final String XPATH_A_RESOURCES = "@resources";
         private static final String XPATH_A_SECRET = "@secret";
         private static final String XPATH_A_STREAMS = "@streams";
         private static final String XPATH_A_TARGET = "@target";

@@ -47,7 +47,7 @@ class DependencyTest {
                 new File(SystemU.userHome(), ".m2/repository").toURI();
 */
         final Arguments[] argumentsArray = {
-                Arguments.arguments(uriLocal, "io/github/greyp9/irby/core/depend/arwo-kube.json",
+                Arguments.arguments(uriLocal, "io/github/greyp9/irby/core/depend2/arwo-kube.json",
                         Arrays.asList(artifactsPruneKube), "target/lib/kube"),
         };
         return Arrays.stream(argumentsArray);

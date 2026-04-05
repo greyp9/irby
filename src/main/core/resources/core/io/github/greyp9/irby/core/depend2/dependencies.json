@@ -1,0 +1,16 @@
+{
+  "kube": {
+    "dependencies": "io/github/greyp9/irby/core/depend2/arwo-kube.json",
+    "prune": [
+      { "groupId": "io.github.greyp9", "artifactId": "arwo-app" },
+      { "groupId": "io.github.greyp9", "artifactId": "arwo-core" },
+      { "groupId": "com.google.code.findbugs", "artifactId": "jsr305" },
+      { "groupId": "com.google.errorprone", "artifactId": "error_prone_annotations" },
+      { "groupId": "io.prometheus", "artifactId": "simpleclient_tracer_otel" },
+      { "groupId": "io.prometheus", "artifactId": "simpleclient_tracer_otel_agent" },
+      { "groupId": "io.swagger", "artifactId": "swagger-annotations" },
+      { "groupId": "javax.annotation", "artifactId": "javax.annotation-api" },
+      { "groupId": "org.jetbrains.kotlin", "artifactId": "kotlin-stdlib-jdk7" }
+    ]
+  }
+}
