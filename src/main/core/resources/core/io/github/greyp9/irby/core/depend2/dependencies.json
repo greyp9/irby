@@ -12,5 +12,14 @@
       { "groupId": "javax.annotation", "artifactId": "javax.annotation-api" },
       { "groupId": "org.jetbrains.kotlin", "artifactId": "kotlin-stdlib-jdk7" }
     ]
+  },
+  "s3": {
+    "dependencies": "io/github/greyp9/irby/core/depend2/arwo-s3.json",
+    "prune": [
+      { "groupId": "io.github.greyp9", "artifactId": "arwo-app" },
+      { "groupId": "io.github.greyp9", "artifactId": "arwo-core" },
+      { "groupId": "javax.servlet", "artifactId": "servlet-api" },
+      { "groupId": "org.json", "artifactId": "json" }
+    ]
   }
 }
