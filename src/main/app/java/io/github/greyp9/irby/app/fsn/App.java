@@ -2,9 +2,9 @@ package io.github.greyp9.irby.app.fsn;
 
 import io.github.greyp9.arwo.core.app.AppSignal;
 import io.github.greyp9.arwo.core.date.DurationU;
+import io.github.greyp9.arwo.core.logging.AppLogger;
 import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.vm.thread.ThreadU;
-import io.github.greyp9.irby.app.logging.AppLogger;
 import io.github.greyp9.irby.core.app.Application;
 
 import java.io.File;

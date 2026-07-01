@@ -3,6 +3,8 @@ package io.github.greyp9.irby.core.app.config;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.io.StreamU;
 import io.github.greyp9.arwo.core.lang.NumberU;
+import io.github.greyp9.arwo.core.task.config.EnvironmentConfig;
+import io.github.greyp9.arwo.core.task.config.TaskServiceConfig;
 import io.github.greyp9.arwo.core.xml.DocumentU;
 import io.github.greyp9.arwo.core.xpath.XPathContext;
 import io.github.greyp9.arwo.core.xpath.XPathContextFactory;
@@ -29,7 +31,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 // i18nf
@@ -50,6 +54,7 @@ public final class ApplicationConfig {
     private final Collection<ProxysConfig> proxysConfigs;
     private final Collection<TCPConfig> tcpConfigs;
     private final Collection<UDPConfig> udpConfigs;
+    private final Collection<TaskServiceConfig> taskServiceConfigs;
     private final Collection<CronConfig> cronConfigs;
     private final Collection<AdvancedConfig> advancedConfigs;
 
@@ -101,6 +106,10 @@ public final class ApplicationConfig {
         return udpConfigs;
     }
 
+    public Collection<TaskServiceConfig> getTaskServiceConfigs() {
+        return taskServiceConfigs;
+    }
+
     public Collection<CronConfig> getCronConfigs() {
         return cronConfigs;
     }
@@ -140,6 +149,7 @@ public final class ApplicationConfig {
         this.proxysConfigs = new ArrayList<>();
         this.tcpConfigs = new ArrayList<>();
         this.udpConfigs = new ArrayList<>();
+        this.taskServiceConfigs = new ArrayList<>();
         this.cronConfigs = new ArrayList<>();
         this.advancedConfigs = new ArrayList<>();
         doElementsClassLoader(xpather.getElements("/irby:application/irby:classloader[@enabled='true']"));
@@ -151,6 +161,7 @@ public final class ApplicationConfig {
         doElementsProxys(xpather.getElements("/irby:application/irby:proxys[@enabled='true']"));
         doElementsTCP(xpather.getElements("/irby:application/irby:tcp[@enabled='true']"));
         doElementsUDP(xpather.getElements("/irby:application/irby:udp[@enabled='true']"));
+        doElementsTaskService(xpather.getElements("/irby:application/irby:task[@enabled='true']"));
         doElementsCronTab(xpather.getElements("/irby:application/irby:cron[@enabled='true']"));
         doElementsAdvanced(xpather.getElements("/irby:application/irby:advanced[@enabled='true']"));
     }
@@ -396,6 +407,38 @@ public final class ApplicationConfig {
         final String target = xpather.getTextAttr(Const.XPATH_A_TARGET);
         final int buffer = NumberU.toInt(xpather.getTextAttr("@buffer"), 0);
         return new UDPConfig(name, host, port, target, buffer);
+    }
+
+    private void doElementsTaskService(final List<Element> elements) throws IOException {
+        for (final Element element : elements) {
+            taskServiceConfigs.add(doElementTaskService(element));
+        }
+    }
+
+    private TaskServiceConfig doElementTaskService(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final int threads = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final TaskServiceConfig taskServiceConfig = new TaskServiceConfig(name, threads);
+        final List<Element> elements = xpather.getElements("irby:env[@enabled='true']");
+        for (final Element elementIt : elements) {
+            taskServiceConfig.addEnvironment(doElementTaskEnvironment(elementIt));
+        }
+        return taskServiceConfig;
+    }
+
+    private EnvironmentConfig doElementTaskEnvironment(final Element element) throws IOException {
+        final XPather xpather = new XPather(element, context);
+        final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
+        final Map<String, String> environment = new HashMap<>();
+        final List<Element> elements = xpather.getElements("irby:param");
+        for (final Element elementIt : elements) {
+            final XPather xpatherIt = new XPather(elementIt, context);
+            final String key = xpatherIt.getTextAttr(Const.XPATH_A_NAME);
+            final String value = xpatherIt.getTextAttr(Const.XPATH_A_VALUE);
+            environment.put(key, value);
+        }
+        return new EnvironmentConfig(name, environment);
     }
 
     private void doElementsCronTab(final List<Element> elements) throws IOException {

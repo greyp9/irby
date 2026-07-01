@@ -9,6 +9,8 @@ import io.github.greyp9.arwo.core.input.runnable.InputStreamRunnable;
 import io.github.greyp9.arwo.core.jce.AES;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
+import io.github.greyp9.arwo.core.task.config.TaskServiceConfig;
+import io.github.greyp9.arwo.core.task.service.TaskServiceRunnable;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
@@ -116,6 +118,9 @@ public class Application {
         }
         for (final UDPConfig udpConfig : config.getUDPConfigs()) {
             executorService.execute(UDPRunnable.create(udpConfig, reference));
+        }
+        for (final TaskServiceConfig taskConfig : config.getTaskServiceConfigs()) {
+            executorService.execute(TaskServiceRunnable.create(taskConfig, reference, config.getInterval()));
         }
         for (final CronConfig cronConfig : config.getCronConfigs()) {
             executorService.execute(CronRunnable.create(cronConfig, executorService, reference));
