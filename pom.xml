@@ -14,7 +14,7 @@
         <com.squareup.okio.version>3.9.0</com.squareup.okio.version>  <!-- 2024-03-13 -->
         <junit.version>5.11.0</junit.version>  <!-- 2024-08-14 -->
         <org.bitbucket.jose4j.version>0.9.6</org.bitbucket.jose4j.version>  <!-- 2024-03-06 -->
-        <org.bouncycastle.version>1.83</org.bouncycastle.version>
+        <org.bouncycastle.version>1.84</org.bouncycastle.version>
         <protobuf-java.version>3.25.5</protobuf-java.version>
 
         <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>  <!-- 2022-04-18 -->
@@ -33,7 +33,7 @@
         <maven.surefire.plugin.version>3.5.0</maven.surefire.plugin.version>  <!-- 2024-08-22 -->
 
         <checkstyle.version>9.3</checkstyle.version>  <!-- 2022-01-30 -->
-        <pmd.version>7.12.0</pmd.version>  <!-- 2025-03-28 -->
+        <pmd.version>7.26.0</pmd.version>  <!-- 2025-03-28 -->
         <linkXRef>false</linkXRef>
         <arwo.version>${project.version}</arwo.version>
 
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.8</version>
+            <version>42.7.12</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -311,7 +311,7 @@
                 <configuration>
                     <includeTests>false</includeTests>
                     <rulesets>
-                        <ruleset>src/config/pmd/pmd-7.3.0.xml</ruleset>
+                        <ruleset>src/config/pmd/pmd-7.26.0.xml</ruleset>
                     </rulesets>
                     <printFailingErrors>true</printFailingErrors>
                     <linkXRef>false</linkXRef>
