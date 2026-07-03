@@ -418,8 +418,8 @@ public final class ApplicationConfig {
     private TaskServiceConfig doElementTaskService(final Element element) throws IOException {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
-        final int threads = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
-        final TaskServiceConfig taskServiceConfig = new TaskServiceConfig(name, threads);
+        final int threadsService = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
+        final TaskServiceConfig taskServiceConfig = new TaskServiceConfig(name, threadsService);
         final List<Element> elements = xpather.getElements("irby:env[@enabled='true']");
         for (final Element elementIt : elements) {
             taskServiceConfig.addEnvironment(doElementTaskEnvironment(elementIt));
