@@ -453,9 +453,10 @@ public final class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String timezone = xpather.getTextAttr("@tz");
+        final String service = xpather.getTextAttr(Const.XPATH_A_SERVICE);
         final int threadsJob = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
         final int threadsStream = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_STREAMS), 0);
-        final CronConfig cronConfig = new CronConfig(name, timezone, threadsJob, threadsStream);
+        final CronConfig cronConfig = new CronConfig(name, timezone, service, threadsJob, threadsStream);
         final List<Element> elements = xpather.getElements("irby:job[@enabled='true']");
         for (final Element elementIt : elements) {
             cronConfig.addJob(doElementCronJob(elementIt));
@@ -502,6 +503,7 @@ public final class ApplicationConfig {
         private static final String XPATH_A_RESOURCE = "@resource";
         private static final String XPATH_A_RESOURCES = "@resources";
         private static final String XPATH_A_SECRET = "@secret";
+        private static final String XPATH_A_SERVICE = "@service";
         private static final String XPATH_A_STREAMS = "@streams";
         private static final String XPATH_A_TARGET = "@target";
         private static final String XPATH_A_THREADS = "@threads";

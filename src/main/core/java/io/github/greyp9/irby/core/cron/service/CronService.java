@@ -4,15 +4,21 @@ import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
+import io.github.greyp9.arwo.core.lang.ShellU;
+import io.github.greyp9.arwo.core.naming.AppNaming;
 import io.github.greyp9.arwo.core.table.filter.Filters;
 import io.github.greyp9.arwo.core.table.metadata.ColumnMetaData;
 import io.github.greyp9.arwo.core.table.metadata.RowSetMetaData;
 import io.github.greyp9.arwo.core.table.model.Table;
 import io.github.greyp9.arwo.core.table.row.RowSet;
 import io.github.greyp9.arwo.core.table.sort.Sorts;
+import io.github.greyp9.arwo.core.task.service.TaskService;
+import io.github.greyp9.arwo.core.task.type.process.ProcessTask;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.CollectionU;
 import io.github.greyp9.arwo.core.vm.mutex.MutexU;
+import io.github.greyp9.arwo.core.xml.ElementU;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.cron.factory.JobFactory;
@@ -173,7 +179,16 @@ public class CronService {
             ((CommandRunnable) runnable).setExecutorServiceCmd(executorServiceCmd);
             ((CommandRunnable) runnable).setCommands(commands);
         }
-        if (runnable != null) {
+        final CommandRunnable commandRunnable = Value.as(runnable, CommandRunnable.class);
+        if (commandRunnable != null) {  // cutover to TaskService
+            final String command = ElementU.getAttribute(commandRunnable.getElement(), "command");
+            final TaskService taskService = Value.as(AppNaming.lookup(
+                    TaskService.class.getName(), config.getService()), TaskService.class);
+            final String taskName = String.format("%s-%s", tab, jobName);
+            logger.info(String.format("%s:%s", taskService.getName(), taskName));
+            taskService.submit(new ProcessTask(
+                    taskName, Arrays.asList(ShellU.toCommandArray(command)), null, null));
+        } else if (runnable != null) {
             // ExecutorService.submit() queues a FutureTask, with no access to interesting data
             executorService.execute(runnable);
         }

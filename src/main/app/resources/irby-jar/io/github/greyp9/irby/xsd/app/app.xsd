@@ -226,6 +226,7 @@
         </xsd:sequence>
         <xsd:attribute name='enabled' type='xsd:boolean'/>
         <xsd:attribute name='name' type='xsd:string'/>
+        <xsd:attribute name='service' type='xsd:string'/>
         <xsd:attribute name='tz' type='xsd:string'/>
         <xsd:attribute name='threads' type='xsd:unsignedShort'/>
         <xsd:attribute name='streams' type='xsd:unsignedShort'/>
