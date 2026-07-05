@@ -120,7 +120,7 @@ public class Application {
             executorService.execute(UDPRunnable.create(udpConfig, reference));
         }
         for (final TaskServiceConfig taskConfig : config.getTaskServiceConfigs()) {
-            executorService.execute(TaskServiceRunnable.create(taskConfig, reference, config.getInterval()));
+            executorService.execute(TaskServiceRunnable.create(taskConfig, reference, true, config.getInterval()));
         }
         for (final CronConfig cronConfig : config.getCronConfigs()) {
             executorService.execute(CronRunnable.create(cronConfig, executorService, reference));

@@ -419,7 +419,9 @@ public final class ApplicationConfig {
         final XPather xpather = new XPather(element, context);
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final int threadsService = NumberU.toInt(xpather.getTextAttr(Const.XPATH_A_THREADS), 0);
-        final TaskServiceConfig taskServiceConfig = new TaskServiceConfig(name, threadsService);
+        final String resource = xpather.getTextAttr(Const.XPATH_A_RESOURCE);
+        final String persist = xpather.getTextAttr(Const.XPATH_A_PERSIST);
+        final TaskServiceConfig taskServiceConfig = new TaskServiceConfig(name, threadsService, resource, persist);
         final List<Element> elements = xpather.getElements("irby:env[@enabled='true']");
         for (final Element elementIt : elements) {
             taskServiceConfig.addEnvironment(doElementTaskEnvironment(elementIt));
@@ -496,6 +498,8 @@ public final class ApplicationConfig {
         private static final String XPATH_A_HOST = "@host";
         private static final String XPATH_A_PORT = "@port";
         private static final String XPATH_A_PARAMETER_REF = "@parameter-ref";
+        private static final String XPATH_A_PERSIST = "@persist";
+        private static final String XPATH_A_RESOURCE = "@resource";
         private static final String XPATH_A_RESOURCES = "@resources";
         private static final String XPATH_A_SECRET = "@secret";
         private static final String XPATH_A_STREAMS = "@streams";
