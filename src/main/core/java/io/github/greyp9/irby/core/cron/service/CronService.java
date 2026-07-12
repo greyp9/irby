@@ -4,7 +4,6 @@ import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
-import io.github.greyp9.arwo.core.lang.ShellU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
 import io.github.greyp9.arwo.core.table.filter.Filters;
 import io.github.greyp9.arwo.core.table.metadata.ColumnMetaData;
@@ -31,6 +30,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
@@ -186,8 +186,7 @@ public class CronService {
                     TaskService.class.getName(), config.getService()), TaskService.class);
             final String taskName = String.format("%s-%s", tab, jobName);
             logger.info(String.format("%s:%s", taskService.getName(), taskName));
-            taskService.submit(new ProcessTask(
-                    taskName, Arrays.asList(ShellU.toCommandArray(command)), null, null));
+            taskService.submit(new ProcessTask(taskName, Collections.singletonList(command), null, null));
         } else if (runnable != null) {
             // ExecutorService.submit() queues a FutureTask, with no access to interesting data
             executorService.execute(runnable);
