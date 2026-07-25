@@ -3,8 +3,10 @@ package io.github.greyp9.irby.core.cron.service;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.httpclient.HttpClientU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.naming.AppNaming;
+import io.github.greyp9.arwo.core.security.realm.AppRealmContainer;
 import io.github.greyp9.arwo.core.table.filter.Filters;
 import io.github.greyp9.arwo.core.table.metadata.ColumnMetaData;
 import io.github.greyp9.arwo.core.table.metadata.RowSetMetaData;
@@ -27,6 +29,7 @@ import io.github.greyp9.irby.core.cron.impl.net.HttpRunnable;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.job.CronJobX;
 import io.github.greyp9.irby.core.cron.widget.ExecutorAdaptor;
+import io.github.greyp9.irby.core.realm.impl.ArwoRealm;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -194,11 +197,16 @@ public class CronService {
             final TaskService taskService = Value.as(AppNaming.lookup(
                     TaskService.class.getName(), config.getService()), TaskService.class);
             final String taskName = String.format("%s-%s", tab, jobName);
+            final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
+                    "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
+            final String authorization = ElementU.getAttribute(httpRunnable.getElement(), "authorization");
+            final String header = HttpClientU.toBasicAuth(
+                    authorization, arwoRealm.getCredential(authorization).toCharArray());
             taskService.submit(new HttpTask(taskName, new Date(),
                     ElementU.getAttribute(httpRunnable.getElement(), "certificate"),
                     ElementU.getAttribute(httpRunnable.getElement(), "method"),
                     ElementU.getAttribute(httpRunnable.getElement(), "source-url"),
-                    ElementU.getAttribute(httpRunnable.getElement(), "authorization"), null));
+                    header, null));
         } else if (runnable != null) {
             // ExecutorService.submit() queues a FutureTask, with no access to interesting data
             executorService.execute(runnable);

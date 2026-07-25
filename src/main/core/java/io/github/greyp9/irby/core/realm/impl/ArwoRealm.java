@@ -7,6 +7,7 @@ import io.github.greyp9.arwo.core.security.realm.AuthPrincipal;
 import io.github.greyp9.irby.core.realm.Realm;
 import io.github.greyp9.irby.core.realm.config.RealmConfig;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 
@@ -27,6 +28,14 @@ public final class ArwoRealm implements Realm, AppRealmContainer {
     @Override
     public String getName() {
         return appRealm.getName();
+    }
+
+    public String getCredential(final String name) {
+        try {
+            return appRealm.getCredential(name);
+        } catch (IOException e) {
+            return "";
+        }
     }
 
     @Override
