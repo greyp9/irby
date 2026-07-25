@@ -67,6 +67,7 @@ public class CronTabServlet extends javax.servlet.http.HttpServlet {
         Logger.getLogger(getClass().getName()).entering(getClass().getName(), null);
         synchronized (this) {
             final Context context = AppNaming.lookupSubcontext(CronService.class.getName());
+            Value.require((context != null), () -> new ServletException(CronService.class.getName()));
             final Collection<Binding> bindings = AppNaming.listBindings(context, ".*");
             this.cronServices = new CronServices(bindings.stream()
                     .map(Binding::getObject)

@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.http11.dispatch;
 
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.irby.core.cl.ClassLoaders;
 import io.github.greyp9.irby.core.http11.config.Http11ConfigServlet;
 import io.github.greyp9.irby.core.http11.servlet25.Http11ServletConfig;
@@ -33,8 +34,12 @@ public class Http11ServletFactory {
             final HttpServlet httpServlet = (HttpServlet) c.newInstance();
             final Http11ServletConfig servletConfig = new Http11ServletConfig(config, servletContext);
             final Http11Authenticator authenticator = new Http11Authenticator(realm, servletConfig.getConfig());
-            httpServlet.init(servletConfig);
-            servlet = new Http11Servlet(servletConfig, authenticator, httpServlet);
+            final boolean init = Boolean.parseBoolean(Value.defaultOnNull(
+                    config.getInitParam("init"), Boolean.TRUE.toString()));
+            if (init) {
+                httpServlet.init(servletConfig);
+            }
+            servlet = new Http11Servlet(servletConfig, authenticator, httpServlet, init);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ServletException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

@@ -12,6 +12,7 @@ import io.github.greyp9.arwo.core.table.model.Table;
 import io.github.greyp9.arwo.core.table.row.RowSet;
 import io.github.greyp9.arwo.core.table.sort.Sorts;
 import io.github.greyp9.arwo.core.task.service.TaskService;
+import io.github.greyp9.arwo.core.task.type.http.HttpTask;
 import io.github.greyp9.arwo.core.task.type.process.ProcessTask;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
@@ -22,6 +23,7 @@ import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.cron.factory.JobFactory;
 import io.github.greyp9.irby.core.cron.impl.CommandRunnable;
+import io.github.greyp9.irby.core.cron.impl.net.HttpRunnable;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.job.CronJobX;
 import io.github.greyp9.irby.core.cron.widget.ExecutorAdaptor;
@@ -180,13 +182,23 @@ public class CronService {
             ((CommandRunnable) runnable).setCommands(commands);
         }
         final CommandRunnable commandRunnable = Value.as(runnable, CommandRunnable.class);
+        final HttpRunnable httpRunnable = Value.as(runnable, HttpRunnable.class);
         if (commandRunnable != null) {  // cutover to TaskService
-            final String command = ElementU.getAttribute(commandRunnable.getElement(), "command");
             final TaskService taskService = Value.as(AppNaming.lookup(
                     TaskService.class.getName(), config.getService()), TaskService.class);
             final String taskName = String.format("%s-%s", tab, jobName);
-            logger.info(String.format("%s:%s", taskService.getName(), taskName));
+            final String command = ElementU.getAttribute(commandRunnable.getElement(), "command");
+            /* final String env = */ ElementU.getAttribute(commandRunnable.getElement(), "env");
             taskService.submit(new ProcessTask(taskName, Collections.singletonList(command), null, null));
+        } else if (httpRunnable != null) {
+            final TaskService taskService = Value.as(AppNaming.lookup(
+                    TaskService.class.getName(), config.getService()), TaskService.class);
+            final String taskName = String.format("%s-%s", tab, jobName);
+            taskService.submit(new HttpTask(taskName, new Date(),
+                    ElementU.getAttribute(httpRunnable.getElement(), "certificate"),
+                    ElementU.getAttribute(httpRunnable.getElement(), "method"),
+                    ElementU.getAttribute(httpRunnable.getElement(), "source-url"),
+                    ElementU.getAttribute(httpRunnable.getElement(), "authorization"), null));
         } else if (runnable != null) {
             // ExecutorService.submit() queues a FutureTask, with no access to interesting data
             executorService.execute(runnable);

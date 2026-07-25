@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.security.Principal;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,16 +27,20 @@ public class Http11Servlet {
     private final Http11ServletConfig servletConfig;
     private final Http11Authenticator authenticator;
     private final HttpServlet httpServlet;
+    private final AtomicBoolean initialized;
 
     public final HttpServlet getHttpServlet() {
         return httpServlet;
     }
 
     public Http11Servlet(final Http11ServletConfig servletConfig,
-                         final Http11Authenticator authenticator, final HttpServlet httpServlet) {
+                         final Http11Authenticator authenticator,
+                         final HttpServlet httpServlet,
+                         final boolean initialized) {
         this.servletConfig = servletConfig;
         this.authenticator = authenticator;
         this.httpServlet = httpServlet;
+        this.initialized = new AtomicBoolean(initialized);
     }
 
     public final void service(final Http11Request http11Request, final Http11Response http11Response) {
@@ -43,6 +48,9 @@ public class Http11Servlet {
             final Principal principal = authenticator.authenticate(http11Request);
             http11Request.setUser((principal == null) ? null : principal.getName());
             final Principal principalZ = authenticator.authorize(principal);
+            if (!initialized.getAndSet(true)) {
+                httpServlet.init(servletConfig);
+            }
             final HttpServletRequest request = new Http11ServletRequest(http11Request, servletConfig, principalZ);
             final HttpServletResponse response = new Http11ServletResponse(http11Response);
             // hand off to servlet implementation
