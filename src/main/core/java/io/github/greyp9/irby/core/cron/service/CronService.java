@@ -192,7 +192,8 @@ public class CronService {
             final String taskName = String.format("%s-%s", tab, jobName);
             final String command = ElementU.getAttribute(commandRunnable.getElement(), "command");
             /* final String env = */ ElementU.getAttribute(commandRunnable.getElement(), "env");
-            taskService.submit(new ProcessTask(taskName, Collections.singletonList(command), null, null));
+            taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
+                    Collections.singletonList(command), null, null));
         } else if (httpRunnable != null) {
             final TaskService taskService = Value.as(AppNaming.lookup(
                     TaskService.class.getName(), config.getService()), TaskService.class);
@@ -202,7 +203,7 @@ public class CronService {
             final String authorization = ElementU.getAttribute(httpRunnable.getElement(), "authorization");
             final String header = HttpClientU.toBasicAuth(
                     authorization, arwoRealm.getCredential(authorization).toCharArray());
-            taskService.submit(new HttpTask(taskName, new Date(),
+            taskService.submit(new HttpTask(taskName, taskService.toUnique(date),
                     ElementU.getAttribute(httpRunnable.getElement(), "certificate"),
                     ElementU.getAttribute(httpRunnable.getElement(), "method"),
                     ElementU.getAttribute(httpRunnable.getElement(), "source-url"),
