@@ -469,9 +469,10 @@ public final class ApplicationConfig {
         final String name = xpather.getTextAttr(Const.XPATH_A_NAME);
         final String schedule = xpather.getTextAttr("@schedule");
         //final String className = xpather.getTextAttr("@class");
-        final Element typeElement = xpather.getElement("*");
+        final List<Element> typeElements = xpather.getElements("*");
+        final Element typeElement = typeElements.isEmpty() ? null : typeElements.iterator().next();
         final String className = (typeElement == null ? null : typeElement.getTagName());
-        return new CronConfigJob(name, schedule, className, typeElement);
+        return new CronConfigJob(name, schedule, className, typeElement, typeElements);
     }
 
     private void doElementsAdvanced(final List<Element> elements) throws IOException {

@@ -3,6 +3,7 @@ package io.github.greyp9.irby.core.cron.service;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
+import io.github.greyp9.arwo.core.envsec.store.SecureStore;
 import io.github.greyp9.arwo.core.httpclient.HttpClientU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.naming.AppNaming;
@@ -25,11 +26,11 @@ import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.cron.factory.JobFactory;
 import io.github.greyp9.irby.core.cron.impl.CommandRunnable;
-import io.github.greyp9.irby.core.cron.impl.net.HttpRunnable;
 import io.github.greyp9.irby.core.cron.job.CronJobQ;
 import io.github.greyp9.irby.core.cron.job.CronJobX;
 import io.github.greyp9.irby.core.cron.widget.ExecutorAdaptor;
 import io.github.greyp9.irby.core.realm.impl.ArwoRealm;
+import org.w3c.dom.Element;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -176,6 +178,51 @@ public class CronService {
     }
 
     private void doJob(final String tab, final String jobName, final Date date, final CronJobX job) {
+        final String name = job.getElement().getTagName();
+        if ("command".equals(name)) {
+            doJobV2(tab, jobName, date, job);
+        } else if ("http".equals(name)) {
+            doJobV2(tab, jobName, date, job);
+        } else {
+            doJobV1(tab, jobName, date, job);
+        }
+    }
+
+    private void doJobV2(final String tab, final String jobName, final Date date, final CronJobX job) {
+        final TaskService taskService = Value.as(AppNaming.lookup(
+                TaskService.class.getName(), config.getService()), TaskService.class);
+        final String taskName = String.format("%s-%s", tab, jobName);
+        final List<Element> elements = job.getElements();
+        for (Element element : elements) {
+            final String name = element.getTagName();
+            if (name.equals("command")) {
+                final String command = ElementU.getAttribute(element, "command");
+                /* final String env = */ ElementU.getAttribute(element, "env");
+                taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
+                        Collections.singletonList(command), null, null));
+            } else if (element.getTagName().equals("http")) {
+                final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
+                        "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
+                final String authorization = ElementU.getAttribute(element, "authorization");
+                final String header = HttpClientU.toBasicAuth(
+                        authorization, arwoRealm.getCredential(authorization).toCharArray());
+                taskService.submit(new HttpTask(taskName, taskService.toUnique(date),
+                        ElementU.getAttribute(element, "certificate"),
+                        ElementU.getAttribute(element, "method"),
+                        ElementU.getAttribute(element, "source-url"),
+                        header, null));
+            } else if (name.equals("store")) {
+                final String key = ElementU.getAttribute(element, "key");
+                final String value = ElementU.getAttribute(element, "value");
+                final String nameLookup = SecureStore.class.getName();
+                final SecureStore secureStore = Value.as(AppNaming.lookup(nameLookup, nameLookup), SecureStore.class);
+                logger.info(String.format("KEY=%s VALUE=%s PROPERTIES=%d",
+                        key, value, secureStore.getProperties().size()));
+            }
+        }
+    }
+
+    private void doJobV1(final String tab, final String jobName, final Date date, final CronJobX job) {
         final JobFactory factory = new JobFactory();
         final String className = lookupClassName(job.getClassName());
         final Runnable runnable = factory.getRunnable(className, job.getElement(), tab, jobName, date);
@@ -184,31 +231,7 @@ public class CronService {
             ((CommandRunnable) runnable).setExecutorServiceCmd(executorServiceCmd);
             ((CommandRunnable) runnable).setCommands(commands);
         }
-        final CommandRunnable commandRunnable = Value.as(runnable, CommandRunnable.class);
-        final HttpRunnable httpRunnable = Value.as(runnable, HttpRunnable.class);
-        if (commandRunnable != null) {  // cutover to TaskService
-            final TaskService taskService = Value.as(AppNaming.lookup(
-                    TaskService.class.getName(), config.getService()), TaskService.class);
-            final String taskName = String.format("%s-%s", tab, jobName);
-            final String command = ElementU.getAttribute(commandRunnable.getElement(), "command");
-            /* final String env = */ ElementU.getAttribute(commandRunnable.getElement(), "env");
-            taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
-                    Collections.singletonList(command), null, null));
-        } else if (httpRunnable != null) {
-            final TaskService taskService = Value.as(AppNaming.lookup(
-                    TaskService.class.getName(), config.getService()), TaskService.class);
-            final String taskName = String.format("%s-%s", tab, jobName);
-            final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
-                    "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
-            final String authorization = ElementU.getAttribute(httpRunnable.getElement(), "authorization");
-            final String header = HttpClientU.toBasicAuth(
-                    authorization, arwoRealm.getCredential(authorization).toCharArray());
-            taskService.submit(new HttpTask(taskName, taskService.toUnique(date),
-                    ElementU.getAttribute(httpRunnable.getElement(), "certificate"),
-                    ElementU.getAttribute(httpRunnable.getElement(), "method"),
-                    ElementU.getAttribute(httpRunnable.getElement(), "source-url"),
-                    header, null));
-        } else if (runnable != null) {
+        if (runnable != null) {
             // ExecutorService.submit() queues a FutureTask, with no access to interesting data
             executorService.execute(runnable);
         }

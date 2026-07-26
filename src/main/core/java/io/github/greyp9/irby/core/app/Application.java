@@ -5,6 +5,7 @@ import io.github.greyp9.arwo.core.data.persist.DataPersist;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.envsec.EnvironmentSecret;
+import io.github.greyp9.arwo.core.envsec.store.SecureStore;
 import io.github.greyp9.arwo.core.input.runnable.InputStreamRunnable;
 import io.github.greyp9.arwo.core.jce.AES;
 import io.github.greyp9.arwo.core.lang.SystemU;
@@ -74,6 +75,7 @@ public class Application {
         final ApplicationConfig config = new ApplicationConfig(url);
         // recover environment secret
         registerSecret(config.getSecret());
+        registerSecureStore();
         // capture process environment
         final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
@@ -168,6 +170,12 @@ public class Application {
         }
         final Context context = AppNaming.createSubcontext(EnvironmentSecret.class.getName());
         AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
+    }
+
+    private void registerSecureStore() {
+        final SecureStore secureStore = new SecureStore();
+        final Context context = AppNaming.createSubcontext(SecureStore.class.getName());
+        AppNaming.bind(context, SecureStore.class.getName(), secureStore);
     }
 
     public static class Const {

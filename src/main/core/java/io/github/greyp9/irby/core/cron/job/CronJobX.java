@@ -5,6 +5,8 @@ import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import org.w3c.dom.Element;
 
+import java.util.List;
+
 public final class CronJobX {
     private final CronConfig cronConfig;
     private final CronConfigJob cronConfigJob;
@@ -28,6 +30,10 @@ public final class CronJobX {
 
     public Element getElement() {
         return cronConfigJob.getElement();
+    }
+
+    public List<Element> getElements() {
+        return cronConfigJob.getElements();
     }
 
     public CronJob getJob() {

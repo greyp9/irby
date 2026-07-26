@@ -244,6 +244,7 @@
             <xsd:element name='group-file' type='irby:jobGroupFileType'/>
             <xsd:element name='regroup-file' type='irby:jobRegroupFileType'/>
             <xsd:element name='http' type='irby:jobHttpType'/>
+            <xsd:element name='store' type='irby:jobStoreType'/>
         </xsd:choice>
         <xsd:attributeGroup ref='irby:jobAttributes'/>
     </xsd:complexType>
@@ -308,6 +309,11 @@
         <xsd:attribute name='authorization' type='xsd:string'/>
         <xsd:attribute name='source-url' type='xsd:string'/>
         <xsd:attribute name='target-file' type='xsd:string'/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jobStoreType">
+        <xsd:attribute name='key' type='xsd:string'/>
+        <xsd:attribute name='value' type='xsd:string'/>
     </xsd:complexType>
 
     <xsd:complexType name='advancedType'>
