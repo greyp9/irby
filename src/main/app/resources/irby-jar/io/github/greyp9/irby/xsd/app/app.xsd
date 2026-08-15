@@ -264,6 +264,7 @@
     </xsd:complexType>
 
     <xsd:complexType name="jobCommandType">
+        <xsd:attribute name='env' type='xsd:string'/>
         <xsd:attribute name='command' type='xsd:string'/>
     </xsd:complexType>
 

@@ -198,10 +198,10 @@ public class CronService {
         for (Element element : elements) {
             final String name = element.getTagName();
             if (name.equals("command")) {
+                final String env = ElementU.getAttribute(element, "env");
                 final String command = ElementU.getAttribute(element, "command");
-                /* final String env = */ ElementU.getAttribute(element, "env");
                 taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
-                        Collections.singletonList(command), null, null));
+                        Collections.singletonList(command), taskService.toEnv(env), null));
             } else if (element.getTagName().equals("http")) {
                 final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
                         "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
