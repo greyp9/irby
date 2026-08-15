@@ -233,7 +233,7 @@
     </xsd:complexType>
 
     <xsd:complexType name='jobType'>
-        <xsd:choice>
+        <xsd:choice maxOccurs="unbounded">
             <xsd:element name='arguments' type='irby:jobArgumentsType'/>
             <xsd:element name='sleep' type='irby:jobSleepType'/>
             <xsd:element name='command' type='irby:jobCommandType'/>

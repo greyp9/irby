@@ -4,6 +4,7 @@ import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
 import io.github.greyp9.arwo.core.envsec.store.SecureStore;
+import io.github.greyp9.arwo.core.file.meta.MetaFile;
 import io.github.greyp9.arwo.core.httpclient.HttpClientU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
 import io.github.greyp9.arwo.core.naming.AppNaming;
@@ -17,6 +18,7 @@ import io.github.greyp9.arwo.core.table.sort.Sorts;
 import io.github.greyp9.arwo.core.task.service.TaskService;
 import io.github.greyp9.arwo.core.task.type.http.HttpTask;
 import io.github.greyp9.arwo.core.task.type.process.ProcessTask;
+import io.github.greyp9.arwo.core.task.type.store.StoreTask;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
 import io.github.greyp9.arwo.core.vm.mutex.CollectionU;
@@ -179,9 +181,8 @@ public class CronService {
 
     private void doJob(final String tab, final String jobName, final Date date, final CronJobX job) {
         final String name = job.getElement().getTagName();
-        if ("command".equals(name)) {
-            doJobV2(tab, jobName, date, job);
-        } else if ("http".equals(name)) {
+        final List<String> namesV2 = Arrays.asList("command", "http", "store");
+        if (namesV2.contains(name)) {
             doJobV2(tab, jobName, date, job);
         } else {
             doJobV1(tab, jobName, date, job);
@@ -192,6 +193,7 @@ public class CronService {
         final TaskService taskService = Value.as(AppNaming.lookup(
                 TaskService.class.getName(), config.getService()), TaskService.class);
         final String taskName = String.format("%s-%s", tab, jobName);
+        final List<MetaFile> metaFiles = new ArrayList<>();
         final List<Element> elements = job.getElements();
         for (Element element : elements) {
             final String name = element.getTagName();
@@ -210,14 +212,13 @@ public class CronService {
                         ElementU.getAttribute(element, "certificate"),
                         ElementU.getAttribute(element, "method"),
                         ElementU.getAttribute(element, "source-url"),
-                        header, null));
+                        header, metaFiles));
             } else if (name.equals("store")) {
                 final String key = ElementU.getAttribute(element, "key");
                 final String value = ElementU.getAttribute(element, "value");
                 final String nameLookup = SecureStore.class.getName();
                 final SecureStore secureStore = Value.as(AppNaming.lookup(nameLookup, nameLookup), SecureStore.class);
-                logger.info(String.format("KEY=%s VALUE=%s PROPERTIES=%d",
-                        key, value, secureStore.getProperties().size()));
+                taskService.submit(new StoreTask(key, value, secureStore, metaFiles));
             }
         }
     }
