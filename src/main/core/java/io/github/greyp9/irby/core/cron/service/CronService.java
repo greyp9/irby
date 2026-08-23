@@ -7,6 +7,7 @@ import io.github.greyp9.arwo.core.envsec.store.SecureStore;
 import io.github.greyp9.arwo.core.file.meta.MetaFile;
 import io.github.greyp9.arwo.core.httpclient.HttpClientU;
 import io.github.greyp9.arwo.core.io.command.CommandWork;
+import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
 import io.github.greyp9.arwo.core.security.realm.AppRealmContainer;
 import io.github.greyp9.arwo.core.table.filter.Filters;
@@ -15,6 +16,7 @@ import io.github.greyp9.arwo.core.table.metadata.RowSetMetaData;
 import io.github.greyp9.arwo.core.table.model.Table;
 import io.github.greyp9.arwo.core.table.row.RowSet;
 import io.github.greyp9.arwo.core.table.sort.Sorts;
+import io.github.greyp9.arwo.core.task.service.TaskEnvironment;
 import io.github.greyp9.arwo.core.task.service.TaskService;
 import io.github.greyp9.arwo.core.task.type.http.HttpTask;
 import io.github.greyp9.arwo.core.task.type.process.ProcessTask;
@@ -34,6 +36,7 @@ import io.github.greyp9.irby.core.cron.widget.ExecutorAdaptor;
 import io.github.greyp9.irby.core.realm.impl.ArwoRealm;
 import org.w3c.dom.Element;
 
+import java.io.File;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,6 +193,8 @@ public class CronService {
     }
 
     private void doJobV2(final String tab, final String jobName, final Date date, final CronJobX job) {
+        final String nameLookup = SecureStore.class.getName();
+        final SecureStore secureStore = Value.as(AppNaming.lookup(nameLookup, nameLookup), SecureStore.class);
         final TaskService taskService = Value.as(AppNaming.lookup(
                 TaskService.class.getName(), config.getService()), TaskService.class);
         final String taskName = String.format("%s-%s", tab, jobName);
@@ -199,9 +204,12 @@ public class CronService {
             final String name = element.getTagName();
             if (name.equals("command")) {
                 final String env = ElementU.getAttribute(element, "env");
+                final String dir = ElementU.getAttribute(element, "dir");
                 final String command = ElementU.getAttribute(element, "command");
+                final TaskEnvironment taskEnvironment = new TaskEnvironment(env, taskService, secureStore);
+                final File folder = (dir == null) ? null : new File(SystemU.resolveSystemProperties(dir));
                 taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
-                        Collections.singletonList(command), taskService.toEnv(env), null));
+                        Collections.singletonList(command), taskEnvironment.getEnv(), folder));
             } else if (element.getTagName().equals("http")) {
                 final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
                         "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
@@ -216,9 +224,7 @@ public class CronService {
             } else if (name.equals("store")) {
                 final String key = ElementU.getAttribute(element, "key");
                 final String value = ElementU.getAttribute(element, "value");
-                final String nameLookup = SecureStore.class.getName();
-                final SecureStore secureStore = Value.as(AppNaming.lookup(nameLookup, nameLookup), SecureStore.class);
-                taskService.submit(new StoreTask(key, value, secureStore, metaFiles));
+                taskService.submit(new StoreTask(name, key, value, secureStore, metaFiles));
             }
         }
     }

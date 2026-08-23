@@ -40,4 +40,15 @@ public class RegexTest {
         final String group1 = matcher.group(1);
         Assertions.assertEquals("\nsome text\n", group1);
     }
+
+    @Test
+    public void testWrap() {
+        final Pattern pattern = Pattern.compile("wrapper\\((.*)\\)");
+        final String text = "wrapper(value)";
+        final Matcher matcher = pattern.matcher(text);
+        final boolean matches = matcher.matches();
+        Assertions.assertTrue(matches);
+        final String group1 = matcher.group(1);
+        Assertions.assertEquals("value", group1);
+    }
 }

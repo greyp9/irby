@@ -16,6 +16,7 @@ import io.github.greyp9.arwo.core.table.model.TableContext;
 import io.github.greyp9.arwo.core.table.row.RowSet;
 import io.github.greyp9.arwo.core.table.sort.Sorts;
 import io.github.greyp9.arwo.core.table.state.ViewState;
+import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.config.CronConfigJob;
 import io.github.greyp9.irby.core.cron.core.CronRequest;
@@ -25,6 +26,7 @@ import org.w3c.dom.Element;
 import java.io.IOException;
 import java.sql.Types;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Render table with buttons to trigger invocation of jobs in specified {@link CronService}.
@@ -70,10 +72,14 @@ public class CronTriggerView {
                         final CronConfigJob job, final String submitIDQ) {
         final SubmitToken tokenNow = new SubmitToken(
                 cronService.getConfig().getName(), App.Action.CRON_NOW, tab.getName(), job.getName());
+        final String jobType = (job.getElements().size() > 1)
+                ? Value.joinCollection(",", job.getElements().stream()
+                                            .map(Element::getTagName).collect(Collectors.toList()))
+                : job.getClassName();
         final InsertRow insertRow = new InsertRow(rowSet);
         insertRow.setNextColumn(tab.getName());
         insertRow.setNextColumn(job.getName());
-        insertRow.setNextColumn(job.getClassName());
+        insertRow.setNextColumn(jobType);
         insertRow.setNextColumn(job.getSchedule());
         insertRow.setNextColumn(new TableViewButton(UTF16.PLAY, submitIDQ, tokenNow.toString()));
         rowSet.add(insertRow.getRow());
