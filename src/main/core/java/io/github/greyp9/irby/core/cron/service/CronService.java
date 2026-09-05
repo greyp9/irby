@@ -16,6 +16,7 @@ import io.github.greyp9.arwo.core.table.metadata.RowSetMetaData;
 import io.github.greyp9.arwo.core.table.model.Table;
 import io.github.greyp9.arwo.core.table.row.RowSet;
 import io.github.greyp9.arwo.core.table.sort.Sorts;
+import io.github.greyp9.arwo.core.task.service.SecureEnvironment;
 import io.github.greyp9.arwo.core.task.service.TaskEnvironment;
 import io.github.greyp9.arwo.core.task.service.TaskService;
 import io.github.greyp9.arwo.core.task.type.http.HttpTask;
@@ -206,10 +207,11 @@ public class CronService {
                 final String env = ElementU.getAttribute(element, "env");
                 final String dir = ElementU.getAttribute(element, "dir");
                 final String command = ElementU.getAttribute(element, "command");
-                final TaskEnvironment taskEnvironment = new TaskEnvironment(env, taskService, secureStore);
+                final TaskEnvironment taskEnvironment = new TaskEnvironment(env, taskService);
+                final SecureEnvironment environment = new SecureEnvironment(taskEnvironment.getEnv(), secureStore);
                 final File folder = (dir == null) ? null : new File(SystemU.resolveSystemProperties(dir));
                 taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
-                        Collections.singletonList(command), true, taskEnvironment.getEnv(), folder));
+                        Collections.singletonList(command), true, environment, folder));
             } else if (element.getTagName().equals("http")) {
                 final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
                         "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
