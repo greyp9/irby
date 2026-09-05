@@ -209,7 +209,7 @@ public class CronService {
                 final TaskEnvironment taskEnvironment = new TaskEnvironment(env, taskService, secureStore);
                 final File folder = (dir == null) ? null : new File(SystemU.resolveSystemProperties(dir));
                 taskService.submit(new ProcessTask(taskName, taskService.toUnique(date),
-                        Collections.singletonList(command), taskEnvironment.getEnv(), folder));
+                        Collections.singletonList(command), true, taskEnvironment.getEnv(), folder));
             } else if (element.getTagName().equals("http")) {
                 final ArwoRealm arwoRealm = Value.as(AppNaming.lookup(
                         "/arwo", AppRealmContainer.NAMING_CONTAINER), ArwoRealm.class);
