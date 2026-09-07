@@ -26,6 +26,7 @@ import io.github.greyp9.irby.core.context.config.ContextConfig;
 import io.github.greyp9.irby.core.context.factory.ContextFactory;
 import io.github.greyp9.irby.core.cron.config.CronConfig;
 import io.github.greyp9.irby.core.cron.service.CronRunnable;
+import io.github.greyp9.irby.core.depend2.ApplicationResolver;
 import io.github.greyp9.irby.core.http11.config.Http11Config;
 import io.github.greyp9.irby.core.http11.server.Http11Runnable;
 import io.github.greyp9.irby.core.https11.config.Https11Config;
@@ -81,7 +82,7 @@ public class Application {
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
         dataPersist.run("props", SysPropsU.getProps(config.getAdvancedConfig("props").getPropertyNames()));
         // load missing dependencies (disable for now)
-        // new ApplicationResolver(config).resolve();
+        new ApplicationResolver(config, new File(SystemU.userDir())).resolve();
         // application setup
         final ExecutorService executorService = ExecutorServiceFactory.create(
                 config.getThreads(), getClass().getSimpleName());
@@ -97,7 +98,6 @@ public class Application {
         for (final ContextConfig contextConfig : config.getContextConfigs()) {
             ContextFactory.create(contextConfig);
         }
-        //final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(getClass().getName());
         //logger.info("AFTER ContextFactory.create()" + IrbyContextU.enumerate(null));
         // web servers
         for (final Http11Config http11Config : config.getHttp11Configs()) {

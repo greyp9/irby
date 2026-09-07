@@ -25,11 +25,13 @@ public final class ApplicationResolver {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final Collection<ClassLoaderConfig> classLoaderConfigs;
-    private final URI uriBase;
+    private final File folderTarget;
+    private final URI uriSource;
 
-    public ApplicationResolver(final ApplicationConfig appConfig) {
+    public ApplicationResolver(final ApplicationConfig appConfig, final File folderTarget) {
         this.classLoaderConfigs = appConfig.getClassLoaderConfigs();
-        this.uriBase = new File(SystemU.userHome(), PATH_REPOSITORY).toURI();
+        this.folderTarget = folderTarget;
+        this.uriSource = new File(SystemU.userHome(), PATH_REPOSITORY).toURI();
     }
 
     public void resolve() throws IOException {
@@ -43,22 +45,22 @@ public final class ApplicationResolver {
     private void resolve(final ClassLoaderConfig classLoaderConfig,
                          final JSONObject dependencies) throws IOException {
         final String name = classLoaderConfig.getName();
-        final String target = classLoaderConfig.getResources();
+        final String resources = classLoaderConfig.getResources();
         final JSONObject classloader = Value.asOptional(
                 new JSONPointer("/" + name).queryFrom(dependencies), JSONObject.class).orElse(null);
         if (classloader != null) {
-            resolve(classloader, target);
+            resolve(classloader, resources);
         }
     }
 
     private void resolve(final JSONObject classloader,
-                         final String target) throws IOException {
+                         final String resources) throws IOException {
         final String dependencies = classloader.getString(DEPENDENCIES);  // library dependencies
         final JSONArray prune = Value.asOptional(
                 new JSONPointer(PATH_PRUNE).queryFrom(classloader), JSONArray.class).orElse(new JSONArray());
         final List<Artifact> exclusions = resolveExclusions(prune);
         final List<Artifact> artifacts = resolveArtifacts(dependencies, exclusions);
-        ensureArtifacts(artifacts, uriBase, target);
+        ensureArtifacts(artifacts, uriSource, resources);
     }
 
     private List<Artifact> resolveExclusions(final JSONArray prune) {
@@ -109,22 +111,22 @@ public final class ApplicationResolver {
 
     private void ensureArtifacts(final List<Artifact> artifacts,
                                  final URI source,
-                                 final String location) throws IOException {
-        final File targetFolder = new File(location).getParentFile();
+                                 final String resources) throws IOException {
+        final File folderArtifacts = FileU.ensureFolder(new File(folderTarget, resources).getParentFile());
         logger.fine(String.format("ARTIFACTS:[%d][%s][%s]",
-                artifacts.size(), source.toString(), targetFolder.getAbsolutePath()));
+                artifacts.size(), source.toString(), folderArtifacts.getAbsolutePath()));
         for (Artifact artifact : artifacts) {
             logger.fine(artifact.toURI(source.toString()).toString());
-            ensureArtifactLocal(artifact, source, targetFolder);
+            ensureArtifactLocal(artifact, source, folderArtifacts);
         }
     }
 
     private void ensureArtifactLocal(final Artifact artifact,
                                      final URI source,
-                                     final File targetFolder) throws IOException {
+                                     final File folderArtifacts) throws IOException {
         final File fileSource = new File(artifact.toURI(source.toString()));
-        final File fileTarget = new File(targetFolder, artifact.getName());
-        if (targetFolder.exists() && !fileTarget.exists()) {
+        final File fileTarget = new File(folderArtifacts, artifact.getName());
+        if (folderArtifacts.exists() && !fileTarget.exists()) {
             FileU.copy(fileSource, fileTarget);
         }
     }

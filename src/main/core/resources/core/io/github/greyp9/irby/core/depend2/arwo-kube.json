@@ -77,7 +77,7 @@
     {
       "groupId": "io.kubernetes",
       "artifactId": "client-java",
-      "version": "19.0.1",
+      "version": "19.0.3",
       "type": "jar",
       "scope": "compile",
       "classifier": "",
@@ -146,7 +146,7 @@
         {
           "groupId": "io.kubernetes",
           "artifactId": "client-java-api",
-          "version": "19.0.1",
+          "version": "19.0.3",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -173,7 +173,7 @@
             {
               "groupId": "com.squareup.okhttp3",
               "artifactId": "okhttp",
-              "version": "4.11.0",
+              "version": "4.12.0",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -201,8 +201,8 @@
                 },
                 {
                   "groupId": "org.jetbrains.kotlin",
-                  "artifactId": "kotlin-stdlib",
-                  "version": "1.6.20",
+                  "artifactId": "kotlin-stdlib-jdk8",
+                  "version": "1.8.21",
                   "type": "jar",
                   "scope": "compile",
                   "classifier": "",
@@ -210,37 +210,37 @@
                   "children": [
                     {
                       "groupId": "org.jetbrains.kotlin",
-                      "artifactId": "kotlin-stdlib-common",
-                      "version": "1.6.20",
+                      "artifactId": "kotlin-stdlib",
+                      "version": "1.8.21",
                       "type": "jar",
                       "scope": "compile",
                       "classifier": "",
-                      "optional": "false"
+                      "optional": "false",
+                      "children": [
+                        {
+                          "groupId": "org.jetbrains.kotlin",
+                          "artifactId": "kotlin-stdlib-common",
+                          "version": "1.8.21",
+                          "type": "jar",
+                          "scope": "compile",
+                          "classifier": "",
+                          "optional": "false"
+                        },
+                        {
+                          "groupId": "org.jetbrains",
+                          "artifactId": "annotations",
+                          "version": "13.0",
+                          "type": "jar",
+                          "scope": "compile",
+                          "classifier": "",
+                          "optional": "false"
+                        }
+                      ]
                     },
-                    {
-                      "groupId": "org.jetbrains",
-                      "artifactId": "annotations",
-                      "version": "13.0",
-                      "type": "jar",
-                      "scope": "compile",
-                      "classifier": "",
-                      "optional": "false"
-                    }
-                  ]
-                },
-                {
-                  "groupId": "org.jetbrains.kotlin",
-                  "artifactId": "kotlin-stdlib-jdk8",
-                  "version": "1.6.20",
-                  "type": "jar",
-                  "scope": "compile",
-                  "classifier": "",
-                  "optional": "false",
-                  "children": [
                     {
                       "groupId": "org.jetbrains.kotlin",
                       "artifactId": "kotlin-stdlib-jdk7",
-                      "version": "1.6.20",
+                      "version": "1.8.21",
                       "type": "jar",
                       "scope": "compile",
                       "classifier": "",
@@ -253,7 +253,7 @@
             {
               "groupId": "com.squareup.okhttp3",
               "artifactId": "logging-interceptor",
-              "version": "4.11.0",
+              "version": "4.12.0",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -302,7 +302,7 @@
         {
           "groupId": "io.kubernetes",
           "artifactId": "client-java-proto",
-          "version": "19.0.1",
+          "version": "19.0.3",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -347,7 +347,7 @@
         {
           "groupId": "org.bouncycastle",
           "artifactId": "bcpkix-jdk18on",
-          "version": "1.83",
+          "version": "1.84",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -356,7 +356,7 @@
             {
               "groupId": "org.bouncycastle",
               "artifactId": "bcutil-jdk18on",
-              "version": "1.83",
+              "version": "1.84",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -365,7 +365,7 @@
                 {
                   "groupId": "org.bouncycastle",
                   "artifactId": "bcprov-jdk18on",
-                  "version": "1.83",
+                  "version": "1.84",
                   "type": "jar",
                   "scope": "compile",
                   "classifier": "",

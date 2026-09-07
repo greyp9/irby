@@ -1,4 +1,9 @@
 {
+  "jdbc": {
+    "dependencies": "io/github/greyp9/irby/core/depend2/arwo-jdbc.json",
+    "prune": [
+    ]
+  },
   "kube": {
     "dependencies": "io/github/greyp9/irby/core/depend2/arwo-kube.json",
     "prune": [

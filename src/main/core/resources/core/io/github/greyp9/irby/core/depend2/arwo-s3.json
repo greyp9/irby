@@ -66,7 +66,7 @@
     {
       "groupId": "software.amazon.awssdk",
       "artifactId": "s3",
-      "version": "2.41.14",
+      "version": "2.46.19",
       "type": "jar",
       "scope": "compile",
       "classifier": "",
@@ -75,7 +75,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "aws-xml-protocol",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -84,7 +84,7 @@
             {
               "groupId": "software.amazon.awssdk",
               "artifactId": "aws-query-protocol",
-              "version": "2.41.14",
+              "version": "2.46.19",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -95,7 +95,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "protocol-core",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -104,7 +104,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "arns",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -113,7 +113,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "profiles",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -122,7 +122,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "crt-core",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -131,7 +131,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "http-auth",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -140,7 +140,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "identity-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -149,7 +149,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "http-auth-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -169,7 +169,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "http-auth-aws",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -178,7 +178,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "checksums",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -187,7 +187,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "checksums-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -196,7 +196,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "retries-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -205,7 +205,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "sdk-core",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -214,7 +214,7 @@
             {
               "groupId": "software.amazon.awssdk",
               "artifactId": "retries",
-              "version": "2.41.14",
+              "version": "2.46.19",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -225,7 +225,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "auth",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -234,7 +234,7 @@
             {
               "groupId": "software.amazon.awssdk",
               "artifactId": "http-auth-aws-eventstream",
-              "version": "2.41.14",
+              "version": "2.46.19",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -254,7 +254,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "http-client-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -263,7 +263,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "regions",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -272,7 +272,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "annotations",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -281,7 +281,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "utils",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -290,7 +290,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "aws-core",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -299,7 +299,7 @@
             {
               "groupId": "software.amazon.awssdk",
               "artifactId": "utils-lite",
-              "version": "2.41.14",
+              "version": "2.46.19",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -310,7 +310,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "metrics-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -319,7 +319,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "json-utils",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -328,7 +328,7 @@
             {
               "groupId": "software.amazon.awssdk",
               "artifactId": "third-party-jackson-core",
-              "version": "2.41.14",
+              "version": "2.46.19",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -339,7 +339,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "endpoints-spi",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -347,26 +347,26 @@
         },
         {
           "groupId": "software.amazon.awssdk",
-          "artifactId": "apache-client",
-          "version": "2.41.14",
+          "artifactId": "apache5-client",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "runtime",
           "classifier": "",
           "optional": "false",
           "children": [
             {
-              "groupId": "org.apache.httpcomponents",
-              "artifactId": "httpclient",
-              "version": "4.5.13",
+              "groupId": "org.apache.httpcomponents.client5",
+              "artifactId": "httpclient5",
+              "version": "5.6.1",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
               "optional": "false",
               "children": [
                 {
-                  "groupId": "commons-logging",
-                  "artifactId": "commons-logging",
-                  "version": "1.2",
+                  "groupId": "org.apache.httpcomponents.core5",
+                  "artifactId": "httpcore5-h2",
+                  "version": "5.4",
                   "type": "jar",
                   "scope": "runtime",
                   "classifier": "",
@@ -375,18 +375,9 @@
               ]
             },
             {
-              "groupId": "org.apache.httpcomponents",
-              "artifactId": "httpcore",
-              "version": "4.4.16",
-              "type": "jar",
-              "scope": "runtime",
-              "classifier": "",
-              "optional": "false"
-            },
-            {
-              "groupId": "commons-codec",
-              "artifactId": "commons-codec",
-              "version": "1.21.0",
+              "groupId": "org.apache.httpcomponents.core5",
+              "artifactId": "httpcore5",
+              "version": "5.4.3",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -397,7 +388,7 @@
         {
           "groupId": "software.amazon.awssdk",
           "artifactId": "netty-nio-client",
-          "version": "2.41.14",
+          "version": "2.46.19",
           "type": "jar",
           "scope": "runtime",
           "classifier": "",
@@ -406,7 +397,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-codec-http",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -415,7 +406,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-codec-http2",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -424,7 +415,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-codec",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -433,7 +424,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-transport",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -442,7 +433,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-common",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -451,7 +442,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-buffer",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -460,7 +451,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-handler",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -469,7 +460,7 @@
                 {
                   "groupId": "io.netty",
                   "artifactId": "netty-transport-native-unix-common",
-                  "version": "4.1.130.Final",
+                  "version": "4.1.135.Final",
                   "type": "jar",
                   "scope": "runtime",
                   "classifier": "",
@@ -480,7 +471,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-transport-classes-epoll",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",
@@ -489,7 +480,7 @@
             {
               "groupId": "io.netty",
               "artifactId": "netty-resolver",
-              "version": "4.1.130.Final",
+              "version": "4.1.135.Final",
               "type": "jar",
               "scope": "runtime",
               "classifier": "",

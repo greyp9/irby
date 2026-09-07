@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<irby:application loop="PT1S" secret="" threads="6" xmlns="urn:irby:app" xmlns:irby="urn:irby:app">
+    <classloader enabled="true" name="jdbc" resources="jdbc/*.jar"/>
+    <classloader enabled="true" name="kube" resources="kube/*.jar"/>
+    <classloader enabled="true" name="s3" resources="s3/*.jar"/>
+</irby:application>
