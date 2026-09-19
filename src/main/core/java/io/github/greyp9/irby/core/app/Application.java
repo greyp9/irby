@@ -49,11 +49,14 @@ import javax.naming.Context;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -76,7 +79,7 @@ public class Application {
         final ApplicationConfig config = new ApplicationConfig(url);
         // recover environment secret
         registerSecret(config.getSecret());
-        registerSecureStore();
+        registerSecureStore(new SecureStore());
         // capture process environment
         final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
@@ -92,6 +95,7 @@ public class Application {
         executorService.execute(new InputStreamRunnable(System.in, reference, config.getInterval()));
         // application subsystems
         final ClassLoaders classLoaders = new ClassLoaders(config.getClassLoaderConfigs(), getClass().getClassLoader());
+        registerClassLoaders(classLoaders);
         // application credentials
         final Realms realms = new Realms(config.getRealmConfigs());
         // lookup contexts
@@ -172,10 +176,18 @@ public class Application {
         AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
     }
 
-    private void registerSecureStore() {
-        final SecureStore secureStore = new SecureStore();
-        final Context context = AppNaming.createSubcontext(SecureStore.class.getName());
+    private void registerSecureStore(final SecureStore secureStore) {
+        final Context context = AppNaming.createSubcontext(secureStore.getClass().getName());
         AppNaming.bind(context, SecureStore.class.getName(), secureStore);
+    }
+
+    private void registerClassLoaders(final ClassLoaders classLoaders) {
+        final Context context = AppNaming.createSubcontext(ClassLoader.class.getName());
+        final Iterator<Map.Entry<String, URLClassLoader>> iterator = classLoaders.getIterator();
+        while (iterator.hasNext()) {
+            final Map.Entry<String, URLClassLoader> entry = iterator.next();
+            AppNaming.bind(context, entry.getKey(), entry.getValue());
+        }
     }
 
     public static class Const {
