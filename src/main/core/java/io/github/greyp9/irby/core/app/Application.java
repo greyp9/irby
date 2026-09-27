@@ -12,6 +12,8 @@ import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
 import io.github.greyp9.arwo.core.task.config.TaskServiceConfig;
 import io.github.greyp9.arwo.core.task.service.TaskServiceRunnable;
+import io.github.greyp9.arwo.core.url.URLCodec;
+import io.github.greyp9.arwo.core.util.PropertiesU;
 import io.github.greyp9.arwo.core.value.Value;
 import io.github.greyp9.arwo.core.vm.env.EnvironmentU;
 import io.github.greyp9.arwo.core.vm.exec.ExecutorServiceFactory;
@@ -57,6 +59,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -79,7 +82,7 @@ public class Application {
         final ApplicationConfig config = new ApplicationConfig(url);
         // recover environment secret
         registerSecret(config.getSecret());
-        registerSecureStore(new SecureStore());
+        registerSecureStore(new SecureStore(new File(config.getSecret())));
         // capture process environment
         final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
@@ -176,7 +179,9 @@ public class Application {
         AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
     }
 
-    private void registerSecureStore(final SecureStore secureStore) {
+    private void registerSecureStore(final SecureStore secureStore) throws IOException {
+        final Properties properties = PropertiesU.loadFromXml(URLCodec.toURL(new File(Const.STORE)));
+        properties.stringPropertyNames().forEach(k -> secureStore.setProperty(k, properties.getProperty(k)));
         final Context context = AppNaming.createSubcontext(secureStore.getClass().getName());
         AppNaming.bind(context, SecureStore.class.getName(), secureStore);
     }
@@ -192,6 +197,7 @@ public class Application {
 
     public static class Const {
         public static final String FILE = "conf/app.xml";
+        public static final String STORE = "conf/store.xml";
         public static final String URL_BUILTIN = "io/github/greyp9/irby/xml/builtin/app.xml";
     }
 }
