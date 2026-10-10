@@ -1,5 +1,6 @@
 package io.github.greyp9.irby.core.cron.service;
 
+import io.github.greyp9.arwo.app.core.lookup.AppLookup;
 import io.github.greyp9.arwo.core.date.DateU;
 import io.github.greyp9.arwo.core.date.DurationU;
 import io.github.greyp9.arwo.core.date.XsdDateU;
@@ -194,8 +195,7 @@ public class CronService {
     }
 
     private void doJobV2(final String tab, final String jobName, final Date date, final CronJobX job) {
-        final String nameLookup = SecureStore.class.getName();
-        final SecureStore secureStore = Value.as(AppNaming.lookup(nameLookup, nameLookup), SecureStore.class);
+        final SecureStore secureStore = AppLookup.secureStore();
         final TaskService taskService = Value.as(AppNaming.lookup(
                 TaskService.class.getName(), config.getService()), TaskService.class);
         final String taskName = String.format("%s-%s", tab, jobName);
