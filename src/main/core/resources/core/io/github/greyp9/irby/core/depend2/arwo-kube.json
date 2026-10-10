@@ -347,7 +347,7 @@
         {
           "groupId": "org.bouncycastle",
           "artifactId": "bcpkix-jdk18on",
-          "version": "1.84",
+          "version": "1.86",
           "type": "jar",
           "scope": "compile",
           "classifier": "",
@@ -356,7 +356,7 @@
             {
               "groupId": "org.bouncycastle",
               "artifactId": "bcutil-jdk18on",
-              "version": "1.84",
+              "version": "1.86",
               "type": "jar",
               "scope": "compile",
               "classifier": "",
@@ -365,7 +365,7 @@
                 {
                   "groupId": "org.bouncycastle",
                   "artifactId": "bcprov-jdk18on",
-                  "version": "1.84",
+                  "version": "1.86",
                   "type": "jar",
                   "scope": "compile",
                   "classifier": "",

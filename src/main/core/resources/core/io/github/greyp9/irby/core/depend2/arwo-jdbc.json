@@ -1,7 +1,7 @@
 {
   "groupId": "org.postgresql",
   "artifactId": "postgresql",
-  "version": "42.7.12",
+  "version": "42.7.14",
   "type": "jar",
   "scope": "provided",
   "classifier": "",
