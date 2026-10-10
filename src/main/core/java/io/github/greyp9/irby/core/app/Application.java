@@ -11,6 +11,7 @@ import io.github.greyp9.arwo.core.jce.AES;
 import io.github.greyp9.arwo.core.lang.SystemU;
 import io.github.greyp9.arwo.core.naming.AppNaming;
 import io.github.greyp9.arwo.core.task.config.TaskServiceConfig;
+import io.github.greyp9.arwo.core.task.service.TaskService;
 import io.github.greyp9.arwo.core.task.service.TaskServiceRunnable;
 import io.github.greyp9.arwo.core.url.URLCodec;
 import io.github.greyp9.arwo.core.util.PropertiesU;
@@ -60,6 +61,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,8 +76,13 @@ public class Application {
         this.name = ((name == null) ? getClass().getName() : name);
     }
 
-    @SuppressWarnings("PMD.NPathComplexity")
     public final String run(final URL url) throws IOException, GeneralSecurityException {
+        return run(url, new TreeMap<>());
+    }
+
+    @SuppressWarnings("PMD.NPathComplexity")
+    public final String run(final URL url,
+                            final Map<String, Object> durable) throws IOException, GeneralSecurityException {
         logger.entering(getClass().getName(), "run()");
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, IrbyContextFactory.class.getName());
         // load config
@@ -128,7 +135,12 @@ public class Application {
             executorService.execute(UDPRunnable.create(udpConfig, reference));
         }
         for (final TaskServiceConfig taskConfig : config.getTaskServiceConfigs()) {
-            executorService.execute(TaskServiceRunnable.create(taskConfig, reference, true, config.getInterval()));
+            final TaskService taskService = Value.as(durable.get(taskConfig.getName()), TaskService.class);
+            final TaskServiceRunnable runnable = (taskService == null)
+                    ? TaskServiceRunnable.create(taskConfig, reference, true, config.getInterval())
+                    : TaskServiceRunnable.create(taskService, reference, true, config.getInterval());
+            executorService.execute(runnable);
+            durable.put(taskConfig.getName(), runnable.getTaskService());
         }
         for (final CronConfig cronConfig : config.getCronConfigs()) {
             executorService.execute(CronRunnable.create(cronConfig, executorService, reference));

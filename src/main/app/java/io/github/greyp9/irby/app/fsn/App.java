@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 public final class App {
@@ -31,10 +33,11 @@ public final class App {
     }
 
     private String applicationRunLoop(final URL url) throws IOException, GeneralSecurityException {
+        final Map<String, Object> durable = new TreeMap<>();
         String signal = "";
         while (!signal.contains(AppSignal.QUIT)) {
             ThreadU.sleepMillis(DurationU.Const.ONE_SECOND_MILLIS);  // no 100% CPU on error
-            signal = new Application(AppSignal.NAME).run(url);
+            signal = new Application(AppSignal.NAME).run(url, durable);
             logger.finer(signal);
         }
         return signal;
