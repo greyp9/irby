@@ -89,7 +89,7 @@ public class Application {
         final ApplicationConfig config = new ApplicationConfig(url);
         // recover environment secret
         registerSecret(config.getSecret());
-        registerSecureStore(new SecureStore(new File(config.getSecret())));
+        registerSecureStore(config.getSecret());
         // capture process environment
         final DataPersist dataPersist = new DataPersist(new File("./data"), App.Action.XML);
         dataPersist.run("env", EnvironmentU.getEnv(config.getAdvancedConfig("env").getPropertyNames()));
@@ -191,9 +191,10 @@ public class Application {
         AppNaming.bind(context, keyStore.getClass().getName(), keyStore);
     }
 
-    private void registerSecureStore(final SecureStore secureStore) throws IOException {
+    private void registerSecureStore(final String secretPath) throws IOException {
         final Properties properties = PropertiesU.loadFromXml(URLCodec.toURL(new File(Const.STORE)));
-        properties.stringPropertyNames().forEach(k -> secureStore.setProperty(k, properties.getProperty(k)));
+        final SecureStore secureStore = new SecureStore(new File(secretPath));
+        properties.stringPropertyNames().forEach(k -> secureStore.put(k, properties.getProperty(k)));
         final Context context = AppNaming.createSubcontext(secureStore.getClass().getName());
         AppNaming.bind(context, SecureStore.class.getName(), secureStore);
     }
