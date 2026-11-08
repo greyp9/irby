@@ -25,12 +25,14 @@ public class Http11ServletFactory {
             final Http11ConfigServlet config, final Http11ServletContext servletContext, final Realm realm) {
         Http11Servlet servlet = null;
         try {
+            final String className = config.getClassName();
             final String classLoaderRef = config.getClassLoader();
             final ClassLoader classLoader = (classLoaderRef == null)
                     ? null : classLoaders.getClassLoader(classLoaderRef);
+            logger.log(Level.FINE, String.format("[%s][%s][%s]", className, classLoaderRef, classLoader));
             final Class<?> c = (classLoader == null)
-                    ? Class.forName(config.getClassName())
-                    : Class.forName(config.getClassName(), true, classLoader);
+                    ? Class.forName(className)
+                    : Class.forName(className, true, classLoader);
             final HttpServlet httpServlet = (HttpServlet) c.newInstance();
             final Http11ServletConfig servletConfig = new Http11ServletConfig(config, servletContext);
             final Http11Authenticator authenticator = new Http11Authenticator(realm, servletConfig.getConfig());
